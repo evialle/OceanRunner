@@ -3,8 +3,8 @@ h1. OceanRunner
 
 h2. Introduction 
 
-A problem, with JUnit is that you may use multiple interesting Runners for a Test: *OceanRunner* tries to solve that problem.
-By offering an easy way to integrate _"RunnersLik"e_ class, named _*OceanModule*_, you may conjugate many behaviors of unit testing strategy.
+A problem, with JUnit is that you CAN'T use multiple interesting Runners for a Test: *OceanRunner* tries to solve that problem.
+By offering an easy way to integrate _"RunnersLike"_ class, named _*OceanModule*_, you may conjugate many behaviors of unit testing strategy.
 
 When you can use a single Runner for test, you may use many *OceanModules*.
 
