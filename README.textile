@@ -1,0 +1,20 @@
+h1. OceanRunner
+
+
+h2. Introduction 
+
+Modules for easyly integrate multiple Runners, named OceanModule
+
+h2. Built in Modules:
+
+* CategoryOceanModule
+* ConcurrentOceanModule
+* JUnit3AdapterOceanModule
+* StatisticsOceanModule 
+
+
+h2. License
+
+Apache License 2.0
+Version 2.0, January 2004
+http://www.apache.org/licenses/
