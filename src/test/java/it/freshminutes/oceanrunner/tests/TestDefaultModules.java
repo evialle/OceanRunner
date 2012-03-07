@@ -9,8 +9,10 @@ import org.junit.runner.RunWith;
  */
 
 /**
- * @author Eric
- *
+ * Run the tests with all the modules loaded in config/oceanrunner.properties in
+ * runners.defaultmodules properties
+ * 
+ * @author Eric Vialle
  */
 @RunWith(OceanRunner.class)
 public class TestDefaultModules {

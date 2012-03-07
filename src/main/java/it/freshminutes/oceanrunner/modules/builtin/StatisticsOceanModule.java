@@ -3,6 +3,9 @@
  */
 package it.freshminutes.oceanrunner.modules.builtin;
 
+import it.freshminutes.oceanrunner.OceanRunner;
+import it.freshminutes.oceanrunner.modules.engine.OceanModule;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -10,12 +13,9 @@ import java.sql.SQLException;
 import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
 
-import it.freshminutes.oceanrunner.OceanRunner;
-import it.freshminutes.oceanrunner.modules.engine.OceanModule;
-
 /**
- * @author Eric
- *
+ * @author Eric Vialle
+ * 
  */
 public class StatisticsOceanModule extends OceanModule {
 	

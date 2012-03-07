@@ -1,11 +1,16 @@
 package it.freshminutes.oceanrunner.modules.engine;
 
-import org.junit.runner.Description;
-import org.junit.runner.notification.Failure;
-import org.junit.runners.model.InitializationError;
-
 import it.freshminutes.oceanrunner.OceanRunner;
 
+import org.junit.runner.Description;
+import org.junit.runner.notification.Failure;
+
+/**
+ * Define an OceanModule. A module could be compared to a JUnit Runner.
+ * 
+ * @author Eric Vialle
+ * 
+ */
 public abstract class OceanModule {
 
 	public abstract void doBeforeAllTestedMethods(final OceanRunner oceanRunner, final Class<?> klass);

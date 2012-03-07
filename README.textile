@@ -3,14 +3,26 @@ h1. OceanRunner
 
 h2. Introduction 
 
-Modules for easyly integrate multiple Runners, named OceanModule
+Modules to easily integrate multiple Runners, named *OceanModule*.
+When you can use a single Runner for test, you may use many *OceanModules*.
 
-h2. Built in Modules:
+h2. Built in OceanModules:
 
-* CategoryOceanModule
-* ConcurrentOceanModule
-* JUnit3AdapterOceanModule
-* StatisticsOceanModule 
+* *@CategoryOceanModule@*: include or exclude tests based not only on annotations
+* *@ConcurrentOceanModule@*: run simultaneously different tests
+* *@JUnit3AdapterOceanModule@*: run your JUnit3 tests
+* *@StatisticsOceanModule@*: process statistics about last success/failure of your test _(not fully implemented)_ 
+
+h2. Creating your own OceanModule
+
+Simply extend your class by @it.freshminutes.oceanrunner.modules.engine.OceanModule@
+And put at the top of your class to Test:
+
+@RunWith(OceanRunner.class)
+@OceanModulesToUse(_MyOwnOceanModule.class_)
+public class Test {
+	...
+}
 
 
 h2. License

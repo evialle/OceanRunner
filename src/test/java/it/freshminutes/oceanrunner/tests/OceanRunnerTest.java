@@ -6,6 +6,7 @@ import it.freshminutes.oceanrunner.annotations.OceanRunTestsInDedicatedThreads;
 import it.freshminutes.oceanrunner.modules.builtin.CategoryOceanModule;
 import it.freshminutes.oceanrunner.modules.builtin.ConcurrentOceanModule;
 import it.freshminutes.oceanrunner.modules.builtin.TestModuleOceanModule;
+import it.freshminutes.oceanrunner.tests.categories.TestCategoryOceanModule;
 
 import java.util.Random;
 
@@ -23,7 +24,7 @@ import org.junit.runner.RunWith;
 public class OceanRunnerTest {
 
 	@Test()
-	@Category(TestCategoryOceanModule2.class)
+	@Category(TestCategoryOceanModule.class)
 	public void voidMyMethod() {
 		printAndWait();
 	}

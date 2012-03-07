@@ -100,6 +100,10 @@ public class OceanRunner extends BlockJUnit4ClassRunner {
 		}
 	}
 
+	/**
+	 * 
+	 * @return Properties from the properties file
+	 */
 	public Properties getProperties() {
 		if (OceanRunner.properties == null) {
 			OceanRunner.properties = new Properties();
@@ -120,6 +124,21 @@ public class OceanRunner extends BlockJUnit4ClassRunner {
 		}
 
 		return OceanRunner.properties;
+	}
+
+	/**
+	 * Return a property in priority from System, then from Properties file.
+	 * 
+	 * @param key
+	 * @return
+	 */
+	public Object getAwareProperty(final String key) {
+
+		Object toReturn = System.getProperties().getProperty(key);
+		if (toReturn == null) {
+			toReturn = getProperties().getProperty(key);
+		}
+		return toReturn;
 	}
 
 	/**
