@@ -21,7 +21,7 @@ Simply extend your class by @it.freshminutes.oceanrunner.modules.engine.OceanMod
 And put at the top of your class to Test:
 
 @RunWith(OceanRunner.class)
-@OceanModulesToUse(_MyOwnOceanModule.class_)
+@OceanModulesToUse({_MyOwnOceanModule.class_, _MyOwnOceanModule2.class_, _MyOwnOceanModule3.class_})
 public class Test {
 	...
 }
