@@ -38,7 +38,7 @@ eg.
 @runners.defaultmodules=it.freshminutes.oceanrunner.modules.builtin.JUnit3AdapterOceanModule;it.freshminutes.oceanrunner.modules.builtin.CategoryOceanModule@
 
 
-h2. Defining in a new way your TestSuite with 
+h2. Defining in a new way your TestSuite with OceanSuite
 
 You may put all the class to test in a text file (one line per class, and line starting by # will not be interpreted).
 
