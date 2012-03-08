@@ -14,6 +14,9 @@ import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
 
 /**
+ * Not developped.
+ * 
+ * 
  * @author Eric Vialle
  * 
  */

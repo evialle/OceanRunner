@@ -11,6 +11,13 @@ import junit.framework.TestCase;
 import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
 
+/**
+ * Convert easily JUnit3 module in JUnit4 modules (sometimes NPE due to huge
+ * reflections in test classes).
+ * 
+ * @author Eric Vialle
+ * 
+ */
 public class JUnit3AdapterOceanModule extends OceanModule {
 
 	@Override

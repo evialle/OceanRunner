@@ -28,7 +28,15 @@ import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.RunnerBuilder;
 
 /**
- * @author Eric
+ * Declare a Suite to use. All the test classes are ordered in a text file
+ * declared in @OceanSuiteClassListFile
+ * 
+ * eg:
+ * 
+ * @RunWith(OceanSuite.class)
+ * @OceanSuiteClassListFile("suitetestliste.txt")
+ * 
+ * @author Eric Vialle
  * 
  */
 public class OceanSuite extends ParentRunner<Runner> {

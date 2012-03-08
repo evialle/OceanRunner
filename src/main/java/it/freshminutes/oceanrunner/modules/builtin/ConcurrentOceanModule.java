@@ -18,6 +18,13 @@ import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
 import org.junit.runners.model.RunnerScheduler;
 
+/**
+ * OceanModule dedicated to run test in different threads. Custom the process of
+ * that module by setting @OceanRunTestsInDedicatedThreads()
+ * 
+ * @author Eric Vialle
+ * 
+ */
 public class ConcurrentOceanModule extends OceanModule {
 
 

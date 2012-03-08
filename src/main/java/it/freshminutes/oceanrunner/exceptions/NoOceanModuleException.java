@@ -1,5 +1,10 @@
 package it.freshminutes.oceanrunner.exceptions;
 
+/**
+ * 
+ * @author Eric Vialle
+ * 
+ */
 public class NoOceanModuleException extends Exception {
 
 	/**

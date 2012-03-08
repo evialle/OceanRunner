@@ -6,7 +6,9 @@ import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
 
 /**
- * Define an OceanModule. A module could be compared to a JUnit Runner.
+ * Define an OceanModule. An OceanModule could be compared to a JUnit Runner.
+ * But when you may have only one JUnit Runner for your class, you may use
+ * multiple OceanModules.
  * 
  * @author Eric Vialle
  * 

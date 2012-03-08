@@ -6,8 +6,8 @@ package it.freshminutes.oceanrunner.utils;
 import java.lang.reflect.Method;
 
 /**
- * @author Eric
- *
+ * @author Eric Vialle
+ * 
  */
 public class ReflectionUtils {
 	

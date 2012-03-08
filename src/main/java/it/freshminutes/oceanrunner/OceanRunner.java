@@ -31,6 +31,10 @@ import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
 
 /**
+ * OceanRunner is the JUnit Runner to use, to use OceanModule. Add
+ * 
+ * @RunWith(OceanRunner.class) to your test class.
+ * 
  * @author Eric Vialle
  * 
  */
