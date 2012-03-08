@@ -15,16 +15,27 @@ h2. Built in OceanModules:
 * *@JUnit3AdapterOceanModule@*: run your JUnit3 tests
 * *@StatisticsOceanModule@*: process statistics about last success/failure of your test _(not fully implemented)_ 
 
-h2. Creating your own OceanModule
+h2. Creating and using your own *OceanModule*
 
-Simply extend your class by @it.freshminutes.oceanrunner.modules.engine.OceanModule@
+h3. Create your *OceanModule*
+
+Simply create a classe extending @it.freshminutes.oceanrunner.modules.engine.OceanModule@
+
+h3. Use the OceanModule with your TestClass...
+
 And put at the top of your class to Test:
 
 @RunWith(OceanRunner.class)
 @OceanModulesToUse({ _MyOwnOceanModule.class_, _MyOwnOceanModule2.class_, _MyOwnOceanModule3.class_})
-public class Test {
+public class TestClass {
 	...
 }
+
+h3. ... or define your OceanModule as a default module
+
+Edit your file @oceanrunner.properties@ and set the property: @runners.defaultmodules@
+eg.
+@runners.defaultmodules=it.freshminutes.oceanrunner.modules.builtin.JUnit3AdapterOceanModule;it.freshminutes.oceanrunner.modules.builtin.CategoryOceanModule@
 
 
 h2. License
