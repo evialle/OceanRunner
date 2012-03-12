@@ -27,30 +27,28 @@ import org.junit.runners.model.RunnerScheduler;
  */
 public class ConcurrentOceanModule extends OceanModule {
 
+	static final class NamedThreadFactory implements ThreadFactory {
+		static final AtomicInteger poolNumber = new AtomicInteger(1);
+		final AtomicInteger threadNumber = new AtomicInteger(1);
+		final ThreadGroup group;
 
-	
-	  static final class NamedThreadFactory implements ThreadFactory {
-	        static final AtomicInteger poolNumber = new AtomicInteger(1);
-	        final AtomicInteger threadNumber = new AtomicInteger(1);
-	        final ThreadGroup group;
+		NamedThreadFactory(String poolName) {
+			group = new ThreadGroup(poolName + "-" + poolNumber.getAndIncrement());
+		}
 
-	        NamedThreadFactory(String poolName) {
-	            group = new ThreadGroup(poolName + "-" + poolNumber.getAndIncrement());
-	        }
-
-	        @Override
-	        public Thread newThread(Runnable r) {
-	            return new Thread(group, r, group.getName() + "-thread-" + threadNumber.getAndIncrement(), 0);
-	        }
-	    }
+		@Override
+		public Thread newThread(Runnable r) {
+			return new Thread(group, r, group.getName() + "-thread-" + threadNumber.getAndIncrement(), 0);
+		}
+	}
 
 	@Override
 	public void doBeforeAllTestedMethods(final OceanRunner oceanRunner, final Class<?> klass) {
 
 		// Do we authorize the fact to be tested in dedicated threads?
 		if (klass.getAnnotation(OceanRunTestsInDedicatedThreads.class).value()) {
-		oceanRunner.setScheduler(new RunnerScheduler() {
-			
+			oceanRunner.setScheduler(new RunnerScheduler() {
+
 				int nbOfThreads = klass.getAnnotation(OceanRunTestsInDedicatedThreads.class).threads();
 
 				ExecutorService executorService = Executors.newFixedThreadPool(nbOfThreads);
@@ -78,49 +76,35 @@ public class ConcurrentOceanModule extends OceanModule {
 				}
 			});
 		}
-		
 
 	}
 
 	@Override
 	public void doAfterAllTestedMethods(final OceanRunner oceanRunner, Class<?> klass) {
-		// TODO Auto-generated method stub
-		
+
 	}
-
-
 
 	@Override
-	public void doAfterEachIgnoredMethod(final OceanRunner oceanRunner,final Description description) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void doAfterEachIgnoredMethod(final OceanRunner oceanRunner, final Description description) {
 
+	}
 
 	@Override
 	public void doBeforeEachTestedMethod(OceanRunner oceanRunnert) {
-		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
-	public void doAfterEachTestedMethod(OceanRunner oceanRunner,
-			Description description) {
-		// TODO Auto-generated method stub
-		
+	public void doAfterEachTestedMethod(OceanRunner oceanRunner, Description description) {
 	}
 
 	@Override
 	public void doAfterEachFailedMethod(OceanRunner oceanRunner, Failure failure) {
-		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
-	public void doAfterEachAssumptionFailedMethod(OceanRunner oceanRunner
-			, final Failure failure) {
-		// TODO Auto-generated method stub
-		
+	public void doAfterEachAssumptionFailedMethod(OceanRunner oceanRunner, final Failure failure) {
 	}
 
 }
