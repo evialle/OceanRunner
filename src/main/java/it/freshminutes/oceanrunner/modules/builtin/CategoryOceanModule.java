@@ -1,6 +1,7 @@
 package it.freshminutes.oceanrunner.modules.builtin;
 
 import it.freshminutes.oceanrunner.OceanRunner;
+import it.freshminutes.oceanrunner.exceptions.OceanModuleException;
 import it.freshminutes.oceanrunner.modules.engine.OceanModule;
 
 import org.junit.experimental.categories.Categories.CategoryFilter;
@@ -28,19 +29,19 @@ public class CategoryOceanModule extends OceanModule {
 	private final static String CATEGORY_EXCLUDED_PROPERTYKEY = "category.excluded";
 
 	@Override
-	public void doBeforeAllTestedMethods(OceanRunner oceanRunner, Class<?> klass) {
+	public void doBeforeAllTestedMethods(OceanRunner oceanRunner, Class<?> klass) throws OceanModuleException {
 		
 		try {
 			oceanRunner.filter(new CategoryFilter(getIncludedCategory(oceanRunner, klass), getExcludedCategory(oceanRunner, klass)));
 		} catch (NoTestsRemainException e) {
-			//TODO
-			e.printStackTrace();
+			throw new OceanModuleException(e);
+
 		}
 		try {
 			assertNoCategorizedDescendentsOfUncategorizeableParents(oceanRunner.getDescription());
 		} catch (InitializationError e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new OceanModuleException(e);
+
 		}
 	}
 
@@ -68,7 +69,7 @@ public class CategoryOceanModule extends OceanModule {
 		return true;
 	}
 
-	private Class<?> getIncludedCategory(final OceanRunner runner, final Class<?> klass) {
+	private Class<?> getIncludedCategory(final OceanRunner runner, final Class<?> klass) throws OceanModuleException {
 		IncludeCategory annotation= klass.getAnnotation(IncludeCategory.class);
 
 		if (annotation == null) {
@@ -79,9 +80,7 @@ public class CategoryOceanModule extends OceanModule {
 				try {
 					return Class.forName(strClass);
 				} catch (ClassNotFoundException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-					return null;
+					throw new OceanModuleException(e);
 				}
 			}
 		} else {
@@ -89,7 +88,7 @@ public class CategoryOceanModule extends OceanModule {
 		}
 	}
 
-	private Class<?> getExcludedCategory(final OceanRunner runner, final Class<?> klass) {
+	private Class<?> getExcludedCategory(final OceanRunner runner, final Class<?> klass) throws OceanModuleException {
 		ExcludeCategory annotation= klass.getAnnotation(ExcludeCategory.class);
 
 		if (annotation == null) {
@@ -100,9 +99,8 @@ public class CategoryOceanModule extends OceanModule {
 				try {
 					return Class.forName(strClass);
 				} catch (ClassNotFoundException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-					return null;
+					throw new OceanModuleException(e);
+
 				}
 			}
 		} else {
@@ -112,24 +110,20 @@ public class CategoryOceanModule extends OceanModule {
 
 	@Override
 	public void doAfterAllTestedMethods(OceanRunner oceanRunner, Class<?> klass) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void doBeforeEachTestedMethod(OceanRunner oceanRunner) {
-		// TODO Auto-generated method stub
 	}
 
 	@Override
 	public void doAfterEachTestedMethod(OceanRunner oceanRunner, Description description) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void doAfterEachIgnoredMethod(OceanRunner oceanRunner,final Description description) {
-		// TODO Auto-generated method stub
 		
 	}
 
@@ -137,14 +131,12 @@ public class CategoryOceanModule extends OceanModule {
 
 	@Override
 	public void doAfterEachFailedMethod(OceanRunner oceanRunner, Failure failure) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void doAfterEachAssumptionFailedMethod(OceanRunner oceanRunner,
 			final Failure failure) {
-		// TODO Auto-generated method stub
 		
 	}
 

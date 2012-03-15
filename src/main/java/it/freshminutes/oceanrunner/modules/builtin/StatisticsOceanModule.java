@@ -4,6 +4,7 @@
 package it.freshminutes.oceanrunner.modules.builtin;
 
 import it.freshminutes.oceanrunner.OceanRunner;
+import it.freshminutes.oceanrunner.exceptions.OceanModuleException;
 import it.freshminutes.oceanrunner.modules.engine.OceanModule;
 
 import java.sql.Connection;
@@ -38,7 +39,7 @@ public class StatisticsOceanModule extends OceanModule {
 	
 	private static Connection dbConn = null;
 	
-	private Connection getDbConn() {
+	private Connection getDbConn() throws OceanModuleException {
 		if (StatisticsOceanModule.dbConn == null) {
 			try {
 				String jdbcClassName= oceanRunner.getProperties().getProperty(JDBC_DRIVER_CLASSNAME);
@@ -50,11 +51,11 @@ public class StatisticsOceanModule extends OceanModule {
 			} catch (ClassNotFoundException e) {
 				// TODO Auto-generated catch block
 				StatisticsOceanModule.dbConn = null;
-				e.printStackTrace();
+				throw new OceanModuleException(e);
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				StatisticsOceanModule.dbConn = null;
-				e.printStackTrace();
+				throw new OceanModuleException(e);
 			}
 		}
 		return StatisticsOceanModule.dbConn;

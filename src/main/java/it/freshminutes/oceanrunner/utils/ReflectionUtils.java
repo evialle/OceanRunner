@@ -6,6 +6,8 @@ package it.freshminutes.oceanrunner.utils;
 import java.lang.reflect.Method;
 
 /**
+ * Easily use reflections.
+ * 
  * @author Eric Vialle
  * 
  */

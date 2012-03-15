@@ -1,6 +1,7 @@
 package it.freshminutes.oceanrunner.modules.builtin;
 
 import it.freshminutes.oceanrunner.OceanRunner;
+import it.freshminutes.oceanrunner.exceptions.OceanModuleException;
 import it.freshminutes.oceanrunner.modules.engine.OceanModule;
 import it.freshminutes.oceanrunner.utils.ReflectionUtils;
 
@@ -22,33 +23,28 @@ public class JUnit3AdapterOceanModule extends OceanModule {
 
 	@Override
 	public void doBeforeAllTestedMethods(OceanRunner oceanRunner, Class<?> klass) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void doAfterAllTestedMethods(OceanRunner oceanRunner, Class<?> klass) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
-	public void doBeforeEachTestedMethod(OceanRunner oceanRunner) {
+	public void doBeforeEachTestedMethod(OceanRunner oceanRunner) throws OceanModuleException {
 		if (oceanRunner.getTarget() instanceof TestCase) {
 			try {
 				Method m = ReflectionUtils.invokeHeritedMethod(oceanRunner.getTarget(), "setUp");
 				m.setAccessible(true);
 				m.invoke(oceanRunner.getTarget());
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				throw new OceanModuleException(e);
 			}
 		}
 	}
 
 	@Override
 	public void doAfterEachTestedMethod(OceanRunner oceanRunner,
-			Description description) {
+ Description description) throws OceanModuleException {
 		if (oceanRunner.getTarget() instanceof TestCase) {
 			try {
 				Method m = ReflectionUtils.invokeHeritedMethod(oceanRunner.getTarget(), "tearDown");
@@ -56,29 +52,25 @@ public class JUnit3AdapterOceanModule extends OceanModule {
 				m.setAccessible(true);
 				m.invoke(oceanRunner.getTarget());
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				throw new OceanModuleException(e);
 			}
 		}
 	}
 
 	@Override
 	public void doAfterEachFailedMethod(OceanRunner oceanRunner, Failure failure) {
-		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public void doAfterEachIgnoredMethod(OceanRunner oceanRunner,
 			Description description) {
-		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public void doAfterEachAssumptionFailedMethod(OceanRunner oceanRunner,
 			Failure failure) {
-		// TODO Auto-generated method stub
 
 	}
 
