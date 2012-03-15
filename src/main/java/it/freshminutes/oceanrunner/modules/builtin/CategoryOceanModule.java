@@ -24,8 +24,10 @@ import org.junit.runners.model.InitializationError;
  */
 public class CategoryOceanModule extends OceanModule {
 
+	/** Name of the property to include categories. */
 	private final static String CATEGORY_INCLUDED_PROPERTYKEY = "category.included";
 
+	/** Name of the property to exclude categories. */
 	private final static String CATEGORY_EXCLUDED_PROPERTYKEY = "category.excluded";
 
 	@Override

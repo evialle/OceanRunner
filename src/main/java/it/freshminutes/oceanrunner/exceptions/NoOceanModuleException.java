@@ -1,6 +1,7 @@
 package it.freshminutes.oceanrunner.exceptions;
 
 /**
+ * No OceanModule.
  * 
  * @author Eric Vialle
  * 
