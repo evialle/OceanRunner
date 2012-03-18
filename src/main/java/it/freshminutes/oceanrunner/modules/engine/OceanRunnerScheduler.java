@@ -26,7 +26,7 @@ import org.junit.runners.model.FrameworkMethod;
 public interface OceanRunnerScheduler {
 
 	/**
-	 * Schedule a child statement to run
+	 * Schedule a child statement to run.
 	 */
 	public void schedule(Runnable childStatement, FrameworkMethod each);
 

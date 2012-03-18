@@ -32,6 +32,7 @@ import org.junit.runner.notification.Failure;
  */
 public abstract class OceanModule {
 
+
 	public void doBeforeAllTestedMethods(final OceanRunner oceanRunner, final Class<?> klass) throws OceanModuleException {
 	}
 
