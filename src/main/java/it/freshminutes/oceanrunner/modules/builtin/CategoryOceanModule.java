@@ -25,7 +25,6 @@ import org.junit.experimental.categories.Categories.IncludeCategory;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.Description;
 import org.junit.runner.manipulation.NoTestsRemainException;
-import org.junit.runner.notification.Failure;
 import org.junit.runners.model.InitializationError;
 
 /**
@@ -125,37 +124,6 @@ public class CategoryOceanModule extends OceanModule {
 		}
 	}
 
-	@Override
-	public void doAfterAllTestedMethods(OceanRunner oceanRunner, Class<?> klass) {
-		
-	}
-
-	@Override
-	public void doBeforeEachTestedMethod(OceanRunner oceanRunner) {
-	}
-
-	@Override
-	public void doAfterEachTestedMethod(OceanRunner oceanRunner, Description description) {
-		
-	}
-
-	@Override
-	public void doAfterEachIgnoredMethod(OceanRunner oceanRunner,final Description description) {
-		
-	}
-
-
-
-	@Override
-	public void doAfterEachFailedMethod(OceanRunner oceanRunner, Failure failure) {
-		
-	}
-
-	@Override
-	public void doAfterEachAssumptionFailedMethod(OceanRunner oceanRunner,
-			final Failure failure) {
-		
-	}
 
 
 	

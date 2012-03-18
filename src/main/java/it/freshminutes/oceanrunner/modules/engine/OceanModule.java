@@ -18,6 +18,7 @@ package it.freshminutes.oceanrunner.modules.engine;
 import it.freshminutes.oceanrunner.OceanRunner;
 import it.freshminutes.oceanrunner.exceptions.OceanModuleException;
 
+import org.junit.internal.AssumptionViolatedException;
 import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
 
@@ -31,18 +32,48 @@ import org.junit.runner.notification.Failure;
  */
 public abstract class OceanModule {
 
-	public abstract void doBeforeAllTestedMethods(final OceanRunner oceanRunner, final Class<?> klass) throws OceanModuleException;
+	public void doBeforeAllTestedMethods(final OceanRunner oceanRunner, final Class<?> klass) throws OceanModuleException {
+	}
+
+	public void doAfterAllTestedMethods(final OceanRunner oceanRunner, final Class<?> klass) throws OceanModuleException {
+	}
 	
-	public abstract void doAfterAllTestedMethods(final OceanRunner oceanRunner, final Class<?> klass) throws OceanModuleException;
+	public void doBeforeEachTestedMethod(final OceanRunner oceanRunner) throws OceanModuleException {
+	}
 	
-	public abstract void doBeforeEachTestedMethod(final OceanRunner oceanRunner) throws OceanModuleException;
+	public void doAfterEachTestedMethod(final OceanRunner oceanRunner, final Description description) throws OceanModuleException {
+	}
 	
-	public abstract void doAfterEachTestedMethod(final OceanRunner oceanRunner, final Description description) throws OceanModuleException;
+	public void doAfterEachFailedMethod(final OceanRunner oceanRunner, final Failure failure) throws OceanModuleException {
+	}
 	
-	public abstract void doAfterEachFailedMethod(final OceanRunner oceanRunner, final Failure failure) throws OceanModuleException;
+	public void doAfterEachIgnoredMethod(final OceanRunner oceanRunner, final Description description) throws OceanModuleException {
+	}
 	
-	public abstract void doAfterEachIgnoredMethod(final OceanRunner oceanRunner, final Description description) throws OceanModuleException;
+	public void doAfterEachAssumptionFailedMethod(final OceanRunner oceanRunner, final Failure failure) throws OceanModuleException {
+	}
 	
-	public abstract void doAfterEachAssumptionFailedMethod(final OceanRunner oceanRunner, final Failure failure) throws OceanModuleException;
+	/**
+	 * Enhance a Throwable, after its evaluation and before its notification.
+	 * 
+	 * @param oceanRunner
+	 * @param throwable
+	 * @return
+	 */
+	public Throwable enhanceThrowable(OceanRunner oceanRunner, Throwable throwable) {
+		return throwable;
+	}
+
+	/**
+	 * Enhance a AssumptionViolatedException, after its evaluation and before
+	 * its notification.
+	 * 
+	 * @param oceanRunner
+	 * @param assumptionViolatedException
+	 * @return
+	 */
+	public AssumptionViolatedException enhanceAssumptionViolatedException(OceanRunner oceanRunner, AssumptionViolatedException assumptionViolatedException) {
+		return assumptionViolatedException;
+	}
 	
 }

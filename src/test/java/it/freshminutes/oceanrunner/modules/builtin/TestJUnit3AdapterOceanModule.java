@@ -17,7 +17,7 @@ package it.freshminutes.oceanrunner.modules.builtin;
 
 import it.freshminutes.oceanrunner.OceanRunner;
 import it.freshminutes.oceanrunner.annotations.OceanModulesToUse;
-import it.freshminutes.oceanrunner.annotations.OceanRunTestsInDedicatedThreads;
+import it.freshminutes.oceanrunner.modules.builtin.concurrent.OceanRunTestsInDedicatedThreads;
 import junit.framework.TestCase;
 
 import org.junit.AfterClass;

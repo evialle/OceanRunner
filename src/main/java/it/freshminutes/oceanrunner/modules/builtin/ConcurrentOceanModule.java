@@ -16,7 +16,9 @@
 package it.freshminutes.oceanrunner.modules.builtin;
 
 import it.freshminutes.oceanrunner.OceanRunner;
-import it.freshminutes.oceanrunner.annotations.OceanRunTestsInDedicatedThreads;
+import it.freshminutes.oceanrunner.OceanRunnerScheduler;
+import it.freshminutes.oceanrunner.modules.builtin.concurrent.OceanRunConcurrencyForbidden;
+import it.freshminutes.oceanrunner.modules.builtin.concurrent.OceanRunTestsInDedicatedThreads;
 import it.freshminutes.oceanrunner.modules.engine.OceanModule;
 
 import java.util.LinkedList;
@@ -29,9 +31,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.junit.runner.Description;
-import org.junit.runner.notification.Failure;
-import org.junit.runners.model.RunnerScheduler;
+import org.junit.runners.model.FrameworkMethod;
 
 /**
  * OceanModule dedicated to run test in different threads. Custom the process of
@@ -62,64 +62,49 @@ public class ConcurrentOceanModule extends OceanModule {
 
 		// Do we authorize the fact to be tested in dedicated threads?
 		if (klass.getAnnotation(OceanRunTestsInDedicatedThreads.class).value()) {
-			oceanRunner.setScheduler(new RunnerScheduler() {
+			oceanRunner.setScheduler(new OceanRunnerScheduler() {
 
 				int nbOfThreads = klass.getAnnotation(OceanRunTestsInDedicatedThreads.class).threads();
 
-				ExecutorService executorService = Executors.newFixedThreadPool(nbOfThreads);
+				ExecutorService executorConcurrentService = Executors.newFixedThreadPool(nbOfThreads);
+				ExecutorService executorMonoThreadService = Executors.newSingleThreadExecutor();
 
-				CompletionService<Void> completionService = new ExecutorCompletionService<Void>(executorService);
+				CompletionService<Void> completionConcurrentService = new ExecutorCompletionService<Void>(executorConcurrentService);
+				CompletionService<Void> completionMonoThreadService = new ExecutorCompletionService<Void>(executorMonoThreadService);
+
 				Queue<Future<Void>> tasks = new LinkedList<Future<Void>>();
 
 				@Override
-				public void schedule(Runnable childStatement) {
-					tasks.offer(completionService.submit(childStatement, null));
+				public void schedule(Runnable childStatement, FrameworkMethod method) {
+
+					OceanRunConcurrencyForbidden annotation = method.getAnnotation(OceanRunConcurrencyForbidden.class);
+
+					if (annotation == null) {
+						// Multi Thread
+						tasks.offer(completionConcurrentService.submit(childStatement, null));
+					} else {
+						// Mono Thread
+						tasks.offer(completionMonoThreadService.submit(childStatement, null));
+					}
+
 				}
 
 				@Override
 				public void finished() {
 					try {
 						while (!tasks.isEmpty())
-							tasks.remove(completionService.take());
+							tasks.remove(completionConcurrentService.take());
 					} catch (InterruptedException e) {
 						Thread.currentThread().interrupt();
 					} finally {
 						while (!tasks.isEmpty())
 							tasks.poll().cancel(true);
-						executorService.shutdownNow();
+						executorConcurrentService.shutdownNow();
 					}
 				}
 			});
 		}
 
-	}
-
-	@Override
-	public void doAfterAllTestedMethods(final OceanRunner oceanRunner, Class<?> klass) {
-
-	}
-
-	@Override
-	public void doAfterEachIgnoredMethod(final OceanRunner oceanRunner, final Description description) {
-
-	}
-
-	@Override
-	public void doBeforeEachTestedMethod(OceanRunner oceanRunnert) {
-
-	}
-
-	@Override
-	public void doAfterEachTestedMethod(OceanRunner oceanRunner, Description description) {
-	}
-
-	@Override
-	public void doAfterEachFailedMethod(OceanRunner oceanRunner, Failure failure) {
-
-	}
-
-	@Override
-	public void doAfterEachAssumptionFailedMethod(OceanRunner oceanRunner, final Failure failure) {
 	}
 
 }

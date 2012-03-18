@@ -25,7 +25,6 @@ import java.lang.reflect.Method;
 import junit.framework.TestCase;
 
 import org.junit.runner.Description;
-import org.junit.runner.notification.Failure;
 
 /**
  * Convert easily JUnit3 module in JUnit4 modules (sometimes NPE due to huge
@@ -36,13 +35,6 @@ import org.junit.runner.notification.Failure;
  */
 public class JUnit3AdapterOceanModule extends OceanModule {
 
-	@Override
-	public void doBeforeAllTestedMethods(OceanRunner oceanRunner, Class<?> klass) {
-	}
-
-	@Override
-	public void doAfterAllTestedMethods(OceanRunner oceanRunner, Class<?> klass) {
-	}
 
 	@Override
 	public void doBeforeEachTestedMethod(OceanRunner oceanRunner) throws OceanModuleException {
@@ -72,21 +64,6 @@ public class JUnit3AdapterOceanModule extends OceanModule {
 		}
 	}
 
-	@Override
-	public void doAfterEachFailedMethod(OceanRunner oceanRunner, Failure failure) {
 
-	}
-
-	@Override
-	public void doAfterEachIgnoredMethod(OceanRunner oceanRunner,
-			Description description) {
-
-	}
-
-	@Override
-	public void doAfterEachAssumptionFailedMethod(OceanRunner oceanRunner,
-			Failure failure) {
-
-	}
 
 }

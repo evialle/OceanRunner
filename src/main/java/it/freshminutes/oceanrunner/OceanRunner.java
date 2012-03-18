@@ -32,6 +32,7 @@ import java.util.Properties;
 
 import org.junit.Ignore;
 import org.junit.internal.AssumptionViolatedException;
+import org.junit.internal.runners.model.EachTestNotifier;
 import org.junit.internal.runners.statements.InvokeMethod;
 import org.junit.runner.Description;
 import org.junit.runner.Result;
@@ -80,6 +81,21 @@ public class OceanRunner extends BlockJUnit4ClassRunner {
 	/** */
 	private Class<?> classUnderTest = null;
 
+	private List<FrameworkMethod> fFilteredChildren = null;
+
+	private OceanRunnerScheduler fScheduler = new OceanRunnerScheduler() {
+
+		@Override
+		public void finished() {
+			// do nothing
+		}
+
+		@Override
+		public void schedule(Runnable childStatement, FrameworkMethod method) {
+			childStatement.run();
+		}
+	};
+
 	/**
 	 * 
 	 * @param classToTest
@@ -114,9 +130,29 @@ public class OceanRunner extends BlockJUnit4ClassRunner {
 
 			}
 
-			runLeaf(stmt, description, notifier);
+			// Run Statement
+			EachTestNotifier eachNotifier = new EachTestNotifier(notifier, description);
+			eachNotifier.fireTestStarted();
+			try {
+				stmt.evaluate();
+			} catch (AssumptionViolatedException e) {
+				AssumptionViolatedException enhancedException = enhanceAssumptionViolatedExceptionForAllModules(e);
+				if (enhancedException != null) {
+					eachNotifier.addFailedAssumption(enhancedException);
+				}
+			} catch (Throwable e) {
+				Throwable enhancedThrowable = enhanceThrowableForAllModules(e);
+				if (enhancedThrowable != null) {
+					eachNotifier.addFailure(enhancedThrowable);
+				}
+			} finally {
+				eachNotifier.fireTestFinished();
+			}
+
 		}
 	}
+
+
 
 	/**
 	 * 
@@ -320,6 +356,8 @@ public class OceanRunner extends BlockJUnit4ClassRunner {
 		super.run(notifier);
 	}
 
+
+
 	/**
 	 * @throws OceanModuleException
 	 * 
@@ -345,12 +383,28 @@ public class OceanRunner extends BlockJUnit4ClassRunner {
 		this.setTarget(null);
 	}
 
+	private Throwable enhanceThrowableForAllModules(Throwable e) {
+		Throwable toReturn = e;
+		for (OceanModule oceanModule : this.oceanModulesList) {
+			toReturn = oceanModule.enhanceThrowable(this, toReturn);
+		}
+		return toReturn;
+	}
+
+	private AssumptionViolatedException enhanceAssumptionViolatedExceptionForAllModules(AssumptionViolatedException e) {
+		AssumptionViolatedException toReturn = e;
+		for (OceanModule oceanModule : this.oceanModulesList) {
+			toReturn = oceanModule.enhanceAssumptionViolatedException(this, toReturn);
+		}
+		return toReturn;
+	}
+
 	/**
 	 * 
 	 * @param failure
 	 * @throws OceanModuleException
 	 */
-	private void doAfterEachFailureForAllModules(Failure failure, Object target) throws OceanModuleException {
+	private void doAfterEachFailureForAllModules(final Failure failure, Object target) throws OceanModuleException {
 		for (OceanModule oceanModule : this.oceanModulesList) {
 			oceanModule.doAfterEachFailedMethod(this, failure);
 		}
@@ -379,6 +433,54 @@ public class OceanRunner extends BlockJUnit4ClassRunner {
 
 	}
 
+
+
+	
+	/**
+	 * Returns a {@link Statement}: Call {@link #runChild(Object, RunNotifier)}
+	 * on each object returned by {@link #getChildren()} (subject to any imposed
+	 * filter and sort)
+	 */
+	protected Statement childrenInvoker(final RunNotifier notifier) {
+		return new Statement() {
+			@Override
+			public void evaluate() {
+				runChildren(notifier);
+			}
+		};
+	}
+
+	/**
+	 * Run children is special, it use an Enhanced Scheduler.
+	 * 
+	 * @param notifier
+	 */
+	private void runChildren(final RunNotifier notifier) {
+		for (final FrameworkMethod each : getFilteredChildren())
+
+			fScheduler.schedule(new Runnable() {
+				public void run() {
+					OceanRunner.this.runChild(each, notifier);
+				}
+			}, each);
+		fScheduler.finished();
+	}
+	
+
+	private List<FrameworkMethod> getFilteredChildren() {
+		if (fFilteredChildren == null)
+			fFilteredChildren = new ArrayList<FrameworkMethod>(getChildren());
+		return fFilteredChildren;
+	}
+
+	/**
+	 * Sets a scheduler that determines the order and parallelization of
+	 * children. Highly experimental feature that may change.
+	 */
+	public void setScheduler(OceanRunnerScheduler scheduler) {
+		this.fScheduler = scheduler;
+	}
+
 	/**
 	 * 
 	 * @author Eric Vialle
@@ -391,7 +493,7 @@ public class OceanRunner extends BlockJUnit4ClassRunner {
 		 * @param description
 		 *            describes the tests to be run
 		 */
-		public void testRunStarted(Description description) throws Exception {
+		public void testRunStarted(final Description description) throws Exception {
 			initializeAllOceanModules();
 		}
 
@@ -402,7 +504,7 @@ public class OceanRunner extends BlockJUnit4ClassRunner {
 		 *            the summary of the test run, including all the tests that
 		 *            failed
 		 */
-		public void testRunFinished(Result result) throws Exception {
+		public void testRunFinished(final Result result) throws Exception {
 			endAllOceanModules();
 		}
 
@@ -413,7 +515,7 @@ public class OceanRunner extends BlockJUnit4ClassRunner {
 		 *            the description of the test that is about to be run
 		 *            (generally a class and method name)
 		 */
-		public void testStarted(Description description) throws Exception {
+		public void testStarted(final Description description) throws Exception {
 			doBeforeEachTestTestedMethodForAllModules();
 		}
 
@@ -424,7 +526,7 @@ public class OceanRunner extends BlockJUnit4ClassRunner {
 		 * @param description
 		 *            the description of the test that just ran
 		 */
-		public void testFinished(Description description) throws Exception {
+		public void testFinished(final Description description) throws Exception {
 			doAfterEachTestTestedMethodForAllModules(description);
 		}
 
@@ -435,7 +537,7 @@ public class OceanRunner extends BlockJUnit4ClassRunner {
 		 *            describes the test that failed and the exception that was
 		 *            thrown
 		 */
-		public void testFailure(Failure failure) throws Exception {
+		public void testFailure(final Failure failure) throws Exception {
 			doAfterEachFailureForAllModules(failure, getTarget());
 		}
 
@@ -447,7 +549,7 @@ public class OceanRunner extends BlockJUnit4ClassRunner {
 		 *            describes the test that failed and the
 		 *            {@link AssumptionViolatedException} that was thrown
 		 */
-		public void testAssumptionFailure(Failure failure) {
+		public void testAssumptionFailure(final Failure failure) {
 			try {
 				doAfterEachAssumptionFailureForAllModules(failure);
 			} catch (OceanModuleException e) {
@@ -462,7 +564,7 @@ public class OceanRunner extends BlockJUnit4ClassRunner {
 		 * @param description
 		 *            describes the test that will not be run
 		 */
-		public void testIgnored(Description description) throws Exception {
+		public void testIgnored(final Description description) throws Exception {
 			doAfterEachIgnoreForAllModules(description, getTarget());
 		}
 

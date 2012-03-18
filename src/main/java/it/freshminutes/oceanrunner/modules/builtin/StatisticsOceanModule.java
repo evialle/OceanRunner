@@ -17,14 +17,28 @@ package it.freshminutes.oceanrunner.modules.builtin;
 
 import it.freshminutes.oceanrunner.OceanRunner;
 import it.freshminutes.oceanrunner.exceptions.OceanModuleException;
+import it.freshminutes.oceanrunner.modules.builtin.statistics.StatisticsResult;
+import it.freshminutes.oceanrunner.modules.builtin.statistics.StatisticsResult.StatusTestResult;
+import it.freshminutes.oceanrunner.modules.builtin.statistics.StatisticsSqlPlug;
 import it.freshminutes.oceanrunner.modules.engine.OceanModule;
 
+import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
+import org.junit.Test;
 import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
+
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 /**
  * Not developped.
@@ -35,6 +49,7 @@ import org.junit.runner.notification.Failure;
  */
 public class StatisticsOceanModule extends OceanModule {
 	
+
 	private static final String JDBC_DRIVER_CLASSNAME = "statistics.jdb.driver";
 
 	private static final String JDBC_USER = "statistics.jdbc.user";
@@ -47,10 +62,19 @@ public class StatisticsOceanModule extends OceanModule {
 	
 	private static final String  APPLINAME = "statistics.appliname";
 
+	private List<String> testmethodsList = Lists.newArrayList();
+	private Map<String, StatisticsResult> lastResultsMap = Maps.newHashMap();
+	private Map<String, StatisticsResult> actualResultsMap = Maps.newHashMap();
+
+
 	private OceanRunner oceanRunner;
 	
-	private static Connection dbConn = null;
+	private static Connection dbConn;
 	
+	private static StatisticsSqlPlug statisticsSqlPlug;
+
+	private ExecutorService threadExecutor = Executors.newSingleThreadExecutor();
+
 	private Connection getDbConn() throws OceanModuleException {
 		if (StatisticsOceanModule.dbConn == null) {
 			try {
@@ -61,11 +85,9 @@ public class StatisticsOceanModule extends OceanModule {
 				Class.forName(jdbcClassName);
 				StatisticsOceanModule.dbConn = DriverManager.getConnection(jdbcUrl, jdbcUser, jdbcPass);
 			} catch (ClassNotFoundException e) {
-				// TODO Auto-generated catch block
 				StatisticsOceanModule.dbConn = null;
 				throw new OceanModuleException(e);
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
 				StatisticsOceanModule.dbConn = null;
 				throw new OceanModuleException(e);
 			}
@@ -78,9 +100,10 @@ public class StatisticsOceanModule extends OceanModule {
 	 */
 	@Override
 	public void doBeforeAllTestedMethods(OceanRunner oceanRunner, Class<?> klass) {
-		// TODO Auto-generated method stub
-		
+		this.testmethodsList = loadTestsToSearch(klass);
 
+		// this.lastResultsMap =
+		// statisticsSqlPlug.loadLastTestStatus(this.testmethodsList);
 	}
 
 	/* (non-Javadoc)
@@ -88,7 +111,24 @@ public class StatisticsOceanModule extends OceanModule {
 	 */
 	@Override
 	public void doAfterAllTestedMethods(OceanRunner oceanRunner, Class<?> klass) {
-		// TODO Auto-generated method stub
+		// we do not block the JUnit test
+		this.threadExecutor.execute(new Thread() {
+
+			@Override
+			public void run() {
+				for (String testMethod : testmethodsList) {
+					StatisticsResult sResult = actualResultsMap.get(testMethod);
+					if (sResult == null) {
+						// The test is successful²
+					} else {
+						// the test is not successful
+					}
+				}
+
+			}
+			
+		});
+
 
 	}
 
@@ -97,7 +137,6 @@ public class StatisticsOceanModule extends OceanModule {
 	 */
 	@Override
 	public void doBeforeEachTestedMethod(OceanRunner oceanRunner) {
-		// TODO Auto-generated method stub
 
 	}
 
@@ -118,8 +157,13 @@ public class StatisticsOceanModule extends OceanModule {
 	 */
 	@Override
 	public void doAfterEachFailedMethod(OceanRunner oceanRunner, Failure failure) {
-		// TODO Auto-generated method stub
+		// Add the statistics result in the cache result
+		StatisticsResult sResults = new StatisticsResult();
+		sResults.setComments(failure.getMessage() + "\n> Trace:" + failure.getTrace() );
+		sResults.setRunDate(new Date());
+		sResults.setStatus(StatusTestResult.FAILED);
 
+		lastResultsMap.put(failure.getDescription().getMethodName(), sResults);
 	}
 
 	/* (non-Javadoc)
@@ -128,8 +172,12 @@ public class StatisticsOceanModule extends OceanModule {
 	@Override
 	public void doAfterEachIgnoredMethod(OceanRunner oceanRunner,
 			Description description) {
-		// TODO Auto-generated method stub
+		// Add the statistics result in the cache result
+		StatisticsResult sResults = new StatisticsResult();
+		sResults.setRunDate(new Date());
+		sResults.setStatus(StatusTestResult.IGNORE);
 
+		lastResultsMap.put(description.getMethodName(), sResults);
 	}
 
 	/* (non-Javadoc)
@@ -138,8 +186,36 @@ public class StatisticsOceanModule extends OceanModule {
 	@Override
 	public void doAfterEachAssumptionFailedMethod(OceanRunner oceanRunner,
 			Failure failure) {
-		// TODO Auto-generated method stub
+		// Add the statistics result in the cache result
+		StatisticsResult sResults = new StatisticsResult();
+		sResults.setComments(failure.getMessage() + "\n> Trace:" + failure.getTrace());
+		sResults.setRunDate(new Date());
+		sResults.setStatus(StatusTestResult.ASSUMPTION_FAILED);
+
+		lastResultsMap.put(failure.getDescription().getMethodName(), sResults);
 
 	}
+
+	/**
+	 * @param klass
+	 * @return the list of the name of the method used for the test
+	 */
+	private List<String> loadTestsToSearch(final Class<?> klass) {
+		List<String> methodsList = new ArrayList<String>();
+
+		Method[] methodArray = klass.getMethods();
+		for (Method method : methodArray) {
+			if ((method != null) && (method.getAnnotation(Test.class) != null)) {
+				methodsList.add(method.getName());
+			}
+		}
+
+		return methodsList;
+	}
+
+	private void enhanceFailure() {
+
+	}
+
 
 }
