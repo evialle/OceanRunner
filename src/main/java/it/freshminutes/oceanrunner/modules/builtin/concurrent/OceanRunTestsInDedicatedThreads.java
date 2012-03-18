@@ -24,7 +24,8 @@ import java.lang.annotation.Target;
  * Define the settings for parallelized tests. Use it with @ConcurrentOceanModule
  * 
  * <ul>
- * <li>threads: number of threads to use</li>
+ * <li>threads: number of threads to use (for methods not marked by
+ * @OceanRunConcurrencyForbidden)</li>
  * <li>value: enabling the parallelized tests</li>
  * </ul>
  * 

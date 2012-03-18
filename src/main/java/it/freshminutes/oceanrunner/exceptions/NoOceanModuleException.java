@@ -16,10 +16,9 @@
 package it.freshminutes.oceanrunner.exceptions;
 
 /**
- * No OceanModule.
+ * No OceanModule Exception.
  * 
  * @author Eric Vialle
- * 
  */
 public class NoOceanModuleException extends Exception {
 
@@ -28,10 +27,19 @@ public class NoOceanModuleException extends Exception {
 	 */
 	private static final long serialVersionUID = 705471103092704419L;
 
+	/**
+	 * Constructor.
+	 */
 	public NoOceanModuleException() {
 		super();
 	}
 
+	/**
+	 * Constructor
+	 * 
+	 * @param str
+	 *            explanation
+	 */
 	public NoOceanModuleException(String str) {
 		super(str + "is not an OceanModule");
 	}

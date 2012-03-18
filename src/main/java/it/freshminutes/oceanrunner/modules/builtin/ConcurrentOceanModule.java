@@ -16,10 +16,10 @@
 package it.freshminutes.oceanrunner.modules.builtin;
 
 import it.freshminutes.oceanrunner.OceanRunner;
-import it.freshminutes.oceanrunner.OceanRunnerScheduler;
 import it.freshminutes.oceanrunner.modules.builtin.concurrent.OceanRunConcurrencyForbidden;
 import it.freshminutes.oceanrunner.modules.builtin.concurrent.OceanRunTestsInDedicatedThreads;
 import it.freshminutes.oceanrunner.modules.engine.OceanModule;
+import it.freshminutes.oceanrunner.modules.engine.OceanRunnerScheduler;
 
 import java.util.LinkedList;
 import java.util.Queue;
@@ -64,15 +64,15 @@ public class ConcurrentOceanModule extends OceanModule {
 		if (klass.getAnnotation(OceanRunTestsInDedicatedThreads.class).value()) {
 			oceanRunner.setScheduler(new OceanRunnerScheduler() {
 
-				int nbOfThreads = klass.getAnnotation(OceanRunTestsInDedicatedThreads.class).threads();
+				private int nbOfThreads = klass.getAnnotation(OceanRunTestsInDedicatedThreads.class).threads();
 
-				ExecutorService executorConcurrentService = Executors.newFixedThreadPool(nbOfThreads);
-				ExecutorService executorMonoThreadService = Executors.newSingleThreadExecutor();
+				private ExecutorService executorConcurrentService = Executors.newFixedThreadPool(nbOfThreads);
+				private ExecutorService executorMonoThreadService = Executors.newSingleThreadExecutor();
 
-				CompletionService<Void> completionConcurrentService = new ExecutorCompletionService<Void>(executorConcurrentService);
-				CompletionService<Void> completionMonoThreadService = new ExecutorCompletionService<Void>(executorMonoThreadService);
+				private CompletionService<Void> completionConcurrentService = new ExecutorCompletionService<Void>(executorConcurrentService);
+				private CompletionService<Void> completionMonoThreadService = new ExecutorCompletionService<Void>(executorMonoThreadService);
 
-				Queue<Future<Void>> tasks = new LinkedList<Future<Void>>();
+				private Queue<Future<Void>> tasks = new LinkedList<Future<Void>>();
 
 				@Override
 				public void schedule(Runnable childStatement, FrameworkMethod method) {
@@ -92,14 +92,17 @@ public class ConcurrentOceanModule extends OceanModule {
 				@Override
 				public void finished() {
 					try {
-						while (!tasks.isEmpty())
+						while (!tasks.isEmpty()) {
 							tasks.remove(completionConcurrentService.take());
+							tasks.remove(completionConcurrentService.take());
+						}
 					} catch (InterruptedException e) {
 						Thread.currentThread().interrupt();
 					} finally {
 						while (!tasks.isEmpty())
 							tasks.poll().cancel(true);
 						executorConcurrentService.shutdownNow();
+						executorMonoThreadService.shutdownNow();
 					}
 				}
 			});

@@ -19,6 +19,7 @@ import it.freshminutes.oceanrunner.annotations.OceanModulesToUse;
 import it.freshminutes.oceanrunner.exceptions.NoOceanModuleException;
 import it.freshminutes.oceanrunner.exceptions.OceanModuleException;
 import it.freshminutes.oceanrunner.modules.engine.OceanModule;
+import it.freshminutes.oceanrunner.modules.engine.OceanRunnerScheduler;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -482,9 +483,9 @@ public class OceanRunner extends BlockJUnit4ClassRunner {
 	}
 
 	/**
+	 * Listener used for Runner.
 	 * 
 	 * @author Eric Vialle
-	 * 
 	 */
 	private class OceanListener extends RunListener {
 		/**

@@ -26,7 +26,6 @@ import java.lang.annotation.Target;
  * List all the OceanModule to use.
  * 
  * @author Eric Vialle
- * 
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
