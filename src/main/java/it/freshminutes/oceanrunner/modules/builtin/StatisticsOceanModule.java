@@ -78,10 +78,10 @@ public class StatisticsOceanModule extends OceanModule {
 	private Connection getDbConn() throws OceanModuleException {
 		if (StatisticsOceanModule.dbConn == null) {
 			try {
-				String jdbcClassName= oceanRunner.getProperties().getProperty(JDBC_DRIVER_CLASSNAME);
-				String jdbcUser = oceanRunner.getProperties().getProperty(JDBC_USER);
-				String jdbcPass = oceanRunner.getProperties().getProperty(JDBC_PASSWORD);
-				String jdbcUrl = oceanRunner.getProperties().getProperty(JDBC_URL);
+				String jdbcClassName = oceanRunner.getAwareProperty(JDBC_DRIVER_CLASSNAME);
+				String jdbcUser = oceanRunner.getAwareProperty(JDBC_USER);
+				String jdbcPass = oceanRunner.getAwareProperty(JDBC_PASSWORD);
+				String jdbcUrl = oceanRunner.getAwareProperty(JDBC_URL);
 				Class.forName(jdbcClassName);
 				StatisticsOceanModule.dbConn = DriverManager.getConnection(jdbcUrl, jdbcUser, jdbcPass);
 			} catch (ClassNotFoundException e) {
@@ -213,9 +213,7 @@ public class StatisticsOceanModule extends OceanModule {
 		return methodsList;
 	}
 
-	private void enhanceFailure() {
 
-	}
 
 
 }

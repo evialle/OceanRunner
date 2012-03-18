@@ -55,28 +55,26 @@ import org.junit.runners.model.Statement;
  */
 public class OceanRunner extends BlockJUnit4ClassRunner {
 
+	/** Empty String. */
 	private static final String EMPTY_STRING = "";
 
+	/** property defining the OceanModules used by default. */
 	private static final String RUNNERS_DEFAULTMODULES = "runners.defaultmodules";
 
-	/**
-	 * 
-	 */
+	/** Path used for oceanrunner.properties by default. */
 	private final static String DEFAULT_PROPERTIES_PATH = "/oceanrunner.properties";
 
 	/**
-	 * 
+	 * JVM System property defining the path of the oceanrunner.properties path.
 	 */
 	private static final String OCEAN_RUNNER_PROPERTIES = "OceanRunnerProp";
 
-	/**
-	 * 
-	 */
+	/** Properties. */
 	private static Properties properties = null;
 
 	private ThreadLocal<Object> targetThreadLocal = new ThreadLocal<Object>();
 
-	/** */
+	/** List of OceanModules. */
 	private List<OceanModule> oceanModulesList = new ArrayList<OceanModule>();
 
 	/** */
@@ -84,6 +82,7 @@ public class OceanRunner extends BlockJUnit4ClassRunner {
 
 	private List<FrameworkMethod> fFilteredChildren = null;
 
+	/** Default Scheduler. */
 	private OceanRunnerScheduler fScheduler = new OceanRunnerScheduler() {
 
 		@Override
@@ -98,6 +97,7 @@ public class OceanRunner extends BlockJUnit4ClassRunner {
 	};
 
 	/**
+	 * Constructor.
 	 * 
 	 * @param classToTest
 	 * @throws InitializationError
@@ -160,7 +160,7 @@ public class OceanRunner extends BlockJUnit4ClassRunner {
 	 * @return Properties from the properties file
 	 * @throws OceanModuleException
 	 */
-	public Properties getProperties() throws OceanModuleException {
+	private Properties getProperties() throws OceanModuleException {
 		if (OceanRunner.properties == null) {
 			OceanRunner.properties = new Properties();
 
@@ -435,8 +435,6 @@ public class OceanRunner extends BlockJUnit4ClassRunner {
 	}
 
 
-
-	
 	/**
 	 * Returns a {@link Statement}: Call {@link #runChild(Object, RunNotifier)}
 	 * on each object returned by {@link #getChildren()} (subject to any imposed
