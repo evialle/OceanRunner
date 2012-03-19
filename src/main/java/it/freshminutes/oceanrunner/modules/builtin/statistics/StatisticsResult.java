@@ -46,6 +46,8 @@ public class StatisticsResult implements Serializable {
 
 	private String comments;
 
+	private transient Throwable throwable;
+
 	/**
 	 * @return the runDate
 	 */
@@ -86,6 +88,20 @@ public class StatisticsResult implements Serializable {
 	 */
 	public void setComments(String comments) {
 		this.comments = comments;
+	}
+
+	/**
+	 * @return the throwable
+	 */
+	public Throwable getThrowable() {
+		return throwable;
+	}
+
+	/**
+	 * @param throwable the throwable to set
+	 */
+	public void setThrowable(Throwable throwable) {
+		this.throwable = throwable;
 	}
 
 }

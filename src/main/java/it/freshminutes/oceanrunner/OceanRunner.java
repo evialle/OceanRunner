@@ -77,7 +77,7 @@ public class OceanRunner extends BlockJUnit4ClassRunner {
 	/** List of OceanModules. */
 	private List<OceanModule> oceanModulesList = new ArrayList<OceanModule>();
 
-	/** */
+	/** Class actualy tested. */
 	private Class<?> classUnderTest = null;
 
 	private List<FrameworkMethod> fFilteredChildren = null;
@@ -120,34 +120,35 @@ public class OceanRunner extends BlockJUnit4ClassRunner {
 			Statement stmt = methodBlock(method);
 			if (stmt instanceof InvokeMethod) {
 				try {
+					// Get the target
 					Field fTargetField = InvokeMethod.class.getDeclaredField("fTarget");
 					fTargetField.setAccessible(true);
 					Object target = fTargetField.get(stmt);
 					this.setTarget(target);
 
+					// Run Statement
+					EachTestNotifier eachNotifier = new EachTestNotifier(notifier, description);
+					eachNotifier.fireTestStarted();
+					try {
+						stmt.evaluate();
+					} catch (AssumptionViolatedException e) {
+						AssumptionViolatedException enhancedException = enhanceAssumptionViolatedExceptionForAllModules(e);
+						if (enhancedException != null) {
+							eachNotifier.addFailedAssumption(enhancedException);
+						}
+					} catch (Throwable e) {
+						Throwable enhancedThrowable = enhanceThrowableForAllModules(e);
+						if (enhancedThrowable != null) {
+							eachNotifier.addFailure(enhancedThrowable);
+						}
+					} finally {
+						eachNotifier.fireTestFinished();
+					}
+
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 
-			}
-
-			// Run Statement
-			EachTestNotifier eachNotifier = new EachTestNotifier(notifier, description);
-			eachNotifier.fireTestStarted();
-			try {
-				stmt.evaluate();
-			} catch (AssumptionViolatedException e) {
-				AssumptionViolatedException enhancedException = enhanceAssumptionViolatedExceptionForAllModules(e);
-				if (enhancedException != null) {
-					eachNotifier.addFailedAssumption(enhancedException);
-				}
-			} catch (Throwable e) {
-				Throwable enhancedThrowable = enhanceThrowableForAllModules(e);
-				if (enhancedThrowable != null) {
-					eachNotifier.addFailure(enhancedThrowable);
-				}
-			} finally {
-				eachNotifier.fireTestFinished();
 			}
 
 		}

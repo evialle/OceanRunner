@@ -22,6 +22,7 @@ import it.freshminutes.oceanrunner.modules.builtin.statistics.StatisticsResult.S
 import it.freshminutes.oceanrunner.modules.builtin.statistics.StatisticsSqlPlug;
 import it.freshminutes.oceanrunner.modules.engine.OceanModule;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -106,6 +107,8 @@ public class StatisticsOceanModule extends OceanModule {
 		// statisticsSqlPlug.loadLastTestStatus(this.testmethodsList);
 	}
 
+
+
 	/* (non-Javadoc)
 	 * @see it.freshminutes.oceanrunner.modules.engine.OceanModule#doAfterAllTestedMethods(it.freshminutes.oceanrunner.OceanRunner, java.lang.Class)
 	 */
@@ -119,7 +122,7 @@ public class StatisticsOceanModule extends OceanModule {
 				for (String testMethod : testmethodsList) {
 					StatisticsResult sResult = actualResultsMap.get(testMethod);
 					if (sResult == null) {
-						// The test is successful²
+						// The test is successful
 					} else {
 						// the test is not successful
 					}
@@ -132,23 +135,7 @@ public class StatisticsOceanModule extends OceanModule {
 
 	}
 
-	/* (non-Javadoc)
-	 * @see it.freshminutes.oceanrunner.modules.engine.OceanModule#doBeforeEachTestedMethod(it.freshminutes.oceanrunner.OceanRunner)
-	 */
-	@Override
-	public void doBeforeEachTestedMethod(OceanRunner oceanRunner) {
 
-	}
-
-	/* (non-Javadoc)
-	 * @see it.freshminutes.oceanrunner.modules.engine.OceanModule#doAfterEachTestedMethod(it.freshminutes.oceanrunner.OceanRunner, org.junit.runner.Description)
-	 */
-	@Override
-	public void doAfterEachTestedMethod(OceanRunner oceanRunner,
-			Description description) {
-		// TODO Auto-generated method stub
-
-	}
 
 
 
@@ -162,6 +149,9 @@ public class StatisticsOceanModule extends OceanModule {
 		sResults.setComments(failure.getMessage() + "\n> Trace:" + failure.getTrace() );
 		sResults.setRunDate(new Date());
 		sResults.setStatus(StatusTestResult.FAILED);
+		sResults.setThrowable(failure.getException());
+
+		enhanceThrowable(failure.getException(), "Failed enhanced");
 
 		lastResultsMap.put(failure.getDescription().getMethodName(), sResults);
 	}
@@ -191,6 +181,9 @@ public class StatisticsOceanModule extends OceanModule {
 		sResults.setComments(failure.getMessage() + "\n> Trace:" + failure.getTrace());
 		sResults.setRunDate(new Date());
 		sResults.setStatus(StatusTestResult.ASSUMPTION_FAILED);
+		sResults.setThrowable(failure.getException());
+
+		enhanceThrowable(failure.getException(), "Assumption enhanced");
 
 		lastResultsMap.put(failure.getDescription().getMethodName(), sResults);
 
@@ -213,6 +206,29 @@ public class StatisticsOceanModule extends OceanModule {
 		return methodsList;
 	}
 
+	private Throwable enhanceThrowable(final Throwable throwable, String message) {
+		try {
+			Field field = Throwable.class.getDeclaredField("detailMessage");
+			field.setAccessible(true);
+			String detailMessage = (String) field.get(throwable);
+			field.set(throwable, detailMessage + " - " + message);
+
+		} catch (NoSuchFieldException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SecurityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return throwable;
+	}
 
 
 
