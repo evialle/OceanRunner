@@ -26,10 +26,7 @@ import org.junit.runner.RunWith;
 
 /**
  * 
- * 
- * 
- * 
- * Should display two pools, one mono threaded, one multi threaded:
+ * Should display two pools, one monothreaded, one multithreaded:
  * 
  * <pre>
  * pool-2-thread-1 testTrueMonoThread
