@@ -17,16 +17,16 @@ package it.freshminutes.oceanrunner.modules.builtin;
 
 import it.freshminutes.oceanrunner.OceanRunner;
 import it.freshminutes.oceanrunner.exceptions.OceanModuleException;
+import it.freshminutes.oceanrunner.modules.builtin.statistics.StatisticsDataPlug;
 import it.freshminutes.oceanrunner.modules.builtin.statistics.StatisticsResult;
 import it.freshminutes.oceanrunner.modules.builtin.statistics.StatisticsResult.StatusTestResult;
-import it.freshminutes.oceanrunner.modules.builtin.statistics.StatisticsSqlPlug;
 import it.freshminutes.oceanrunner.modules.engine.OceanModule;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -51,17 +51,7 @@ import com.google.common.collect.Maps;
 public class StatisticsOceanModule extends OceanModule {
 	
 
-	private static final String JDBC_DRIVER_CLASSNAME = "statistics.jdb.driver";
 
-	private static final String JDBC_USER = "statistics.jdbc.user";
-
-	private static final String JDBC_PASSWORD = " statistics.jdbc.password";
-
-	private static final String JDBC_URL = "statistics.jdbc.url";
-	
-	private static final String  ENV = "statistics.env";
-	
-	private static final String  APPLINAME = "statistics.appliname";
 
 	private List<String> testmethodsList = Lists.newArrayList();
 	private Map<String, StatisticsResult> lastResultsMap = Maps.newHashMap();
@@ -72,39 +62,45 @@ public class StatisticsOceanModule extends OceanModule {
 	
 	private static Connection dbConn;
 	
-	private static StatisticsSqlPlug statisticsSqlPlug;
+	private static StatisticsDataPlug statisticsDataPlug;
 
 	private ExecutorService threadExecutor = Executors.newSingleThreadExecutor();
 
-	private Connection getDbConn() throws OceanModuleException {
-		if (StatisticsOceanModule.dbConn == null) {
-			try {
-				String jdbcClassName = oceanRunner.getAwareProperty(JDBC_DRIVER_CLASSNAME);
-				String jdbcUser = oceanRunner.getAwareProperty(JDBC_USER);
-				String jdbcPass = oceanRunner.getAwareProperty(JDBC_PASSWORD);
-				String jdbcUrl = oceanRunner.getAwareProperty(JDBC_URL);
-				Class.forName(jdbcClassName);
-				StatisticsOceanModule.dbConn = DriverManager.getConnection(jdbcUrl, jdbcUser, jdbcPass);
-			} catch (ClassNotFoundException e) {
-				StatisticsOceanModule.dbConn = null;
-				throw new OceanModuleException(e);
-			} catch (SQLException e) {
-				StatisticsOceanModule.dbConn = null;
-				throw new OceanModuleException(e);
-			}
-		}
-		return StatisticsOceanModule.dbConn;
-	}
+
 
 	/* (non-Javadoc)
 	 * @see it.freshminutes.oceanrunner.modules.engine.OceanModule#doBeforeAllTestedMethods(it.freshminutes.oceanrunner.OceanRunner, java.lang.Class)
 	 */
 	@Override
-	public void doBeforeAllTestedMethods(OceanRunner oceanRunner, Class<?> klass) {
-		this.testmethodsList = loadTestsToSearch(klass);
+	public void doBeforeAllTestedMethods(OceanRunner oceanRunner, Class<?> klass) throws OceanModuleException {
+		String StatisticsDataPlugClassName = oceanRunner.getAwareProperty("statistics.dataplug");
+		try {
 
-		// this.lastResultsMap =
-		// statisticsSqlPlug.loadLastTestStatus(this.testmethodsList);
+			// get constructor that takes a String as argument
+			Constructor<?> constructor = Class.forName(StatisticsDataPlugClassName).getConstructor(OceanRunner.class);
+
+			StatisticsOceanModule.statisticsDataPlug = (StatisticsDataPlug) constructor.newInstance(oceanRunner);
+
+			this.testmethodsList = loadTestsToSearch(klass);
+			this.lastResultsMap = statisticsDataPlug.loadLastTestStatus(this.testmethodsList);
+			this.actualResultsMap = Maps.newHashMap();
+
+		} catch (ClassNotFoundException e) {
+			throw new OceanModuleException(e);
+		} catch (NoSuchMethodException e) {
+			throw new OceanModuleException(e);
+		} catch (SecurityException e) {
+			throw new OceanModuleException(e);
+		} catch (InstantiationException e) {
+			throw new OceanModuleException(e);
+		} catch (IllegalAccessException e) {
+			throw new OceanModuleException(e);
+		} catch (IllegalArgumentException e) {
+			throw new OceanModuleException(e);
+		} catch (InvocationTargetException e) {
+			throw new OceanModuleException(e);
+		}
+
 	}
 
 
@@ -113,31 +109,16 @@ public class StatisticsOceanModule extends OceanModule {
 	 * @see it.freshminutes.oceanrunner.modules.engine.OceanModule#doAfterAllTestedMethods(it.freshminutes.oceanrunner.OceanRunner, java.lang.Class)
 	 */
 	@Override
-	public void doAfterAllTestedMethods(OceanRunner oceanRunner, Class<?> klass) {
+	public void doAfterAllTestedMethods(final OceanRunner oceanRunner, final Class<?> klass) {
 		// we do not block the JUnit test
 		this.threadExecutor.execute(new Thread() {
 
 			@Override
 			public void run() {
-				for (String testMethod : testmethodsList) {
-					StatisticsResult sResult = actualResultsMap.get(testMethod);
-					if (sResult == null) {
-						// The test is successful
-					} else {
-						// the test is not successful
-					}
-				}
-
+				statisticsDataPlug.storeLastTestStatus(actualResultsMap.values());
 			}
-			
 		});
-
-
 	}
-
-
-
-
 
 	/* (non-Javadoc)
 	 * @see it.freshminutes.oceanrunner.modules.engine.OceanModule#doAfterEachFailedMethod(it.freshminutes.oceanrunner.OceanRunner, org.junit.runner.notification.Failure)
@@ -150,10 +131,12 @@ public class StatisticsOceanModule extends OceanModule {
 		sResults.setRunDate(new Date());
 		sResults.setStatus(StatusTestResult.FAILED);
 		sResults.setThrowable(failure.getException());
+		sResults.setClassUnderTestName(failure.getDescription().getClassName());
+		sResults.setMethodUnderTestName(failure.getDescription().getMethodName());
 
 		enhanceThrowable(failure.getException(), "Failed enhanced");
 
-		lastResultsMap.put(failure.getDescription().getMethodName(), sResults);
+		actualResultsMap.put(failure.getDescription().getMethodName(), sResults);
 	}
 
 	/* (non-Javadoc)
@@ -166,8 +149,10 @@ public class StatisticsOceanModule extends OceanModule {
 		StatisticsResult sResults = new StatisticsResult();
 		sResults.setRunDate(new Date());
 		sResults.setStatus(StatusTestResult.IGNORE);
+		sResults.setClassUnderTestName(description.getClassName());
+		sResults.setMethodUnderTestName(description.getMethodName());
 
-		lastResultsMap.put(description.getMethodName(), sResults);
+		actualResultsMap.put(description.getMethodName(), sResults);
 	}
 
 	/* (non-Javadoc)
@@ -182,11 +167,28 @@ public class StatisticsOceanModule extends OceanModule {
 		sResults.setRunDate(new Date());
 		sResults.setStatus(StatusTestResult.ASSUMPTION_FAILED);
 		sResults.setThrowable(failure.getException());
+		sResults.setClassUnderTestName(failure.getDescription().getClassName());
+		sResults.setMethodUnderTestName(failure.getDescription().getMethodName());
 
 		enhanceThrowable(failure.getException(), "Assumption enhanced");
 
-		lastResultsMap.put(failure.getDescription().getMethodName(), sResults);
+		actualResultsMap.put(failure.getDescription().getMethodName(), sResults);
+	}
 
+	@Override
+	public void doAfterEachTestedMethod(final OceanRunner oceanRunner, final Description description) throws OceanModuleException {
+		StatisticsResult sResult = actualResultsMap.get(description.getMethodName());
+		// Doesn't exist -> The test was successful
+		if (sResult == null) {
+			// Add the statistics result in the cache result
+			StatisticsResult sResults = new StatisticsResult();
+			sResults.setRunDate(new Date());
+			sResults.setStatus(StatusTestResult.FAILED);
+			sResults.setClassUnderTestName(description.getClassName());
+			sResults.setMethodUnderTestName(description.getMethodName());
+
+			actualResultsMap.put(description.getMethodName(), sResults);
+		}
 	}
 
 	/**
@@ -211,7 +213,15 @@ public class StatisticsOceanModule extends OceanModule {
 			Field field = Throwable.class.getDeclaredField("detailMessage");
 			field.setAccessible(true);
 			String detailMessage = (String) field.get(throwable);
-			field.set(throwable, detailMessage + " - " + message);
+			
+			String enhancedMessage;
+			if (detailMessage == null) {
+				enhancedMessage = message;
+			} else {
+				enhancedMessage = detailMessage + " - " + message;
+			}
+			
+			field.set(throwable, enhancedMessage);
 
 		} catch (NoSuchFieldException e) {
 			// TODO Auto-generated catch block

@@ -66,33 +66,6 @@ public class TestConcurrentOceanModule {
 		assertTrue(false);
 	}
 
-	@Test
-	public void testTrue2() {
-		System.out.println(Thread.currentThread().getName() + " testTrue");
-
-		assertTrue(true);
-	}
-
-	@Test
-	public void testFalse2() {
-		System.out.println(Thread.currentThread().getName() + " testFalse");
-
-		assertTrue(false);
-	}
-
-	@Test
-	public void testTrue3() {
-		System.out.println(Thread.currentThread().getName() + " testTrue");
-
-		assertTrue(true);
-	}
-
-	@Test
-	public void testFalse3() {
-		System.out.println(Thread.currentThread().getName() + " testFalse");
-
-		assertTrue(false);
-	}
 
 	@Test
 	@OceanRunConcurrencyForbidden
@@ -105,38 +78,6 @@ public class TestConcurrentOceanModule {
 	@Test
 	@OceanRunConcurrencyForbidden
 	public void testFalseMonoThread() {
-		System.out.println(Thread.currentThread().getName() + " testFalseMonoThread");
-
-		assertTrue(false);
-	}
-
-	@Test
-	@OceanRunConcurrencyForbidden
-	public void testTrueMonoThread1() {
-		System.out.println(Thread.currentThread().getName() + " testTrueMonoThread");
-
-		assertTrue(true);
-	}
-
-	@Test
-	@OceanRunConcurrencyForbidden
-	public void testFalseMonoThread1() {
-		System.out.println(Thread.currentThread().getName() + " testFalseMonoThread");
-
-		assertTrue(false);
-	}
-
-	@Test
-	@OceanRunConcurrencyForbidden
-	public void testTrueMonoThread2() {
-		System.out.println(Thread.currentThread().getName() + " testTrueMonoThread");
-
-		assertTrue(true);
-	}
-
-	@Test
-	@OceanRunConcurrencyForbidden
-	public void testFalseMonoThread2() {
 		System.out.println(Thread.currentThread().getName() + " testFalseMonoThread");
 
 		assertTrue(false);

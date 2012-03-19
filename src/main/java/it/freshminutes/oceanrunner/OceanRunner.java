@@ -47,11 +47,9 @@ import org.junit.runners.model.Statement;
 
 /**
  * OceanRunner is the JUnit Runner to use, to use OceanModule. Add
- * 
  * @RunWith(OceanRunner.class) to your test class.
  * 
  * @author Eric Vialle
- * 
  */
 public class OceanRunner extends BlockJUnit4ClassRunner {
 
@@ -132,15 +130,9 @@ public class OceanRunner extends BlockJUnit4ClassRunner {
 					try {
 						stmt.evaluate();
 					} catch (AssumptionViolatedException e) {
-						AssumptionViolatedException enhancedException = enhanceAssumptionViolatedExceptionForAllModules(e);
-						if (enhancedException != null) {
-							eachNotifier.addFailedAssumption(enhancedException);
-						}
+						eachNotifier.addFailedAssumption(e);
 					} catch (Throwable e) {
-						Throwable enhancedThrowable = enhanceThrowableForAllModules(e);
-						if (enhancedThrowable != null) {
-							eachNotifier.addFailure(enhancedThrowable);
-						}
+						eachNotifier.addFailure(e);
 					} finally {
 						eachNotifier.fireTestFinished();
 					}
@@ -150,10 +142,8 @@ public class OceanRunner extends BlockJUnit4ClassRunner {
 				}
 
 			}
-
 		}
 	}
-
 
 
 	/**
@@ -257,10 +247,13 @@ public class OceanRunner extends BlockJUnit4ClassRunner {
 		return System.getProperty(OCEAN_RUNNER_PROPERTIES, DEFAULT_PROPERTIES_PATH);
 	}
 
+
 	/**
+	 * Initialize all OceanModules.
+	 * 
 	 * @throws NoOceanModuleException
 	 * @throws OceanModuleException
-	 * 
+	 *             while instantiating a Module
 	 */
 	private void loadAllOceanModules() throws NoOceanModuleException, OceanModuleException {
 		List<Class<? extends OceanModule>> oceanModulesClass;
@@ -288,12 +281,7 @@ public class OceanRunner extends BlockJUnit4ClassRunner {
 
 	}
 
-	/**
-	 * @return
-	 * @throws IOException
-	 * @throws NoOceanModuleException
-	 * @throws OceanModuleException
-	 */
+
 	@SuppressWarnings("unchecked")
 	private List<Class<? extends OceanModule>> listOceanModuleFromProperties() throws IOException, NoOceanModuleException, OceanModuleException {
 
@@ -316,9 +304,7 @@ public class OceanRunner extends BlockJUnit4ClassRunner {
 		return oceanModulesClassList;
 	}
 
-	/**
-	 * @return
-	 */
+
 	private List<Class<? extends OceanModule>> listOceanModulesFromAnnotation() {
 		List<Class<? extends OceanModule>> oceanModulesClassList;
 		if (this.classUnderTest.getAnnotation(OceanModulesToUse.class).value() == null) {
@@ -330,51 +316,34 @@ public class OceanRunner extends BlockJUnit4ClassRunner {
 		return oceanModulesClassList;
 	}
 
-	/**
-	 * @throws OceanModuleException
-	 * 
-	 */
+
 	private void initializeAllOceanModules() throws OceanModuleException {
 		for (OceanModule oceanModule : this.oceanModulesList) {
 			oceanModule.doBeforeAllTestedMethods(this, this.classUnderTest);
 		}
 	}
 
-	/**
-	 * @throws OceanModuleException
-	 * 
-	 */
+
 	private void endAllOceanModules() throws OceanModuleException {
 		for (OceanModule oceanModule : this.oceanModulesList) {
 			oceanModule.doAfterAllTestedMethods(this, this.classUnderTest);
 		}
 	}
 
-	/**
-	 * @param notifier
-	 */
+
 	public void run(final RunNotifier notifier) {
-		notifier.addListener(new OceanListener());
+		notifier.addFirstListener(new OceanListener());
 		super.run(notifier);
 	}
 
 
-
-	/**
-	 * @throws OceanModuleException
-	 * 
-	 */
 	private void doBeforeEachTestTestedMethodForAllModules() throws OceanModuleException {
 		for (OceanModule oceanModule : this.oceanModulesList) {
 			oceanModule.doBeforeEachTestedMethod(this);
 		}
 	}
 
-	/**
-	 * 
-	 * @param description
-	 * @throws OceanModuleException
-	 */
+
 	private void doAfterEachTestTestedMethodForAllModules(final Description description) throws OceanModuleException {
 
 		for (OceanModule oceanModule : this.oceanModulesList) {
@@ -385,49 +354,21 @@ public class OceanRunner extends BlockJUnit4ClassRunner {
 		this.setTarget(null);
 	}
 
-	private Throwable enhanceThrowableForAllModules(Throwable e) {
-		Throwable toReturn = e;
-		for (OceanModule oceanModule : this.oceanModulesList) {
-			toReturn = oceanModule.enhanceThrowable(this, toReturn);
-		}
-		return toReturn;
-	}
 
-	private AssumptionViolatedException enhanceAssumptionViolatedExceptionForAllModules(AssumptionViolatedException e) {
-		AssumptionViolatedException toReturn = e;
-		for (OceanModule oceanModule : this.oceanModulesList) {
-			toReturn = oceanModule.enhanceAssumptionViolatedException(this, toReturn);
-		}
-		return toReturn;
-	}
 
-	/**
-	 * 
-	 * @param failure
-	 * @throws OceanModuleException
-	 */
 	private void doAfterEachFailureForAllModules(final Failure failure, Object target) throws OceanModuleException {
 		for (OceanModule oceanModule : this.oceanModulesList) {
 			oceanModule.doAfterEachFailedMethod(this, failure);
 		}
 	}
 
-	/**
-	 * 
-	 * @param failure
-	 * @throws OceanModuleException
-	 */
 	private void doAfterEachAssumptionFailureForAllModules(final Failure failure) throws OceanModuleException {
 		for (OceanModule oceanModule : this.oceanModulesList) {
 			oceanModule.doAfterEachAssumptionFailedMethod(this, failure);
 		}
 	}
 
-	/**
-	 * 
-	 * @param description
-	 * @throws OceanModuleException
-	 */
+
 	private void doAfterEachIgnoreForAllModules(final Description description, final Object object) throws OceanModuleException {
 		for (OceanModule oceanModule : this.oceanModulesList) {
 			oceanModule.doAfterEachIgnoredMethod(this, description);

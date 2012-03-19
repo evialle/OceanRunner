@@ -46,6 +46,10 @@ public class StatisticsResult implements Serializable {
 
 	private String comments;
 
+	private String classUnderTestName;
+
+	private String methodUnderTestName;
+
 	private transient Throwable throwable;
 
 	/**
@@ -103,5 +107,36 @@ public class StatisticsResult implements Serializable {
 	public void setThrowable(Throwable throwable) {
 		this.throwable = throwable;
 	}
+
+
+	/**
+	 * @return the methodUnderTestName
+	 */
+	public String getMethodUnderTestName() {
+		return methodUnderTestName;
+	}
+
+	/**
+	 * @param methodUnderTestName the methodUnderTestName to set
+	 */
+	public void setMethodUnderTestName(String methodUnderTestName) {
+		this.methodUnderTestName = methodUnderTestName;
+	}
+
+	/**
+	 * @return the classUnderTestName
+	 */
+	public String getClassUnderTestName() {
+		return classUnderTestName;
+	}
+
+	/**
+	 * @param classUnderTestName the classUnderTestName to set
+	 */
+	public void setClassUnderTestName(String classUnderTestName) {
+		this.classUnderTestName = classUnderTestName;
+	}
+
+
 
 }

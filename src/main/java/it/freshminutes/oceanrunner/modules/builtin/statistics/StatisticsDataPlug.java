@@ -15,6 +15,9 @@
  */
 package it.freshminutes.oceanrunner.modules.builtin.statistics;
 
+import it.freshminutes.oceanrunner.OceanRunner;
+
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -22,8 +25,14 @@ import java.util.Map;
  * @author Eric
  *
  */
-public interface StatisticsSqlPlug {
+public abstract class StatisticsDataPlug {
+	
+	public StatisticsDataPlug(final OceanRunner oceanRunner) {
+		super();
+	}
 
-	Map<String, StatisticsResult> loadLastTestStatus(List<String> testsToSearch);
+	public abstract Map<String, StatisticsResult> loadLastTestStatus(List<String> testsToSearch);
+
+	public abstract void storeLastTestStatus(Collection<StatisticsResult> statisticsResultsList);
 
 }
