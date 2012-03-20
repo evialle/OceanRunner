@@ -44,4 +44,14 @@ public class OceanModuleException extends Exception {
 		super(s);
 	}
 
+	/**
+	 * Constructor.
+	 * 
+	 * @param s
+	 *            root explanation of the exception.
+	 */
+	public OceanModuleException(String s, Throwable t) {
+		super(s, t);
+	}
+
 }

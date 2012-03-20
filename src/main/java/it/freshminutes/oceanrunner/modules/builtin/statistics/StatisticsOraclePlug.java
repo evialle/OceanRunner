@@ -45,6 +45,8 @@ public class StatisticsOraclePlug extends StatisticsDataPlug {
 
 	private static final String APPLINAME = "statistics.appliname";
 
+
+
 	@Override
 	public Map<String, StatisticsResult> loadLastTestStatus(List<String> testsToSearch) {
 		// TODO Auto-generated method stub
