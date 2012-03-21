@@ -9,7 +9,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>it.freshminutes.5</groupId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>master-SNAPSHOT</version>
 	<artifactId>OceanRunner</artifactId>
 	<name>OceanRunner</name>
 	<description>OceanRunner - Make easily JUnit Runners.</description>
@@ -57,10 +57,9 @@
 							<goal>single</goal>
 						</goals>
 						<configuration>
-							<!-- This is where we use our shared assembly descriptor -->
-							<descriptorRefs>
-								<descriptorRef>with-dependencies</descriptorRef>
-							</descriptorRefs>
+							<descriptors>
+								<descriptor>src/assemble/with-dependancies.xml</descriptor>
+							</descriptors>
 						</configuration>
 					</execution>
 				</executions>
@@ -89,4 +88,11 @@
 
 
 
+	<scm>
+		<url>git@github.com:evialle/OceanRunner.git</url>
+	</scm>
+	<issueManagement>
+		<url>https://github.com/evialle/OceanRunner/issues</url>
+	</issueManagement>
+	<url>https://github.com/evialle/OceanRunner</url>
 </project>
