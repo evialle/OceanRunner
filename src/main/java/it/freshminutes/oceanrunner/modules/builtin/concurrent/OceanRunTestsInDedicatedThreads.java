@@ -34,6 +34,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
 public @interface OceanRunTestsInDedicatedThreads {
-	int threads() default 5;
+	int threads() default -1;
+
 	boolean value() default true;
 }

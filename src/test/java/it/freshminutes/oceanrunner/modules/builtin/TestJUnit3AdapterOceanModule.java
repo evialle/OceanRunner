@@ -29,11 +29,9 @@ import org.junit.runner.RunWith;
 @OceanRunTestsInDedicatedThreads(value = false)
 @OceanModulesToUse({ JUnit3AdapterOceanModule.class, CategoryOceanModule.class, ConcurrentOceanModule.class })
 public class TestJUnit3AdapterOceanModule extends TestCase {
-	
-	
+
 	private int value = 1;
-	
-	
+
 	@BeforeClass
 	public static void beforeClass() {
 		System.out.println("This is beforeClass");

@@ -31,6 +31,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.junit.Test;
 import org.junit.runners.model.FrameworkMethod;
 
 /**
@@ -38,7 +39,6 @@ import org.junit.runners.model.FrameworkMethod;
  * that module by setting @OceanRunTestsInDedicatedThreads()
  * 
  * @author Eric Vialle
- * 
  */
 public class ConcurrentOceanModule extends OceanModule {
 
@@ -61,34 +61,78 @@ public class ConcurrentOceanModule extends OceanModule {
 	public void doBeforeAllTestedMethods(final OceanRunner oceanRunner, final Class<?> klass) {
 
 		// Do we authorize the fact to be tested in dedicated threads?
-		if (klass.getAnnotation(OceanRunTestsInDedicatedThreads.class).value()) {
+		if ((klass.getAnnotation(OceanRunTestsInDedicatedThreads.class) != null) && (klass.getAnnotation(OceanRunTestsInDedicatedThreads.class).value())) {
 			oceanRunner.setScheduler(new OceanRunnerScheduler() {
 
-				private int nbOfThreads = klass.getAnnotation(OceanRunTestsInDedicatedThreads.class).threads();
+				private ExecutorService executorConcurrentService;
+				private ExecutorService executorMonoThreadService;
 
-				private ExecutorService executorConcurrentService = Executors.newFixedThreadPool(nbOfThreads);
-				private ExecutorService executorMonoThreadService = Executors.newSingleThreadExecutor();
-
-				private CompletionService<Void> completionConcurrentService = new ExecutorCompletionService<Void>(executorConcurrentService);
-				private CompletionService<Void> completionMonoThreadService = new ExecutorCompletionService<Void>(executorMonoThreadService);
+				private CompletionService<Void> completionConcurrentService;
+				private CompletionService<Void> completionMonoThreadService;
 
 				private Queue<Future<Void>> multithreadTasks = new LinkedList<Future<Void>>();
 				private Queue<Future<Void>> monothreadTasks = new LinkedList<Future<Void>>();
 
-
 				@Override
-				public void schedule(Runnable childStatement, FrameworkMethod method) {
+				public void schedule(final Runnable childStatement, final FrameworkMethod method) {
 
 					OceanRunConcurrencyForbidden annotation = method.getAnnotation(OceanRunConcurrencyForbidden.class);
 
 					if (annotation == null) {
 						// Multi Thread
-						multithreadTasks.offer(completionConcurrentService.submit(childStatement, null));
+						multithreadTasks.offer(getCompletionConcurrentService().submit(childStatement, null));
 					} else {
 						// Mono Thread
-						monothreadTasks.offer(completionMonoThreadService.submit(childStatement, null));
+						monothreadTasks.offer(getCompletionMonoThreadService().submit(childStatement, null));
 					}
 
+				}
+
+				/** Define the number of threads to use. */
+				private int getBestNbOfThreads(final OceanRunTestsInDedicatedThreads annotation) {
+
+					int nbOfThreads = annotation.threads();
+
+					int threadsOptim;
+					if (nbOfThreads > 0) {
+						threadsOptim = nbOfThreads;
+					} else {
+						// Compare the nb of methods to test and the available
+						// cpu
+						int nbOfMethodToTest = oceanRunner.getTestClass().getAnnotatedMethods(Test.class).size();
+						int nbOfAvailableCpu = Runtime.getRuntime().availableProcessors();
+
+						if (nbOfMethodToTest > nbOfAvailableCpu) {
+							threadsOptim = nbOfAvailableCpu;
+							// Keep one thread for the mono thread
+							if (threadsOptim > 2) {
+								threadsOptim--;
+							}
+						} else {
+							threadsOptim = nbOfMethodToTest;
+						}
+					}
+
+					return threadsOptim;
+				}
+
+				/** Lazy loading of the ComplemetionConcurrentService. */
+				private CompletionService<Void> getCompletionConcurrentService() {
+					if (completionConcurrentService == null) {
+						int nbOfThreads = getBestNbOfThreads(klass.getAnnotation(OceanRunTestsInDedicatedThreads.class));
+						executorConcurrentService = Executors.newFixedThreadPool(nbOfThreads);
+						completionConcurrentService = new ExecutorCompletionService<Void>(executorConcurrentService);
+					}
+					return completionConcurrentService;
+				}
+
+				/** Lazy loading of the completionMonoThreadService. */
+				private CompletionService<Void> getCompletionMonoThreadService() {
+					if (completionMonoThreadService == null) {
+						executorMonoThreadService = Executors.newSingleThreadExecutor();
+						completionMonoThreadService = new ExecutorCompletionService<Void>(executorMonoThreadService);
+					}
+					return completionMonoThreadService;
 				}
 
 				@Override
@@ -103,14 +147,19 @@ public class ConcurrentOceanModule extends OceanModule {
 					} catch (InterruptedException e) {
 						Thread.currentThread().interrupt();
 					} finally {
-						while (!multithreadTasks.isEmpty()){
+						while (!multithreadTasks.isEmpty()) {
 							multithreadTasks.poll().cancel(true);
 						}
+						if (executorConcurrentService != null) {
+							executorConcurrentService.shutdownNow();
+						}
+
 						while (!monothreadTasks.isEmpty()) {
 							monothreadTasks.poll().cancel(true);
 						}
-						executorConcurrentService.shutdownNow();
-						executorMonoThreadService.shutdownNow();
+						if (executorMonoThreadService != null) {
+							executorMonoThreadService.shutdownNow();
+						}
 					}
 				}
 			});

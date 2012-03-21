@@ -13,13 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package it.freshminutes.oceanrunner.modules.builtin;
+package it.freshminutes.oceanrunner.modules.builtin.concurrent;
 
 import static org.junit.Assert.assertTrue;
 import it.freshminutes.oceanrunner.OceanRunner;
 import it.freshminutes.oceanrunner.annotations.OceanModulesToUse;
-import it.freshminutes.oceanrunner.modules.builtin.concurrent.OceanRunConcurrencyForbidden;
-import it.freshminutes.oceanrunner.modules.builtin.concurrent.OceanRunTestsInDedicatedThreads;
+import it.freshminutes.oceanrunner.modules.builtin.ConcurrentOceanModule;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -53,6 +52,7 @@ import org.junit.runner.RunWith;
 public class TestConcurrentOceanModule {
 
 	@Test
+	@OceanRunConcurrencyForbidden
 	public void testTrue() {
 		System.out.println(Thread.currentThread().getName() + " testTrue");
 
@@ -60,6 +60,7 @@ public class TestConcurrentOceanModule {
 	}
 
 	@Test
+	@OceanRunConcurrencyForbidden
 	public void testFalse() {
 		System.out.println(Thread.currentThread().getName() + " testFalse");
 
