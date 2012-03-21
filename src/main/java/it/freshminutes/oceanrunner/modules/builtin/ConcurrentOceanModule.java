@@ -72,7 +72,9 @@ public class ConcurrentOceanModule extends OceanModule {
 				private CompletionService<Void> completionConcurrentService = new ExecutorCompletionService<Void>(executorConcurrentService);
 				private CompletionService<Void> completionMonoThreadService = new ExecutorCompletionService<Void>(executorMonoThreadService);
 
-				private Queue<Future<Void>> tasks = new LinkedList<Future<Void>>();
+				private Queue<Future<Void>> multithreadTasks = new LinkedList<Future<Void>>();
+				private Queue<Future<Void>> monothreadTasks = new LinkedList<Future<Void>>();
+
 
 				@Override
 				public void schedule(Runnable childStatement, FrameworkMethod method) {
@@ -81,10 +83,10 @@ public class ConcurrentOceanModule extends OceanModule {
 
 					if (annotation == null) {
 						// Multi Thread
-						tasks.offer(completionConcurrentService.submit(childStatement, null));
+						multithreadTasks.offer(completionConcurrentService.submit(childStatement, null));
 					} else {
 						// Mono Thread
-						tasks.offer(completionMonoThreadService.submit(childStatement, null));
+						monothreadTasks.offer(completionMonoThreadService.submit(childStatement, null));
 					}
 
 				}
@@ -92,15 +94,21 @@ public class ConcurrentOceanModule extends OceanModule {
 				@Override
 				public void finished() {
 					try {
-						while (!tasks.isEmpty()) {
-							tasks.remove(completionConcurrentService.take());
-							tasks.remove(completionConcurrentService.take());
+						while (!multithreadTasks.isEmpty()) {
+							multithreadTasks.remove(completionConcurrentService.take());
+						}
+						while (!monothreadTasks.isEmpty()) {
+							monothreadTasks.remove(completionMonoThreadService.take());
 						}
 					} catch (InterruptedException e) {
 						Thread.currentThread().interrupt();
 					} finally {
-						while (!tasks.isEmpty())
-							tasks.poll().cancel(true);
+						while (!multithreadTasks.isEmpty()){
+							multithreadTasks.poll().cancel(true);
+						}
+						while (!monothreadTasks.isEmpty()) {
+							monothreadTasks.poll().cancel(true);
+						}
 						executorConcurrentService.shutdownNow();
 						executorMonoThreadService.shutdownNow();
 					}

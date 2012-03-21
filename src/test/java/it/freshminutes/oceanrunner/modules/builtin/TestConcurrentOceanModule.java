@@ -83,4 +83,20 @@ public class TestConcurrentOceanModule {
 		assertTrue(false);
 	}
 
+	@Test
+	@OceanRunConcurrencyForbidden
+	public void testTrueAgainMonoThread() {
+		System.out.println(Thread.currentThread().getName() + " testTrueMonoThread");
+
+		assertTrue(true);
+	}
+
+	@Test
+	@OceanRunConcurrencyForbidden
+	public void testAgainFalseMonoThread() {
+		System.out.println(Thread.currentThread().getName() + " testFalseMonoThread");
+
+		assertTrue(false);
+	}
+
 }
