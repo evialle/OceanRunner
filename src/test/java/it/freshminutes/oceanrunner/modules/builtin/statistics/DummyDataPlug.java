@@ -4,9 +4,8 @@ import it.freshminutes.oceanrunner.OceanRunner;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
-import com.google.common.collect.Maps;
+import com.google.common.collect.Lists;
 
 public class DummyDataPlug extends StatisticsDataPlug {
 
@@ -15,16 +14,17 @@ public class DummyDataPlug extends StatisticsDataPlug {
 		// TODO Auto-generated constructor stub
 	}
 
-	@Override
-	public Map<String, StatisticsResult> loadLastTestStatus(List<String> testsToSearch) {
-		// TODO Auto-generated method stub
-		return Maps.newHashMap();
-	}
 
 	@Override
 	public void storeLastTestStatus(Collection<StatisticsResult> statisticsResultsList) {
 		// TODO Auto-generated method stub
 
+	}
+
+
+	@Override
+	public List<StatisticsResult> loadTestStatus(String testsToSearch) {
+		return Lists.newArrayList();
 	}
 
 }

@@ -78,6 +78,13 @@ public class OceanRunner extends BlockJUnit4ClassRunner {
 	/** Class actualy tested. */
 	private Class<?> classUnderTest = null;
 
+	/**
+	 * @return the classUnderTest
+	 */
+	public Class<?> getClassUnderTest() {
+		return classUnderTest;
+	}
+
 	private List<FrameworkMethod> fFilteredChildren = null;
 
 	/** Default Scheduler. */

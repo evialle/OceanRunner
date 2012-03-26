@@ -18,12 +18,25 @@ package it.freshminutes.oceanrunner.modules.builtin.statistics;
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
 /**
  * @author Eric Vialle
  * 
  */
+@Entity
+@Table(name = "oceanrunner_statisticsresult")
 public class StatisticsResult implements Serializable {
 
+	/**
+	 * JUnit status.
+	 * 
+	 * @author Eric Vialle
+	 */
 	public static enum StatusTestResult {
 
 		SUCCESS(0), IGNORE(1), FAILED(2), ASSUMPTION_FAILED(3);
@@ -40,15 +53,26 @@ public class StatisticsResult implements Serializable {
 	/** Like any good javabean... */
 	private static final long serialVersionUID = -4454510292257647912L;
 
+	/** Last run date with that status. */
+	@Column(name = "runDate")
+	@Temporal(TemporalType.TIMESTAMP)
 	private Date runDate;
 
+
+	@Column(name = "status")
 	private StatusTestResult status;
 
+	@Column(name = "comments")
 	private String comments;
 
+	@Column(name = "classundertestName")
 	private String classUnderTestName;
 
+	@Column(name = "methodundertestName")
 	private String methodUnderTestName;
+
+	@Column(name = "environement")
+	private String environement;
 
 	private transient Throwable throwable;
 
@@ -137,6 +161,18 @@ public class StatisticsResult implements Serializable {
 		this.classUnderTestName = classUnderTestName;
 	}
 
+	/**
+	 * @return the environement
+	 */
+	public String getEnvironement() {
+		return environement;
+	}
 
+	/**
+	 * @param environement the environement to set
+	 */
+	public void setEnvironement(String environement) {
+		this.environement = environement;
+	}
 
 }

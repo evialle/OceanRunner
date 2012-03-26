@@ -15,9 +15,13 @@
 	<description>OceanRunner - Make easily JUnit Runners.</description>
 
 	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<downloadSources>true</downloadSources>
 		<downloadJavadocs>true</downloadJavadocs>
 		<java.version>1.6</java.version>
+		<ebean.version>2.7.4</ebean.version>
+		<junit.version>4.10</junit.version>
+		<guava.version>11.0.1</guava.version>
 	</properties>
 
 	<build>
@@ -40,13 +44,13 @@
 					<dependency>
 						<groupId>junit</groupId>
 						<artifactId>junit</artifactId>
-						<version>4.10</version>
+						<version>${junit.version}</version>
 					</dependency>
 					<!-- Guava -->
 					<dependency>
 						<groupId>com.google.guava</groupId>
 						<artifactId>guava</artifactId>
-						<version>11.0.1</version>
+						<version>${guava.version}</version>
 					</dependency>
 				</dependencies>
 				<executions>
@@ -75,13 +79,31 @@
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.10</version>
+			<version>${junit.version}</version>
 		</dependency>
 		<!-- Guava -->
 		<dependency>
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
-			<version>11.0.1</version>
+			<version>${guava.version}</version>
+		</dependency>
+		<!-- DB Persistence for Statistics. -->
+		<dependency>
+			<groupId>javax.persistence</groupId>
+			<artifactId>persistence-api</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.avaje</groupId>
+			<artifactId>ebean</artifactId>
+			<version>${ebean.version}</version>
+		</dependency>
+
+		<!-- Test dependencies -->
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<version>1.1.115</version>
 		</dependency>
 
 	</dependencies>

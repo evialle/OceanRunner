@@ -25,20 +25,15 @@ import it.freshminutes.oceanrunner.modules.engine.OceanModule;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
-import org.junit.Test;
 import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
 
-import com.google.common.collect.Lists;
+import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 
 /**
@@ -50,15 +45,20 @@ import com.google.common.collect.Maps;
  */
 public class StatisticsOceanModule extends OceanModule {
 
+	public static final String STATISTICS_ENVIRONEMENT_PROPERTY = "statistics.environement";
+
+	public static final String STATISTICS_AUTHORIZEDWRITE_PROPERTY = "statistics.authorizedwrite";
+
+
+	/** SimpleDateFormat static. */
 	private static final SimpleDateFormat SDF = new SimpleDateFormat("dd/MM/YYYY HH:mm");
 
-	private List<String> testmethodsList = Lists.newArrayList();
-	private Map<String, StatisticsResult> lastResultsMap = Maps.newHashMap();
 	private Map<String, StatisticsResult> actualResultsMap = Maps.newHashMap();
 
 	private StatisticsDataPlug statisticsDataPlug;
 
-	private ExecutorService threadExecutor = Executors.newSingleThreadExecutor();
+	/** Environnement name where the unit test is run. */
+	private String environment;
 
 	/*
 	 * (non-Javadoc)
@@ -69,7 +69,7 @@ public class StatisticsOceanModule extends OceanModule {
 	 */
 	@Override
 	public void doBeforeAllTestedMethods(OceanRunner oceanRunner, Class<?> klass) throws OceanModuleException {
-		
+
 		String statisticsDataPlugClassName = oceanRunner.getAwareProperty("statistics.dataplug");
 		if (statisticsDataPlugClassName == null) {
 			throw new OceanModuleException(
@@ -88,8 +88,6 @@ public class StatisticsOceanModule extends OceanModule {
 
 			statisticsDataPlug = (StatisticsDataPlug) constructor.newInstance(oceanRunner);
 
-			this.testmethodsList = loadTestsToSearch(klass);
-			this.lastResultsMap = statisticsDataPlug.loadLastTestStatus(this.testmethodsList);
 			this.actualResultsMap = Maps.newHashMap();
 
 		} catch (ClassNotFoundException e) {
@@ -119,15 +117,11 @@ public class StatisticsOceanModule extends OceanModule {
 	 * java.lang.Class)
 	 */
 	@Override
-	public void doAfterAllTestedMethods(final OceanRunner oceanRunner, final Class<?> klass) {
-		// we do not block the JUnit test
-		this.threadExecutor.execute(new Thread() {
-
-			@Override
-			public void run() {
-				statisticsDataPlug.storeLastTestStatus(actualResultsMap.values());
-			}
-		});
+	public void doAfterAllTestedMethods(final OceanRunner oceanRunner, final Class<?> klass) throws OceanModuleException {
+		boolean writeAuthorized = Boolean.getBoolean(oceanRunner.getAwareProperty("STATISTICS_AUTHORIZEDWRITE_PROPERTY", "true"));
+		if (writeAuthorized) {
+			statisticsDataPlug.storeLastTestStatus(actualResultsMap.values());
+		}
 	}
 
 	/*
@@ -145,6 +139,8 @@ public class StatisticsOceanModule extends OceanModule {
 		sResults.setRunDate(new Date());
 		sResults.setStatus(StatusTestResult.FAILED);
 		sResults.setThrowable(failure.getException());
+		sResults.setComments(failure.getMessage());
+		sResults.setEnvironement(this.environment);
 		sResults.setClassUnderTestName(failure.getDescription().getClassName());
 		sResults.setMethodUnderTestName(failure.getDescription().getMethodName());
 
@@ -169,6 +165,7 @@ public class StatisticsOceanModule extends OceanModule {
 		sResults.setStatus(StatusTestResult.IGNORE);
 		sResults.setClassUnderTestName(description.getClassName());
 		sResults.setMethodUnderTestName(description.getMethodName());
+		sResults.setEnvironement(this.environment);
 
 		actualResultsMap.put(description.getMethodName(), sResults);
 	}
@@ -190,6 +187,7 @@ public class StatisticsOceanModule extends OceanModule {
 		sResults.setStatus(StatusTestResult.ASSUMPTION_FAILED);
 		sResults.setThrowable(failure.getException());
 		sResults.setClassUnderTestName(failure.getDescription().getClassName());
+		sResults.setEnvironement(this.environment);
 		sResults.setMethodUnderTestName(failure.getDescription().getMethodName());
 
 		String statisticsMsg = processStatisticMessage(failure);
@@ -200,24 +198,39 @@ public class StatisticsOceanModule extends OceanModule {
 	}
 
 	/**
+	 * Build report for a given failure.
+	 * 
 	 * @param failure
 	 * @return
 	 */
 	private String processStatisticMessage(Failure failure) {
-		StatisticsResult lastRs = lastResultsMap.get(failure.getDescription().getMethodName());
-		String statisticsMsg;
-		if (lastRs == null) {
-			statisticsMsg = "This test has never been ran before";
-		} else {
-			StringBuilder strB = new StringBuilder("Ran with status: ").append(lastRs.getStatus().name()).append(", the ")
-					.append(SDF.format(lastRs.getRunDate()));
-			if (StatusTestResult.SUCCESS.equals(lastRs.getStatus()) == false) {
-				strB.append(" with the comments: ").append(lastRs.getComments());
+		List<StatisticsResult> statisticsResultList = statisticsDataPlug.loadTestStatus(failure.getDescription().getMethodName());
+
+		StringBuilder msgBuilder = new StringBuilder();
+		for (StatisticsResult statisticsResult : statisticsResultList) {
+
+			StatusTestResult lastStatusTestResult = StatusTestResult.SUCCESS;
+			String lastComments = "";
+
+			if (StatusTestResult.SUCCESS.equals(statisticsResult.getStatus())) {
+				String date = SDF.format(statisticsResult.getRunDate());
+				msgBuilder.append("Last success of ").append(failure.getDescription().getMethodName()).append(", the ").append(date);
+				break;
+			} else if (!lastStatusTestResult.equals(statisticsResult.getStatus())
+					|| !(lastComments.equals(Strings.nullToEmpty(statisticsResult.getComments())))) {
+				lastStatusTestResult = statisticsResult.getStatus();
+				lastComments = Strings.nullToEmpty(statisticsResult.getComments());
+
+				String date = SDF.format(statisticsResult.getRunDate());
+
+				msgBuilder.append("Last ").append(statisticsResult.getStatus().name()).append(" of ").append(failure.getDescription().getMethodName())
+						.append(", the ").append(date).append(", with comments: ").append(statisticsResult.getComments());
+
 			}
-			strB.append(".");
-			statisticsMsg = strB.toString();
+			msgBuilder.append(System.lineSeparator());
 		}
-		return statisticsMsg;
+
+		return msgBuilder.toString();
 	}
 
 	@Override
@@ -231,28 +244,19 @@ public class StatisticsOceanModule extends OceanModule {
 			sResults.setStatus(StatusTestResult.FAILED);
 			sResults.setClassUnderTestName(description.getClassName());
 			sResults.setMethodUnderTestName(description.getMethodName());
+			sResults.setEnvironement(this.environment);
 
 			actualResultsMap.put(description.getMethodName(), sResults);
 		}
 	}
 
 	/**
-	 * @param klass
-	 * @return the list of the name of the method used for the test
+	 * Modify a throwable to include a message.
+	 * 
+	 * @param throwable
+	 * @param message
+	 * @return
 	 */
-	private List<String> loadTestsToSearch(final Class<?> klass) {
-		List<String> methodsList = new ArrayList<String>();
-
-		Method[] methodArray = klass.getMethods();
-		for (Method method : methodArray) {
-			if ((method != null) && (method.getAnnotation(Test.class) != null)) {
-				methodsList.add(method.getName());
-			}
-		}
-
-		return methodsList;
-	}
-
 	private Throwable enhanceThrowable(final Throwable throwable, String message) {
 		try {
 			Field field = Throwable.class.getDeclaredField("detailMessage");
