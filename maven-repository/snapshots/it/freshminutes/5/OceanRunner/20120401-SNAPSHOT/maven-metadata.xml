@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata modelVersion="1.1.0">
+  <groupId>it.freshminutes.5</groupId>
+  <artifactId>OceanRunner</artifactId>
+  <version>20120401-SNAPSHOT</version>
+  <versioning>
+    <snapshot>
+      <timestamp>20120331.230851</timestamp>
+      <buildNumber>1</buildNumber>
+    </snapshot>
+    <lastUpdated>20120331230851</lastUpdated>
+    <snapshotVersions>
+      <snapshotVersion>
+        <extension>jar</extension>
+        <value>20120401-20120331.230851-1</value>
+        <updated>20120331230851</updated>
+      </snapshotVersion>
+      <snapshotVersion>
+        <extension>pom</extension>
+        <value>20120401-20120331.230851-1</value>
+        <updated>20120331230851</updated>
+      </snapshotVersion>
+      <snapshotVersion>
+        <classifier>sources</classifier>
+        <extension>jar</extension>
+        <value>20120401-20120331.230851-1</value>
+        <updated>20120331230851</updated>
+      </snapshotVersion>
+      <snapshotVersion>
+        <classifier>with-dependancies</classifier>
+        <extension>jar</extension>
+        <value>20120401-20120331.230851-1</value>
+        <updated>20120331230851</updated>
+      </snapshotVersion>
+    </snapshotVersions>
+  </versioning>
+</metadata>

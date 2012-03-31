@@ -9,7 +9,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>it.freshminutes.5</groupId>
-	<version>master-SNAPSHOT</version>
+	<version>20120401-SNAPSHOT</version>
 	<artifactId>OceanRunner</artifactId>
 	<name>OceanRunner</name>
 	<description>OceanRunner - Make easily JUnit Runners.</description>
@@ -34,6 +34,20 @@
 					<source>${java.version}</source>
 					<target>${java.version}</target>
 				</configuration>
+			</plugin>
+			<!-- Source code -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>2.1.2</version>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 			<!--Maven Assembly -->
 			<plugin>
@@ -68,8 +82,6 @@
 					</execution>
 				</executions>
 			</plugin>
-
-
 		</plugins>
 	</build>
 
@@ -108,7 +120,17 @@
 
 	</dependencies>
 
-
+	<!-- Maven Repo of OceanRunner: where to retrieve that tool -->
+	<distributionManagement>
+		<repository>
+			<id>repo</id>
+			<url>https://github.com/evialle/OceanRunner/maven/releases</url>
+		</repository>
+		<snapshotRepository>
+			<id>snapshot-repo</id>
+			<url>https://github.com/evialle/OceanRunner/maven/snapshots</url>
+		</snapshotRepository>
+	</distributionManagement>
 
 	<scm>
 		<url>git@github.com:evialle/OceanRunner.git</url>
