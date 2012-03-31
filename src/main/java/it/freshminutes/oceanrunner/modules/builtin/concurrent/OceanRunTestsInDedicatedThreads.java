@@ -34,7 +34,9 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
 public @interface OceanRunTestsInDedicatedThreads {
+	/** Number of threads to use. */
 	int threads() default -1;
 
+	/** Is multi threading activated for this class? */
 	boolean value() default true;
 }

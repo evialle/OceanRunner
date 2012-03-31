@@ -16,6 +16,7 @@
 package it.freshminutes.oceanrunner.modules.builtin;
 
 import it.freshminutes.oceanrunner.OceanRunner;
+import it.freshminutes.oceanrunner.exceptions.OceanModuleException;
 import it.freshminutes.oceanrunner.modules.builtin.concurrent.OceanRunConcurrencyForbidden;
 import it.freshminutes.oceanrunner.modules.builtin.concurrent.OceanRunTestsInDedicatedThreads;
 import it.freshminutes.oceanrunner.modules.engine.OceanModule;
@@ -28,8 +29,6 @@ import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import org.junit.Test;
 import org.junit.runners.model.FrameworkMethod;
@@ -42,26 +41,22 @@ import org.junit.runners.model.FrameworkMethod;
  */
 public class ConcurrentOceanModule extends OceanModule {
 
-	static final class NamedThreadFactory implements ThreadFactory {
-		static final AtomicInteger poolNumber = new AtomicInteger(1);
-		final AtomicInteger threadNumber = new AtomicInteger(1);
-		final ThreadGroup group;
+	private static Object contentOfThreadLocal;
 
-		NamedThreadFactory(String poolName) {
-			group = new ThreadGroup(poolName + "-" + poolNumber.getAndIncrement());
-		}
-
-		@Override
-		public Thread newThread(Runnable r) {
-			return new Thread(group, r, group.getName() + "-thread-" + threadNumber.getAndIncrement(), 0);
-		}
-	}
 
 	@Override
 	public void doBeforeAllTestedMethods(final OceanRunner oceanRunner, final Class<?> klass) {
 
 		// Do we authorize the fact to be tested in dedicated threads?
-		if ((klass.getAnnotation(OceanRunTestsInDedicatedThreads.class) != null) && (klass.getAnnotation(OceanRunTestsInDedicatedThreads.class).value())) {
+		OceanRunTestsInDedicatedThreads oceanRunTestInDedicateThreadsAnnotation = klass.getAnnotation(OceanRunTestsInDedicatedThreads.class);
+		if ((oceanRunTestInDedicateThreadsAnnotation != null) && (oceanRunTestInDedicateThreadsAnnotation.value())) {
+
+			// ThreadLocal as static
+			if (oceanRunTestInDedicateThreadsAnnotation.copyThreadLocalCreatedInBeforeAll()) {
+
+			}
+
+			// Set scheduler
 			oceanRunner.setScheduler(new OceanRunnerScheduler() {
 
 				private ExecutorService executorConcurrentService;
@@ -70,8 +65,9 @@ public class ConcurrentOceanModule extends OceanModule {
 				private CompletionService<Void> completionConcurrentService;
 				private CompletionService<Void> completionMonoThreadService;
 
-				private Queue<Future<Void>> multithreadTasks = new LinkedList<Future<Void>>();
-				private Queue<Future<Void>> monothreadTasks = new LinkedList<Future<Void>>();
+				private final Queue<Future<Void>> multithreadTasks = new LinkedList<Future<Void>>();
+				private final Queue<Future<Void>> monothreadTasks = new LinkedList<Future<Void>>();
+
 
 				@Override
 				public void schedule(final Runnable childStatement, final FrameworkMethod method) {
@@ -165,6 +161,10 @@ public class ConcurrentOceanModule extends OceanModule {
 			});
 		}
 
+	}
+
+	@Override
+	public void doBeforeEachTestedMethod(final OceanRunner oceanRunner) throws OceanModuleException {
 	}
 
 }

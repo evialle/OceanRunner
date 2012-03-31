@@ -54,7 +54,6 @@ public class StatisticsOceanModule extends OceanModule {
 	 */
 	public static final String STATISTICS_AUTHORIZEDWRITE_PROPERTY = "statistics.authorizedwrite";
 
-
 	/** SimpleDateFormat static. */
 	private static final SimpleDateFormat SDF = new SimpleDateFormat("dd/MM/YYYY HH:mm");
 
@@ -279,16 +278,12 @@ public class StatisticsOceanModule extends OceanModule {
 			field.set(throwable, enhancedMessage);
 
 		} catch (NoSuchFieldException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (SecurityException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
