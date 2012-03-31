@@ -45,8 +45,13 @@ import com.google.common.collect.Maps;
  */
 public class StatisticsOceanModule extends OceanModule {
 
+	/** System property name defining the statistics environement. */
 	public static final String STATISTICS_ENVIRONEMENT_PROPERTY = "statistics.environement";
 
+	/**
+	 * System property name defining if the user may write statistics or if it
+	 * only use it.
+	 */
 	public static final String STATISTICS_AUTHORIZEDWRITE_PROPERTY = "statistics.authorizedwrite";
 
 
@@ -89,6 +94,7 @@ public class StatisticsOceanModule extends OceanModule {
 			statisticsDataPlug = (StatisticsDataPlug) constructor.newInstance(oceanRunner);
 
 			this.actualResultsMap = Maps.newHashMap();
+			this.environment = oceanRunner.getAwareProperty(STATISTICS_ENVIRONEMENT_PROPERTY);
 
 		} catch (ClassNotFoundException e) {
 			throw new OceanModuleException(
@@ -118,7 +124,7 @@ public class StatisticsOceanModule extends OceanModule {
 	 */
 	@Override
 	public void doAfterAllTestedMethods(final OceanRunner oceanRunner, final Class<?> klass) throws OceanModuleException {
-		boolean writeAuthorized = Boolean.getBoolean(oceanRunner.getAwareProperty("STATISTICS_AUTHORIZEDWRITE_PROPERTY", "true"));
+		boolean writeAuthorized = Boolean.parseBoolean(oceanRunner.getAwareProperty(STATISTICS_AUTHORIZEDWRITE_PROPERTY, "true"));
 		if (writeAuthorized) {
 			statisticsDataPlug.storeLastTestStatus(actualResultsMap.values());
 		}
