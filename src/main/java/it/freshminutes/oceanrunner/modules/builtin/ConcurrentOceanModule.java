@@ -41,8 +41,6 @@ import org.junit.runners.model.FrameworkMethod;
  */
 public class ConcurrentOceanModule extends OceanModule {
 
-	private static Object contentOfThreadLocal;
-
 
 	@Override
 	public void doBeforeAllTestedMethods(final OceanRunner oceanRunner, final Class<?> klass) {
@@ -50,11 +48,6 @@ public class ConcurrentOceanModule extends OceanModule {
 		// Do we authorize the fact to be tested in dedicated threads?
 		OceanRunTestsInDedicatedThreads oceanRunTestInDedicateThreadsAnnotation = klass.getAnnotation(OceanRunTestsInDedicatedThreads.class);
 		if ((oceanRunTestInDedicateThreadsAnnotation != null) && (oceanRunTestInDedicateThreadsAnnotation.value())) {
-
-			// ThreadLocal as static
-			if (oceanRunTestInDedicateThreadsAnnotation.copyThreadLocalCreatedInBeforeAll()) {
-
-			}
 
 			// Set scheduler
 			oceanRunner.setScheduler(new OceanRunnerScheduler() {

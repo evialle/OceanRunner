@@ -21,11 +21,13 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Define the settings for parallelized tests. Use it with @ConcurrentOceanModule
+ * Define the settings for parallelized tests. Use it with
+ * @ConcurrentOceanModule.
  * 
  * <ul>
  * <li>threads: number of threads to use (for methods not marked by
- * @OceanRunConcurrencyForbidden)</li>
+ * OceanRunConcurrencyForbidden). The number of threads is defined
+ * automatically, you do not need to use that value</li>
  * <li>value: enabling the parallelized tests</li>
  * </ul>
  * 
@@ -34,6 +36,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
 public @interface OceanRunTestsInDedicatedThreads {
+
 	/** Number of threads to use. */
 	int threads() default -1;
 
