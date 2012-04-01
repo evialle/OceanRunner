@@ -13,7 +13,10 @@ h2. Built in OceanModules:
 * *@CategoryOceanModule@*: include or exclude tests based not only on annotations
 * *@ConcurrentOceanModule@*: run simultaneously different tests
 * *@JUnit3AdapterOceanModule@*: run your JUnit3 tests
-* *@StatisticsOceanModule@*: process statistics about last success/failure of your test _(not fully implemented)_ 
+* *@StatisticsOceanModule@*: process statistics about last success/failure of your test
+* *@OpenEjb30OceanModule@*: Test easily EJB 3.0
+* *@MockitoOceanModule@*: Easily use Mockito with your tests
+
 
 h2. Creating and using your own *OceanModule*
 
