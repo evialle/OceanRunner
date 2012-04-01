@@ -38,6 +38,11 @@ public class OpenEjb30OceanModule extends OceanModule {
 
 	private static final ThreadLocal<Context> jeeContextThreadLocal = new ThreadLocal<Context>();
 
+	@Override
+	public void doBeforeAllTestedMethods(final OceanRunner oceanRunner, final Class<?> klass) throws OceanModuleException {
+
+	}
+
 	/**
 	 * @throws OceanModuleException
 	 */
@@ -83,6 +88,19 @@ public class OpenEjb30OceanModule extends OceanModule {
 
 	@Override
 	public void doAfterEachTestedMethod(final OceanRunner oceanRunner, final Description description) throws OceanModuleException {
+		OpenEjbResetAfterEachTest annotation = oceanRunner.getClassUnderTest().getAnnotation(OpenEjbResetAfterEachTest.class);
+		if (annotation != null) {
+			if (annotation.value()) {
+				Context ctx = jeeContextThreadLocal.get();
+				try {
+					ctx.close();
+					ctx = null;
+				} catch (NamingException e) {
+					// We don't care
+				}
+				jeeContextThreadLocal.set(null);
+			}
+		}
 	}
 
 }
