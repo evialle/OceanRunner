@@ -13,22 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * 
- */
-package it.freshminutes.oceanrunner.modules.builtin;
+package it.freshminutes.oceanrunner.modules.builtin.ejb;
 
-import javax.ejb.Stateless;
+public interface IHelloWorld {
 
-/**
- * @author Eric Vialle
- *
- */
-@Stateless
-public class HelloWorldEjb {
-
-	public int returnOne() {
-		return 1;
-	}
-
+	public int returnOne();
 }

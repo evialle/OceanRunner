@@ -17,29 +17,28 @@ package it.freshminutes.oceanrunner.modules.builtin.ejb;
 
 import it.freshminutes.oceanrunner.OceanRunner;
 import it.freshminutes.oceanrunner.annotations.OceanModulesToUse;
-import it.freshminutes.oceanrunner.modules.builtin.HelloWorldEjb;
+import it.freshminutes.oceanrunner.exceptions.OceanModuleException;
 
-import javax.annotation.ManagedBean;
-import javax.ejb.EJB;
+import javax.naming.NamingException;
 
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(OceanRunner.class)
-@OceanModulesToUse(OpenEjbOceanModule.class)
-@ManagedBean
-public class TestOpenEjbOceanModule {
+@OceanModulesToUse(OpenEjb30OceanModule.class)
+public class TestOpenEjb30OceanModule {
 	
-	@EJB
-	HelloWorldEjb helloWorldEjb;
+	IHelloWorld helloWorldEjb;
 	
-
 	@Test
-	public void testBasic() {
+	public void testBasic() throws NamingException, OceanModuleException {
+		helloWorldEjb = (IHelloWorld) OpenEjb30OceanModule.lookupEJB(HelloWorldEjb30.class);
+
 		Assert.assertTrue(helloWorldEjb != null);
 
 		int returnValue = helloWorldEjb.returnOne();
 		Assert.assertEquals(1, returnValue);
 	}
+
 }

@@ -91,7 +91,8 @@
 		<dependency>
 			<groupId>org.apache.openejb</groupId>
 			<artifactId>openejb-core</artifactId>
-			<version>4.0.0-beta-1</version>
+			<!-- JavaEE 5 -->
+			<version>3.0.4</version>
 		</dependency>
 
 		<!-- JUnit 4 -->

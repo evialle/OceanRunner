@@ -32,9 +32,17 @@ import org.mockito.MockitoAnnotations;
  */
 public class MockitoOceanModule extends OceanModule {
 
+	private boolean firstRun = true;
+
 	@Override
-	public void doBeforeAllTestedMethods(final OceanRunner oceanRunner, final Class<?> klass) throws OceanModuleException {
-		MockitoAnnotations.initMocks(oceanRunner.getTarget());
+	public void doBeforeEachTestedMethod(final OceanRunner oceanRunner) throws OceanModuleException {
+		synchronized (this) {
+			if (this.firstRun) {
+				this.firstRun = false;
+				MockitoAnnotations.initMocks(oceanRunner.getTarget());
+			}
+		}
+
 	}
 
 	@Override
