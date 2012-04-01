@@ -70,10 +70,10 @@ public class OceanRunner extends BlockJUnit4ClassRunner {
 	/** Properties. */
 	private static Properties properties = null;
 
-	private ThreadLocal<Object> targetThreadLocal = new ThreadLocal<Object>();
+	private final ThreadLocal<Object> targetThreadLocal = new ThreadLocal<Object>();
 
 	/** List of OceanModules. */
-	private List<OceanModule> oceanModulesList = new ArrayList<OceanModule>();
+	private final List<OceanModule> oceanModulesList = new ArrayList<OceanModule>();
 
 	/** Class actualy tested. */
 	private Class<?> classUnderTest = null;
@@ -338,6 +338,7 @@ public class OceanRunner extends BlockJUnit4ClassRunner {
 	}
 
 
+	@Override
 	public void run(final RunNotifier notifier) {
 		notifier.addFirstListener(new OceanListener());
 		super.run(notifier);
@@ -389,6 +390,7 @@ public class OceanRunner extends BlockJUnit4ClassRunner {
 	 * on each object returned by {@link #getChildren()} (subject to any imposed
 	 * filter and sort)
 	 */
+	@Override
 	protected Statement childrenInvoker(final RunNotifier notifier) {
 		return new Statement() {
 			@Override
@@ -407,6 +409,7 @@ public class OceanRunner extends BlockJUnit4ClassRunner {
 		for (final FrameworkMethod each : getFilteredChildren())
 
 			fScheduler.schedule(new Runnable() {
+				@Override
 				public void run() {
 					OceanRunner.this.runChild(each, notifier);
 				}
@@ -441,6 +444,7 @@ public class OceanRunner extends BlockJUnit4ClassRunner {
 		 * @param description
 		 *            describes the tests to be run
 		 */
+		@Override
 		public void testRunStarted(final Description description) throws Exception {
 			initializeAllOceanModules();
 		}
@@ -452,6 +456,7 @@ public class OceanRunner extends BlockJUnit4ClassRunner {
 		 *            the summary of the test run, including all the tests that
 		 *            failed
 		 */
+		@Override
 		public void testRunFinished(final Result result) throws Exception {
 			endAllOceanModules();
 		}
@@ -463,6 +468,7 @@ public class OceanRunner extends BlockJUnit4ClassRunner {
 		 *            the description of the test that is about to be run
 		 *            (generally a class and method name)
 		 */
+		@Override
 		public void testStarted(final Description description) throws Exception {
 			doBeforeEachTestTestedMethodForAllModules();
 		}
@@ -474,6 +480,7 @@ public class OceanRunner extends BlockJUnit4ClassRunner {
 		 * @param description
 		 *            the description of the test that just ran
 		 */
+		@Override
 		public void testFinished(final Description description) throws Exception {
 			doAfterEachTestTestedMethodForAllModules(description);
 		}
@@ -485,6 +492,7 @@ public class OceanRunner extends BlockJUnit4ClassRunner {
 		 *            describes the test that failed and the exception that was
 		 *            thrown
 		 */
+		@Override
 		public void testFailure(final Failure failure) throws Exception {
 			doAfterEachFailureForAllModules(failure, getTarget());
 		}
@@ -497,6 +505,7 @@ public class OceanRunner extends BlockJUnit4ClassRunner {
 		 *            describes the test that failed and the
 		 *            {@link AssumptionViolatedException} that was thrown
 		 */
+		@Override
 		public void testAssumptionFailure(final Failure failure) {
 			try {
 				doAfterEachAssumptionFailureForAllModules(failure);
@@ -512,10 +521,12 @@ public class OceanRunner extends BlockJUnit4ClassRunner {
 		 * @param description
 		 *            describes the test that will not be run
 		 */
+		@Override
 		public void testIgnored(final Description description) throws Exception {
 			doAfterEachIgnoreForAllModules(description, getTarget());
 		}
 
 	}
+
 
 }
