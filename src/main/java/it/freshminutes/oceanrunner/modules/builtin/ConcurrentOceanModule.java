@@ -16,7 +16,6 @@
 package it.freshminutes.oceanrunner.modules.builtin;
 
 import it.freshminutes.oceanrunner.OceanRunner;
-import it.freshminutes.oceanrunner.exceptions.OceanModuleException;
 import it.freshminutes.oceanrunner.modules.builtin.concurrent.OceanRunConcurrencyForbidden;
 import it.freshminutes.oceanrunner.modules.builtin.concurrent.OceanRunTestsInDedicatedThreads;
 import it.freshminutes.oceanrunner.modules.engine.OceanModule;
@@ -156,8 +155,5 @@ public class ConcurrentOceanModule extends OceanModule {
 
 	}
 
-	@Override
-	public void doBeforeEachTestedMethod(final OceanRunner oceanRunner) throws OceanModuleException {
-	}
 
 }

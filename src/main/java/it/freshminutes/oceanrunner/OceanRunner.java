@@ -33,8 +33,9 @@ import java.util.Properties;
 
 import org.junit.Ignore;
 import org.junit.internal.AssumptionViolatedException;
-import org.junit.internal.runners.model.EachTestNotifier;
 import org.junit.internal.runners.statements.InvokeMethod;
+import org.junit.internal.runners.statements.RunAfters;
+import org.junit.internal.runners.statements.RunBefores;
 import org.junit.runner.Description;
 import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
@@ -47,6 +48,7 @@ import org.junit.runners.model.Statement;
 
 /**
  * OceanRunner is the JUnit Runner to use, to use OceanModule. Add
+ * 
  * @RunWith(OceanRunner.class) to your test class.
  * 
  * @author Eric Vialle
@@ -70,6 +72,7 @@ public class OceanRunner extends BlockJUnit4ClassRunner {
 	/** Properties. */
 	private static Properties properties = null;
 
+	/** TargetClass. */
 	private final ThreadLocal<Object> targetThreadLocal = new ThreadLocal<Object>();
 
 	/** List of OceanModules. */
@@ -123,35 +126,28 @@ public class OceanRunner extends BlockJUnit4ClassRunner {
 			notifier.fireTestIgnored(description);
 		} else {
 			Statement stmt = methodBlock(method);
-			if (stmt instanceof InvokeMethod) {
-				try {
+			try {
+				Field fTargetField = null;
+				if (stmt instanceof InvokeMethod) {
+					fTargetField = InvokeMethod.class.getDeclaredField("fTarget");
+				} else if (stmt instanceof RunAfters) {
+					fTargetField = RunAfters.class.getDeclaredField("fTarget");
+				} else if (stmt instanceof RunBefores) {
+					fTargetField = RunBefores.class.getDeclaredField("fTarget");
+				}
+				if (fTargetField != null) {
 					// Get the target
-					Field fTargetField = InvokeMethod.class.getDeclaredField("fTarget");
 					fTargetField.setAccessible(true);
 					Object target = fTargetField.get(stmt);
 					this.setTarget(target);
 
-					// Run Statement
-					EachTestNotifier eachNotifier = new EachTestNotifier(notifier, description);
-					eachNotifier.fireTestStarted();
-					try {
-						stmt.evaluate();
-					} catch (AssumptionViolatedException e) {
-						eachNotifier.addFailedAssumption(e);
-					} catch (Throwable e) {
-						eachNotifier.addFailure(e);
-					} finally {
-						eachNotifier.fireTestFinished();
-					}
-
-				} catch (Exception e) {
-					e.printStackTrace();
 				}
-
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
+			runLeaf(stmt, description, notifier);
 		}
 	}
-
 
 	/**
 	 * 
@@ -254,7 +250,6 @@ public class OceanRunner extends BlockJUnit4ClassRunner {
 		return System.getProperty(OCEAN_RUNNER_PROPERTIES, DEFAULT_PROPERTIES_PATH);
 	}
 
-
 	/**
 	 * Initialize all OceanModules.
 	 * 
@@ -288,7 +283,6 @@ public class OceanRunner extends BlockJUnit4ClassRunner {
 
 	}
 
-
 	@SuppressWarnings("unchecked")
 	private List<Class<? extends OceanModule>> listOceanModuleFromProperties() throws IOException, NoOceanModuleException, OceanModuleException {
 
@@ -311,7 +305,6 @@ public class OceanRunner extends BlockJUnit4ClassRunner {
 		return oceanModulesClassList;
 	}
 
-
 	private List<Class<? extends OceanModule>> listOceanModulesFromAnnotation() {
 		List<Class<? extends OceanModule>> oceanModulesClassList;
 		if (this.classUnderTest.getAnnotation(OceanModulesToUse.class).value() == null) {
@@ -323,13 +316,11 @@ public class OceanRunner extends BlockJUnit4ClassRunner {
 		return oceanModulesClassList;
 	}
 
-
 	private void initializeAllOceanModules() throws OceanModuleException {
 		for (OceanModule oceanModule : this.oceanModulesList) {
 			oceanModule.doBeforeAllTestedMethods(this, this.classUnderTest);
 		}
 	}
-
 
 	private void endAllOceanModules() throws OceanModuleException {
 		for (OceanModule oceanModule : this.oceanModulesList) {
@@ -337,20 +328,17 @@ public class OceanRunner extends BlockJUnit4ClassRunner {
 		}
 	}
 
-
 	@Override
 	public void run(final RunNotifier notifier) {
 		notifier.addFirstListener(new OceanListener());
 		super.run(notifier);
 	}
 
-
 	private void doBeforeEachTestTestedMethodForAllModules() throws OceanModuleException {
 		for (OceanModule oceanModule : this.oceanModulesList) {
 			oceanModule.doBeforeEachTestedMethod(this);
 		}
 	}
-
 
 	private void doAfterEachTestTestedMethodForAllModules(final Description description) throws OceanModuleException {
 
@@ -361,8 +349,6 @@ public class OceanRunner extends BlockJUnit4ClassRunner {
 		// Remove the target
 		this.setTarget(null);
 	}
-
-
 
 	private void doAfterEachFailureForAllModules(final Failure failure, Object target) throws OceanModuleException {
 		for (OceanModule oceanModule : this.oceanModulesList) {
@@ -376,14 +362,12 @@ public class OceanRunner extends BlockJUnit4ClassRunner {
 		}
 	}
 
-
 	private void doAfterEachIgnoreForAllModules(final Description description, final Object object) throws OceanModuleException {
 		for (OceanModule oceanModule : this.oceanModulesList) {
 			oceanModule.doAfterEachIgnoredMethod(this, description);
 		}
 
 	}
-
 
 	/**
 	 * Returns a {@link Statement}: Call {@link #runChild(Object, RunNotifier)}
@@ -416,7 +400,6 @@ public class OceanRunner extends BlockJUnit4ClassRunner {
 			}, each);
 		fScheduler.finished();
 	}
-	
 
 	private List<FrameworkMethod> getFilteredChildren() {
 		if (fFilteredChildren == null)
@@ -527,6 +510,5 @@ public class OceanRunner extends BlockJUnit4ClassRunner {
 		}
 
 	}
-
 
 }
