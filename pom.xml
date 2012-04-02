@@ -9,7 +9,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>it.freshminutes.5</groupId>
-	<version>20120401-SNAPSHOT</version>
+	<version>20120402-SNAPSHOT</version>
 	<artifactId>OceanRunner</artifactId>
 	<name>OceanRunner</name>
 	<description>OceanRunner - Make easily JUnit Runners.</description>
