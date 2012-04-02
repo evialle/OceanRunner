@@ -1,3 +1,3 @@
 #!/bin/sh
 
-mvn -DskipTests=true -DaltDeploymentRepository=snapshot-repo::default::file:maven-repository/snapshots clean deploy
+mvn -DskipTests=true -DaltDeploymentRepository=snapshot-repo::default::file:snapshots clean deploy

@@ -139,11 +139,11 @@
 	<distributionManagement>
 		<repository>
 			<id>repo</id>
-			<url>https://github.com/evialle/OceanRunner/maven/releases</url>
+			<url>https://github.com/evialle/OceanRunner/releases</url>
 		</repository>
 		<snapshotRepository>
 			<id>snapshot-repo</id>
-			<url>https://github.com/evialle/OceanRunner/maven/snapshots</url>
+			<url>https://github.com/evialle/OceanRunner/snapshots</url>
 		</snapshotRepository>
 	</distributionManagement>
 
