@@ -8,8 +8,8 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>it.freshminutes.5</groupId>
-	<version>20120402-SNAPSHOT</version>
+	<groupId>it.freshminutes</groupId>
+	<version>20120403-SNAPSHOT</version>
 	<artifactId>OceanRunner</artifactId>
 	<name>OceanRunner</name>
 	<description>OceanRunner - Make easily JUnit Runners.</description>
@@ -49,41 +49,56 @@
 					</execution>
 				</executions>
 			</plugin>
-			<!--Maven Assembly -->
-			<plugin>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<version>2.3</version>
-				<dependencies>
-					<!-- JUnit -->
-					<dependency>
-						<groupId>junit</groupId>
-						<artifactId>junit</artifactId>
-						<version>${junit.version}</version>
-					</dependency>
-					<!-- Guava -->
-					<dependency>
-						<groupId>com.google.guava</groupId>
-						<artifactId>guava</artifactId>
-						<version>${guava.version}</version>
-					</dependency>
-				</dependencies>
-				<executions>
-					<execution>
-						<id>make-assembly</id>
-						<phase>package</phase>
-						<goals>
-							<goal>single</goal>
-						</goals>
-						<configuration>
-							<descriptors>
-								<descriptor>src/assemble/with-dependancies.xml</descriptor>
-							</descriptors>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
+
 		</plugins>
 	</build>
+
+
+	<!-- Profile to create a jar with all dependencies -->
+	<profiles>
+		<profile>
+			<id>dependenciesIntegration</id>
+			<build>
+				<plugins>
+					<!--Maven Assembly -->
+					<plugin>
+						<artifactId>maven-assembly-plugin</artifactId>
+						<version>2.3</version>
+						<dependencies>
+							<!-- JUnit -->
+							<dependency>
+								<groupId>junit</groupId>
+								<artifactId>junit</artifactId>
+								<version>${junit.version}</version>
+							</dependency>
+							<!-- Guava -->
+							<dependency>
+								<groupId>com.google.guava</groupId>
+								<artifactId>guava</artifactId>
+								<version>${guava.version}</version>
+							</dependency>
+						</dependencies>
+						<executions>
+							<execution>
+								<id>make-assembly</id>
+								<phase>package</phase>
+								<goals>
+									<goal>single</goal>
+								</goals>
+								<configuration>
+									<descriptors>
+										<descriptor>src/assemble/with-dependancies.xml</descriptor>
+									</descriptors>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+
+		</profile>
+
+	</profiles>
 
 
 	<dependencies>
