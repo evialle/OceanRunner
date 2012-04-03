@@ -87,13 +87,6 @@
 
 
 	<dependencies>
-		<!-- OpenEJB -->
-		<dependency>
-			<groupId>org.apache.openejb</groupId>
-			<artifactId>openejb-core</artifactId>
-			<!-- JavaEE 5 -->
-			<version>3.0.4</version>
-		</dependency>
 
 		<!-- JUnit 4 -->
 		<dependency>
@@ -106,12 +99,6 @@
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
 			<version>${guava.version}</version>
-		</dependency>
-		<!-- Mockito -->
-		<dependency>
-			<groupId>org.mockito</groupId>
-			<artifactId>mockito-core</artifactId>
-			<version>1.9.0</version>
 		</dependency>
 
 		<!-- DB Persistence for Statistics. -->
@@ -131,6 +118,7 @@
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
 			<version>1.1.115</version>
+			<scope>test</scope>
 		</dependency>
 
 	</dependencies>
@@ -138,12 +126,12 @@
 	<!-- Maven Repo of OceanRunner: where to retrieve that tool -->
 	<distributionManagement>
 		<repository>
-			<id>repo</id>
-			<url>https://github.com/evialle/OceanRunner/releases</url>
+			<id>release-repo</id>
+			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
 		</repository>
 		<snapshotRepository>
 			<id>snapshot-repo</id>
-			<url>https://github.com/evialle/OceanRunner/snapshots</url>
+			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
 		</snapshotRepository>
 	</distributionManagement>
 
