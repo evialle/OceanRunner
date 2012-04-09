@@ -1,28 +1,114 @@
-<!-- Copyright 2012 Eric P. Vialle Licensed under the Apache License, Version 
-	2.0 (the "License"); you may not use this file except in compliance with 
-	the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 
-	Unless required by applicable law or agreed to in writing, software distributed 
-	under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES 
-	OR CONDITIONS OF ANY KIND, either express or implied. See the License for 
-	the specific language governing permissions and limitations under the License. -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>it.freshminutes</groupId>
-	<version>20120403-SNAPSHOT</version>
-	<artifactId>OceanRunner</artifactId>
+	<version>20120409-SNAPSHOT</version>
+	<packaging>pom</packaging>
+	<artifactId>oceanrunner</artifactId>
 	<name>OceanRunner</name>
 	<description>OceanRunner - Make easily JUnit Runners.</description>
 
 	<properties>
+		<java.version>1.6</java.version>
+		<java.source.version>1.6</java.source.version>
+		<java.target.version>1.6</java.target.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<downloadSources>true</downloadSources>
 		<downloadJavadocs>true</downloadJavadocs>
-		<java.version>1.6</java.version>
 		<ebean.version>2.7.4</ebean.version>
 		<junit.version>4.10</junit.version>
 		<guava.version>11.0.1</guava.version>
+		<openejb.version>3.0.4</openejb.version>
+		<mockito.version>1.9.0</mockito.version>
 	</properties>
+
+
+	<modules>
+		<module>oceanrunner-core</module>
+		<module>oceanrunner-categories</module>
+		<module>oceanrunner-concurrent</module>
+		<module>oceanrunner-junit3</module>
+		<module>oceanrunner-mockito</module>
+		<module>oceanrunner-openejb30</module>
+		<module>oceanrunner-statistics</module>
+	</modules>
+
+
+
+	<dependencyManagement>
+		<dependencies>
+
+			<!-- OceanRunner Cores -->
+			<dependency>
+				<groupId>it.freshminutes</groupId>
+				<artifactId>oceanrunner-core</artifactId>
+				<version>${version}</version>
+
+			</dependency>
+
+			<!-- JUnit 4 -->
+			<dependency>
+				<groupId>junit</groupId>
+				<artifactId>junit</artifactId>
+				<version>${junit.version}</version>
+			</dependency>
+
+			<!-- Guava -->
+			<dependency>
+				<groupId>com.google.guava</groupId>
+				<artifactId>guava</artifactId>
+				<version>${guava.version}</version>
+			</dependency>
+
+			<!-- DB Persistence for Statistics. -->
+			<dependency>
+				<groupId>javax.persistence</groupId>
+				<artifactId>persistence-api</artifactId>
+				<version>1.0</version>
+			</dependency>
+			<dependency>
+				<groupId>org.avaje</groupId>
+				<artifactId>ebean</artifactId>
+				<version>${ebean.version}</version>
+			</dependency>
+
+			<!-- OceanRunner Core -->
+			<dependency>
+				<groupId>it.freshminutes</groupId>
+				<version>${oceanrunner.version}</version>
+				<artifactId>OceanRunner</artifactId>
+			</dependency>
+
+			<!-- Mockito -->
+			<dependency>
+				<groupId>org.mockito</groupId>
+				<artifactId>mockito-core</artifactId>
+				<version>${mockito.version}</version>
+			</dependency>
+
+			<!-- OpenEJB -->
+			<dependency>
+				<groupId>org.apache.openejb</groupId>
+				<artifactId>openejb-core</artifactId>
+				<!-- JavaEE 5 -->
+				<version>${openejb.version}</version>
+			</dependency>
+
+
+			<!-- Test dependencies -->
+			<dependency>
+				<groupId>com.h2database</groupId>
+				<artifactId>h2</artifactId>
+				<version>1.1.115</version>
+				<scope>test</scope>
+			</dependency>
+
+
+		</dependencies>
+	</dependencyManagement>
+
+
 
 	<build>
 		<plugins>
@@ -39,7 +125,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-source-plugin</artifactId>
-				<version>2.1.2</version>
 				<executions>
 					<execution>
 						<phase>package</phase>
@@ -101,42 +186,7 @@
 	</profiles>
 
 
-	<dependencies>
 
-		<!-- JUnit 4 -->
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>${junit.version}</version>
-		</dependency>
-		<!-- Guava -->
-		<dependency>
-			<groupId>com.google.guava</groupId>
-			<artifactId>guava</artifactId>
-			<version>${guava.version}</version>
-		</dependency>
-
-		<!-- DB Persistence for Statistics. -->
-		<dependency>
-			<groupId>javax.persistence</groupId>
-			<artifactId>persistence-api</artifactId>
-			<version>1.0</version>
-		</dependency>
-		<dependency>
-			<groupId>org.avaje</groupId>
-			<artifactId>ebean</artifactId>
-			<version>${ebean.version}</version>
-		</dependency>
-
-		<!-- Test dependencies -->
-		<dependency>
-			<groupId>com.h2database</groupId>
-			<artifactId>h2</artifactId>
-			<version>1.1.115</version>
-			<scope>test</scope>
-		</dependency>
-
-	</dependencies>
 
 	<!-- Maven Repo of OceanRunner: where to retrieve that tool -->
 	<distributionManagement>
@@ -157,4 +207,5 @@
 		<url>https://github.com/evialle/OceanRunner/issues</url>
 	</issueManagement>
 	<url>https://github.com/evialle/OceanRunner</url>
+
 </project>

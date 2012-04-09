@@ -1,0 +1,7 @@
+# This is the list
+
+
+it.freshminutes.oceanrunner.tests.MyTest
+#it.freshminutes.oceanrunner.tests.OceanRunnerTest
+#testDoesntWork
+#it.freshminutes.oceanrunner.tests.TestDefaultModules
