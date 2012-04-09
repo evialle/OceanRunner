@@ -17,7 +17,7 @@ package it.freshminutes.oceanrunner.tests;
 import static org.junit.Assert.assertTrue;
 import it.freshminutes.oceanrunner.OceanRunner;
 import it.freshminutes.oceanrunner.annotations.OceanModulesToUse;
-import it.freshminutes.oceanrunner.modules.builtin.CategoryOceanModule;
+import it.freshminutes.oceanrunner.modules.categories.CategoryOceanModule;
 import it.freshminutes.oceanrunner.tests.categories.TestCategoryOceanModule;
 
 import java.util.Random;
