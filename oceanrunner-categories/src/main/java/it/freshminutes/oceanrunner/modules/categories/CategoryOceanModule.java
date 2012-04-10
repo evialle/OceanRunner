@@ -19,13 +19,17 @@ import it.freshminutes.oceanrunner.OceanRunner;
 import it.freshminutes.oceanrunner.exceptions.OceanModuleException;
 import it.freshminutes.oceanrunner.modules.engine.OceanModule;
 
-import org.junit.experimental.categories.Categories.CategoryFilter;
+import java.util.List;
+
 import org.junit.experimental.categories.Categories.ExcludeCategory;
 import org.junit.experimental.categories.Categories.IncludeCategory;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.Description;
+import org.junit.runner.manipulation.Filter;
 import org.junit.runner.manipulation.NoTestsRemainException;
 import org.junit.runners.model.InitializationError;
+
+import com.google.common.collect.Lists;
 
 /**
  * 
@@ -45,86 +49,111 @@ public class CategoryOceanModule extends OceanModule {
 	private final static String CATEGORY_EXCLUDED_PROPERTYKEY = "category.excluded";
 
 	@Override
-	public void doBeforeAllTestedMethods(OceanRunner oceanRunner, Class<?> klass) throws OceanModuleException {
-		
+	public void doBeforeAllTestedMethods(OceanRunner oceanRunner, Class<?> klass)
+			throws OceanModuleException {
+
 		try {
-			oceanRunner.filter(new CategoryFilter(getIncludedCategory(oceanRunner, klass), getExcludedCategory(oceanRunner, klass)));
+			List<Class<?>> includedCategory = getIncludedCategory(oceanRunner,
+					klass);
+			List<Class<?>> excludedCategory = getExcludedCategory(oceanRunner,
+					klass);
+			Filter filter = new MultipleCategoriesFilter(includedCategory,
+					excludedCategory);
+			oceanRunner.filter(filter);
 		} catch (NoTestsRemainException e) {
 			throw new OceanModuleException(e);
 
 		}
 		try {
-			assertNoCategorizedDescendentsOfUncategorizeableParents(oceanRunner.getDescription());
+			assertNoCategorizedDescendentsOfUncategorizeableParents(oceanRunner
+					.getDescription());
 		} catch (InitializationError e) {
 			throw new OceanModuleException(e);
 
 		}
 	}
 
-	private void assertNoCategorizedDescendentsOfUncategorizeableParents(Description description) throws InitializationError {
+	private void assertNoCategorizedDescendentsOfUncategorizeableParents(
+			final Description description) throws InitializationError {
 		if (!canHaveCategorizedChildren(description))
 			assertNoDescendantsHaveCategoryAnnotations(description);
 		for (Description each : description.getChildren())
 			assertNoCategorizedDescendentsOfUncategorizeableParents(each);
 	}
 
-	private void assertNoDescendantsHaveCategoryAnnotations(Description description) throws InitializationError {			
+	private void assertNoDescendantsHaveCategoryAnnotations(
+			final Description description) throws InitializationError {
 		for (Description each : description.getChildren()) {
 			if (each.getAnnotation(Category.class) != null)
-				throw new InitializationError("Category annotations on Parameterized classes are not supported on individual methods.");
+				throw new InitializationError(
+						"Category annotations on Parameterized classes are not supported on individual methods.");
 			assertNoDescendantsHaveCategoryAnnotations(each);
 		}
 	}
 
-	// If children have names like [0], our current magical category code can't determine their
+	// If children have names like [0], our current magical category code can't
+	// determine their
 	// parentage.
-	private static boolean canHaveCategorizedChildren(Description description) {
+	private static boolean canHaveCategorizedChildren(
+			final Description description) {
 		for (Description each : description.getChildren())
 			if (each.getTestClass() == null)
 				return false;
 		return true;
 	}
 
-	private Class<?> getIncludedCategory(final OceanRunner runner, final Class<?> klass) throws OceanModuleException {
-		IncludeCategory annotation= klass.getAnnotation(IncludeCategory.class);
+	private List<Class<?>> getIncludedCategory(final OceanRunner runner,
+			final Class<?> klass) throws OceanModuleException {
+		
+		IncludeCategory annotation = klass.getAnnotation(IncludeCategory.class);
+
+		List<Class<?>> includedCategoryList = Lists.newArrayList();
 
 		if (annotation == null) {
 			String strClass = (String) runner.getAwareProperty(CATEGORY_INCLUDED_PROPERTYKEY);
-			if (strClass == null || strClass.isEmpty()) {
-				return null;
-			} else {
+			if (strClass != null && !strClass.isEmpty()) {
 				try {
-					return Class.forName(strClass);
+					String[] classArray = strClass.trim().split(";");
+					for (String classForName : classArray) {
+						includedCategoryList.add(Class.forName(classForName));
+					}
 				} catch (ClassNotFoundException e) {
 					throw new OceanModuleException(e);
 				}
 			}
 		} else {
-			return annotation.value();
+			includedCategoryList.add(annotation.value());
 		}
+
+		return includedCategoryList;
 	}
 
-	private Class<?> getExcludedCategory(final OceanRunner runner, final Class<?> klass) throws OceanModuleException {
-		ExcludeCategory annotation= klass.getAnnotation(ExcludeCategory.class);
+	private List<Class<?>> getExcludedCategory(final OceanRunner runner,
+			final Class<?> klass) throws OceanModuleException {
+		
+		ExcludeCategory annotation = klass.getAnnotation(ExcludeCategory.class);
+
+		List<Class<?>> excludedCategoryList = Lists.newArrayList();
 
 		if (annotation == null) {
-			String strClass = (String) runner.getAwareProperty(CATEGORY_EXCLUDED_PROPERTYKEY);
-			if (strClass == null || strClass.isEmpty()) {
-				return null;
-			} else {
+			String strClass = (String) runner
+					.getAwareProperty(CATEGORY_EXCLUDED_PROPERTYKEY);
+			if (strClass != null && !strClass.isEmpty()) {
 				try {
-					return Class.forName(strClass);
+					String[] classArray = strClass.trim().split(";");
+					for (String classForName : classArray) {
+						excludedCategoryList.add(Class.forName(classForName));
+					}
 				} catch (ClassNotFoundException e) {
 					throw new OceanModuleException(e);
 
 				}
 			}
 		} else {
-			return annotation.value();
+			excludedCategoryList.add(annotation.value());
 		}
+
+		return excludedCategoryList;
 	}
 
-
-
-	
 }
