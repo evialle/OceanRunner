@@ -31,24 +31,46 @@ import com.avaje.ebean.config.ServerConfig;
 public class StatisticsEbeanPlug extends StatisticsDataPlug {
 
 
+	/** Property key defining the maximum statistics to analyse for a method. */
+	private static final String STATISTICS_MAX_RUN_TO_STUDY_PROPERTYKEY = "statistics.maxRunToStudy";
+	
 	private static final int MAX_RUN_TO_STUDY_DEFAULT = 30;
+
+	/** Class of the JDBC driver, property key. */
+	private static final String STATISTICS_JPA_JDBC_DRIVER_PROPERTYKEY = "statistics.jpa.jdbc.driver";
+
+	/** Username to access db, property key. */
+	private static final String STATISTICS_JPA_JDBC_USER_PROPERTYKEY = "statistics.jpa.jdbc.user";
+
+	/** Password to access db, property key. */
+	private static final String STATISTICS_JPA_JDBC_PASSWORD_PROPERTYKEY = "statistics.jpa.jdbc.password";
+
+	/** JDBC URL, property key. */
+	private static final String STATISTICS_JPA_JDBC_URL_PROPERTYKEY = "statistics.jpa.jdbc.url";
 
 	/** Database server. */
 	private EbeanServer dbServer;
 
+	/** The maximum statistics to analyse for a method. */
 	private int maxRunToStudy;
 
+	/** Name of the environnement tested. */
 	private String environment;
 
+	/**
+	 * 
+	 * @param oceanRunner
+	 * @throws OceanModuleException
+	 */
 	public StatisticsEbeanPlug(final OceanRunner oceanRunner) throws OceanModuleException {
 		super(oceanRunner);
 
 		// Define DataSource parameters
 		DataSourceConfig myDbConfig = new DataSourceConfig();
-		myDbConfig.setDriver(oceanRunner.getAwareProperty("statistics.jpa.jdbc.driver"));
-		myDbConfig.setUsername(oceanRunner.getAwareProperty("statistics.jpa.jdbc.user"));
-		myDbConfig.setPassword(oceanRunner.getAwareProperty("statistics.jpa.jdbc.password"));
-		myDbConfig.setUrl(oceanRunner.getAwareProperty("statistics.jpa.jdbc.url"));
+		myDbConfig.setDriver(oceanRunner.getAwareProperty(STATISTICS_JPA_JDBC_DRIVER_PROPERTYKEY));
+		myDbConfig.setUsername(oceanRunner.getAwareProperty(STATISTICS_JPA_JDBC_USER_PROPERTYKEY));
+		myDbConfig.setPassword(oceanRunner.getAwareProperty(STATISTICS_JPA_JDBC_PASSWORD_PROPERTYKEY));
+		myDbConfig.setUrl(oceanRunner.getAwareProperty(STATISTICS_JPA_JDBC_URL_PROPERTYKEY));
 
 		ServerConfig config = new ServerConfig();
 		config.setName("StatisticsEbeanPlug");
@@ -64,7 +86,7 @@ public class StatisticsEbeanPlug extends StatisticsDataPlug {
 		
 		//Properties for StatisticsEbeanPlug
 		this.environment = oceanRunner.getAwareProperty(StatisticsOceanModule.STATISTICS_ENVIRONEMENT_PROPERTY, "default");
-		String maxRunToStudy = oceanRunner.getAwareProperty("statistics.maxRunToStudy", Integer.toString(MAX_RUN_TO_STUDY_DEFAULT));
+		String maxRunToStudy = oceanRunner.getAwareProperty(STATISTICS_MAX_RUN_TO_STUDY_PROPERTYKEY, Integer.toString(MAX_RUN_TO_STUDY_DEFAULT));
 		try {
 			this.maxRunToStudy = Integer.parseInt(maxRunToStudy);
 		} catch (NumberFormatException e) {

@@ -25,8 +25,9 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 /**
- * @author Eric Vialle
+ * Entity representing the result to persist concerning the result of a JUnit Test.
  * 
+ * @author Eric Vialle
  */
 @Entity
 @Table(name = "oceanrunner_statisticsresult")
