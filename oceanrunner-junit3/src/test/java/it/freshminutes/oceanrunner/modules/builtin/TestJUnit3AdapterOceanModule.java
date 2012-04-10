@@ -15,6 +15,7 @@
  */
 package it.freshminutes.oceanrunner.modules.builtin;
 
+import junit.framework.TestCase;
 import it.freshminutes.oceanrunner.OceanRunner;
 import it.freshminutes.oceanrunner.annotations.OceanModulesToUse;
 import it.freshminutes.oceanrunner.modules.junit3.JUnit3AdapterOceanModule;

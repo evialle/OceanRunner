@@ -11,24 +11,23 @@
 	<groupId>it.freshminutes</groupId>
 	<artifactId>oceanrunner-concurrent</artifactId>
 	<name>OceanRunner - OceanConccurentModule</name>
-			<version>20120409-SNAPSHOT</version>
-
+	<version>20120411-SNAPSHOT</version>
 	<description>OceanRunner - manage concurrent unit tests</description>
-	
-	
+
+
 	<parent>
 		<groupId>it.freshminutes</groupId>
 		<artifactId>oceanrunner</artifactId>
-		<version>20120409-SNAPSHOT</version>
+		<version>20120411-SNAPSHOT</version>
 	</parent>
 
 	<dependencies>
 		<!-- JUnit 4 -->
 		<dependency>
-		<groupId>it.freshminutes</groupId>
-		<artifactId>oceanrunner-core</artifactId>
+			<groupId>it.freshminutes</groupId>
+			<artifactId>oceanrunner-core</artifactId>
 		</dependency>
-	
+
 	</dependencies>
-	
+
 </project>

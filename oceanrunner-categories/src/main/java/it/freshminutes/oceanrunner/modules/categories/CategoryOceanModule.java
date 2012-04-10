@@ -49,20 +49,15 @@ public class CategoryOceanModule extends OceanModule {
 	private final static String CATEGORY_EXCLUDED_PROPERTYKEY = "category.excluded";
 
 	@Override
-	public void doBeforeAllTestedMethods(OceanRunner oceanRunner, Class<?> klass)
-			throws OceanModuleException {
+	public void doBeforeAllTestedMethods(final OceanRunner oceanRunner, final Class<?> klass) throws OceanModuleException {
 
 		try {
-			List<Class<?>> includedCategory = getIncludedCategory(oceanRunner,
-					klass);
-			List<Class<?>> excludedCategory = getExcludedCategory(oceanRunner,
-					klass);
-			Filter filter = new MultipleCategoriesFilter(includedCategory,
-					excludedCategory);
+			List<Class<?>> includedCategory = getIncludedCategory(oceanRunner, klass);
+			List<Class<?>> excludedCategory = getExcludedCategory(oceanRunner, klass);
+			Filter filter = new MultipleCategoriesFilter(includedCategory, excludedCategory);
 			oceanRunner.filter(filter);
 		} catch (NoTestsRemainException e) {
 			throw new OceanModuleException(e);
-
 		}
 		try {
 			assertNoCategorizedDescendentsOfUncategorizeableParents(oceanRunner
@@ -75,18 +70,21 @@ public class CategoryOceanModule extends OceanModule {
 
 	private void assertNoCategorizedDescendentsOfUncategorizeableParents(
 			final Description description) throws InitializationError {
-		if (!canHaveCategorizedChildren(description))
+		if (!canHaveCategorizedChildren(description)) {
 			assertNoDescendantsHaveCategoryAnnotations(description);
-		for (Description each : description.getChildren())
+		}
+		for (Description each : description.getChildren()) {
 			assertNoCategorizedDescendentsOfUncategorizeableParents(each);
+		}
 	}
 
 	private void assertNoDescendantsHaveCategoryAnnotations(
 			final Description description) throws InitializationError {
 		for (Description each : description.getChildren()) {
-			if (each.getAnnotation(Category.class) != null)
+			if (each.getAnnotation(Category.class) != null) {
 				throw new InitializationError(
 						"Category annotations on Parameterized classes are not supported on individual methods.");
+			}
 			assertNoDescendantsHaveCategoryAnnotations(each);
 		}
 	}
@@ -96,15 +94,17 @@ public class CategoryOceanModule extends OceanModule {
 	// parentage.
 	private static boolean canHaveCategorizedChildren(
 			final Description description) {
-		for (Description each : description.getChildren())
-			if (each.getTestClass() == null)
+		for (Description each : description.getChildren()) {
+			if (each.getTestClass() == null) {
 				return false;
+			}
+		}
 		return true;
 	}
 
 	private List<Class<?>> getIncludedCategory(final OceanRunner runner,
 			final Class<?> klass) throws OceanModuleException {
-		
+
 		IncludeCategory annotation = klass.getAnnotation(IncludeCategory.class);
 
 		List<Class<?>> includedCategoryList = Lists.newArrayList();
@@ -130,7 +130,7 @@ public class CategoryOceanModule extends OceanModule {
 
 	private List<Class<?>> getExcludedCategory(final OceanRunner runner,
 			final Class<?> klass) throws OceanModuleException {
-		
+
 		ExcludeCategory annotation = klass.getAnnotation(ExcludeCategory.class);
 
 		List<Class<?>> excludedCategoryList = Lists.newArrayList();
@@ -140,13 +140,13 @@ public class CategoryOceanModule extends OceanModule {
 					.getAwareProperty(CATEGORY_EXCLUDED_PROPERTYKEY);
 			if (strClass != null && !strClass.isEmpty()) {
 				try {
-					String[] classArray = strClass.trim().split(";");
+					String[] classArray = strClass.split(";");
 					for (String classForName : classArray) {
-						excludedCategoryList.add(Class.forName(classForName));
+						excludedCategoryList.add(Class.forName(classForName
+								.trim()));
 					}
 				} catch (ClassNotFoundException e) {
 					throw new OceanModuleException(e);
-
 				}
 			}
 		} else {
