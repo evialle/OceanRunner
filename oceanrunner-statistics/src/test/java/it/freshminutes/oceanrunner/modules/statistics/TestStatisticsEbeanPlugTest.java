@@ -90,7 +90,7 @@ public class TestStatisticsEbeanPlugTest {
 		r1.setComments("great");
 		r1.setMethodUnderTestName("testStoreLastTestStatus");
 		r1.setStatus(StatusTestResult.SUCCESS);
-		r1.setEnvironement("default");
+		r1.setEnvironment("default");
 		statisticsResultsList.add(r1);
 
 		StatisticsResult r2 = new StatisticsResult();
@@ -98,7 +98,7 @@ public class TestStatisticsEbeanPlugTest {
 		r2.setComments("great");
 		r2.setMethodUnderTestName(TestStatisticsEbeanPlugTest.class.getName());
 		r2.setStatus(StatusTestResult.SUCCESS);
-		r2.setEnvironement("default");
+		r2.setEnvironment("default");
 		statisticsResultsList.add(r2);
 
 		StatisticsResult r3 = new StatisticsResult();
@@ -106,7 +106,7 @@ public class TestStatisticsEbeanPlugTest {
 		r3.setComments("great");
 		r3.setMethodUnderTestName("testStoreLastTestStatus");
 		r3.setStatus(StatusTestResult.IGNORE);
-		r3.setEnvironement("default");
+		r3.setEnvironment("default");
 		statisticsResultsList.add(r3);
 
 		StatisticsResult r4 = new StatisticsResult();
@@ -114,7 +114,7 @@ public class TestStatisticsEbeanPlugTest {
 		r4.setComments("great");
 		r4.setMethodUnderTestName("testStoreLastTestStatus");
 		r4.setStatus(StatusTestResult.IGNORE);
-		r4.setEnvironement("default");
+		r4.setEnvironment("default");
 		statisticsResultsList.add(r4);
 
 		StatisticsResult r5 = new StatisticsResult();
@@ -122,7 +122,7 @@ public class TestStatisticsEbeanPlugTest {
 		r5.setComments("great");
 		r5.setMethodUnderTestName("testStoreLastTestStatus");
 		r5.setStatus(StatusTestResult.FAILED);
-		r5.setEnvironement("default");
+		r5.setEnvironment("default");
 		statisticsResultsList.add(r5);
 
 		StatisticsResult r6 = new StatisticsResult();
@@ -130,7 +130,7 @@ public class TestStatisticsEbeanPlugTest {
 		r6.setComments("great");
 		r6.setMethodUnderTestName("testDifferent");
 		r6.setStatus(StatusTestResult.FAILED);
-		r6.setEnvironement("default");
+		r6.setEnvironment("default");
 		statisticsResultsList.add(r6);
 
 		return statisticsResultsList;

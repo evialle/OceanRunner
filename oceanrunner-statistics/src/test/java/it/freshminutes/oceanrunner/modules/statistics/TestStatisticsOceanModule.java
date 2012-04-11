@@ -18,14 +18,11 @@ package it.freshminutes.oceanrunner.modules.statistics;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import it.freshminutes.oceanrunner.OceanRunner;
-import it.freshminutes.oceanrunner.annotations.OceanModulesToUse;
-import it.freshminutes.oceanrunner.modules.statistics.StatisticsOceanModule;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(OceanRunner.class)
-@OceanModulesToUse(StatisticsOceanModule.class)
 public class TestStatisticsOceanModule {
 
 	@Test
@@ -35,7 +32,7 @@ public class TestStatisticsOceanModule {
 
 	@Test
 	public void dummyFailedAssumptionTest() {
-		assertFalse(true);
+		assertFalse("failed assumption...", true);
 	}
 
 	@Test

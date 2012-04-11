@@ -24,8 +24,11 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import com.avaje.ebean.annotation.EnumValue;
+
 /**
- * Entity representing the result to persist concerning the result of a JUnit Test.
+ * Entity representing the result to persist concerning the result of a JUnit
+ * Test.
  * 
  * @author Eric Vialle
  */
@@ -38,27 +41,24 @@ public class StatisticsResult implements Serializable {
 	 * 
 	 * @author Eric Vialle
 	 */
-	public static enum StatusTestResult {
-
-		SUCCESS(0), IGNORE(1), FAILED(2), ASSUMPTION_FAILED(3);
-
-		int value_;
-		
-		/** Constructor. */
-		StatusTestResult(int value) {
-			this.value_ = value;
-		}
-
+	public enum StatusTestResult {
+		@EnumValue("S")
+		SUCCESS, 
+		@EnumValue("I")
+		IGNORE, 
+		@EnumValue("F")
+		FAILED, 
+		@EnumValue("A")
+		ASSUMPTION_FAILED;
 	}
 
 	/** Like any good javabean... */
-	private static final long serialVersionUID = -4454510292257647912L;
+	private static final long serialVersionUID = 4454510292255644912L;
 
 	/** Last run date with that status. */
-	@Column(name = "runDate")
+	@Column(name = "rundate")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date runDate;
-
 
 	@Column(name = "status")
 	private StatusTestResult status;
@@ -66,14 +66,14 @@ public class StatisticsResult implements Serializable {
 	@Column(name = "comments")
 	private String comments;
 
-	@Column(name = "classundertestName")
+	@Column(name = "classundertestname")
 	private String classUnderTestName;
 
-	@Column(name = "methodundertestName")
+	@Column(name = "methodundertestname")
 	private String methodUnderTestName;
 
-	@Column(name = "environement")
-	private String environement;
+	@Column(name = "environment")
+	private String environment;
 
 	private transient Throwable throwable;
 
@@ -85,7 +85,8 @@ public class StatisticsResult implements Serializable {
 	}
 
 	/**
-	 * @param runDate the runDate to set
+	 * @param runDate
+	 *            the runDate to set
 	 */
 	public void setRunDate(Date runDate) {
 		this.runDate = runDate;
@@ -99,7 +100,8 @@ public class StatisticsResult implements Serializable {
 	}
 
 	/**
-	 * @param status the status to set
+	 * @param status
+	 *            the status to set
 	 */
 	public void setStatus(StatusTestResult status) {
 		this.status = status;
@@ -113,7 +115,8 @@ public class StatisticsResult implements Serializable {
 	}
 
 	/**
-	 * @param comments the comments to set
+	 * @param comments
+	 *            the comments to set
 	 */
 	public void setComments(String comments) {
 		this.comments = comments;
@@ -127,12 +130,12 @@ public class StatisticsResult implements Serializable {
 	}
 
 	/**
-	 * @param throwable the throwable to set
+	 * @param throwable
+	 *            the throwable to set
 	 */
 	public void setThrowable(Throwable throwable) {
 		this.throwable = throwable;
 	}
-
 
 	/**
 	 * @return the methodUnderTestName
@@ -142,7 +145,8 @@ public class StatisticsResult implements Serializable {
 	}
 
 	/**
-	 * @param methodUnderTestName the methodUnderTestName to set
+	 * @param methodUnderTestName
+	 *            the methodUnderTestName to set
 	 */
 	public void setMethodUnderTestName(String methodUnderTestName) {
 		this.methodUnderTestName = methodUnderTestName;
@@ -156,24 +160,32 @@ public class StatisticsResult implements Serializable {
 	}
 
 	/**
-	 * @param classUnderTestName the classUnderTestName to set
+	 * @param classUnderTestName
+	 *            the classUnderTestName to set
 	 */
 	public void setClassUnderTestName(String classUnderTestName) {
 		this.classUnderTestName = classUnderTestName;
 	}
 
 	/**
-	 * @return the environement
+	 * @return the environment
 	 */
-	public String getEnvironement() {
-		return environement;
+	public String getEnvironment() {
+		return environment;
 	}
 
 	/**
-	 * @param environement the environement to set
+	 * @param environement
+	 *            the environment to set
 	 */
-	public void setEnvironement(String environement) {
-		this.environement = environement;
+	public void setEnvironment(String environment) {
+		this.environment = environment;
+	}
+
+	@Override
+	public String toString() {
+		return classUnderTestName + "." + methodUnderTestName + "() "
+				+ environment + ", " + runDate + " " + comments + ", " + status;
 	}
 
 }

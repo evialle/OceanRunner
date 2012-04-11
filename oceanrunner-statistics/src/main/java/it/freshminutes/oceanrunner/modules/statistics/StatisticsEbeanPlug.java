@@ -30,10 +30,9 @@ import com.avaje.ebean.config.ServerConfig;
 
 public class StatisticsEbeanPlug extends StatisticsDataPlug {
 
-
 	/** Property key defining the maximum statistics to analyse for a method. */
 	private static final String STATISTICS_MAX_RUN_TO_STUDY_PROPERTYKEY = "statistics.maxRunToStudy";
-	
+
 	private static final int MAX_RUN_TO_STUDY_DEFAULT = 30;
 
 	/** Class of the JDBC driver, property key. */
@@ -49,7 +48,7 @@ public class StatisticsEbeanPlug extends StatisticsDataPlug {
 	private static final String STATISTICS_JPA_JDBC_URL_PROPERTYKEY = "statistics.jpa.jdbc.url";
 
 	/** Database server. */
-	private EbeanServer dbServer;
+	private static EbeanServer DB_SERVER = null;
 
 	/** The maximum statistics to analyse for a method. */
 	private int maxRunToStudy;
@@ -62,47 +61,56 @@ public class StatisticsEbeanPlug extends StatisticsDataPlug {
 	 * @param oceanRunner
 	 * @throws OceanModuleException
 	 */
-	public StatisticsEbeanPlug(final OceanRunner oceanRunner) throws OceanModuleException {
+	public StatisticsEbeanPlug(final OceanRunner oceanRunner)
+			throws OceanModuleException {
 		super(oceanRunner);
 
-		// Define DataSource parameters
-		DataSourceConfig myDbConfig = new DataSourceConfig();
-		myDbConfig.setDriver(oceanRunner.getAwareProperty(STATISTICS_JPA_JDBC_DRIVER_PROPERTYKEY));
-		myDbConfig.setUsername(oceanRunner.getAwareProperty(STATISTICS_JPA_JDBC_USER_PROPERTYKEY));
-		myDbConfig.setPassword(oceanRunner.getAwareProperty(STATISTICS_JPA_JDBC_PASSWORD_PROPERTYKEY));
-		myDbConfig.setUrl(oceanRunner.getAwareProperty(STATISTICS_JPA_JDBC_URL_PROPERTYKEY));
+		if (DB_SERVER == null) {
+			// Define DataSource parameters
+			DataSourceConfig myDbConfig = new DataSourceConfig();
+			myDbConfig.setDriver(oceanRunner.getAwareProperty(STATISTICS_JPA_JDBC_DRIVER_PROPERTYKEY));
+			myDbConfig.setUsername(oceanRunner.getAwareProperty(STATISTICS_JPA_JDBC_USER_PROPERTYKEY));
+			myDbConfig.setPassword(oceanRunner.getAwareProperty(STATISTICS_JPA_JDBC_PASSWORD_PROPERTYKEY));
+			myDbConfig.setUrl(oceanRunner.getAwareProperty(STATISTICS_JPA_JDBC_URL_PROPERTYKEY));
 
-		ServerConfig config = new ServerConfig();
-		config.setName("StatisticsEbeanPlug");
-		config.setDataSourceConfig(myDbConfig);
-		config.setDdlGenerate(true);
-		config.setDdlRun(true);
-		config.setDefaultServer(true);
+			ServerConfig config = new ServerConfig();
+			config.setName("StatisticsEbeanPlug");
+			config.setDataSourceConfig(myDbConfig);
+			//config.setDdlGenerate(true);
+			//config.setDdlRun(true);
+			config.setDefaultServer(true);
 
-		config.addClass(StatisticsResult.class);
-		
-		this.dbServer = EbeanServerFactory.create(config);
-		
-		
-		//Properties for StatisticsEbeanPlug
-		this.environment = oceanRunner.getAwareProperty(StatisticsOceanModule.STATISTICS_ENVIRONEMENT_PROPERTY, "default");
-		String maxRunToStudy = oceanRunner.getAwareProperty(STATISTICS_MAX_RUN_TO_STUDY_PROPERTYKEY, Integer.toString(MAX_RUN_TO_STUDY_DEFAULT));
-		try {
-			this.maxRunToStudy = Integer.parseInt(maxRunToStudy);
-		} catch (NumberFormatException e) {
-			this.maxRunToStudy = MAX_RUN_TO_STUDY_DEFAULT;
+			config.addClass(StatisticsResult.class);
+
+			DB_SERVER = EbeanServerFactory.create(config);
+
+			// Properties for StatisticsEbeanPlug
+			this.environment = oceanRunner.getAwareProperty(
+					StatisticsOceanModule.STATISTICS_ENVIRONEMENT_PROPERTYKEY,
+					"default");
+			String maxRunToStudy = oceanRunner.getAwareProperty(
+					STATISTICS_MAX_RUN_TO_STUDY_PROPERTYKEY,
+					Integer.toString(MAX_RUN_TO_STUDY_DEFAULT));
+			try {
+				this.maxRunToStudy = Integer.parseInt(maxRunToStudy);
+			} catch (NumberFormatException e) {
+				this.maxRunToStudy = MAX_RUN_TO_STUDY_DEFAULT;
+			}
 		}
 	}
-
 
 	@Override
 	public List<StatisticsResult> loadTestStatus(String testsToSearch) {
 
-		Query<StatisticsResult> selectResultsQuery = this.dbServer.find(StatisticsResult.class);
-		selectResultsQuery.where().eq("classUnderTestName", oceanRunner.getClassUnderTest().getName()).eq("methodUnderTestName", testsToSearch)
-				.eq("environement", this.environment).orderBy()
-				.desc("runDate").setMaxRows(this.maxRunToStudy);
-		
+		Query<StatisticsResult> selectResultsQuery = DB_SERVER
+				.find(StatisticsResult.class);
+		selectResultsQuery
+				.where()
+				.eq("classundertestname",
+						oceanRunner.getClassUnderTest().getName())
+				.eq("methodundertestname", testsToSearch)
+				.eq("environment", this.environment).orderBy().desc("rundate")
+				.setMaxRows(this.maxRunToStudy);
 
 		List<StatisticsResult> lastStatusList = selectResultsQuery.findList();
 
@@ -110,8 +118,9 @@ public class StatisticsEbeanPlug extends StatisticsDataPlug {
 	}
 
 	@Override
-	public void storeLastTestStatus(Collection<StatisticsResult> statisticsResultsList) {
-		this.dbServer.save(statisticsResultsList);
+	public void storeLastTestStatus(
+			Collection<StatisticsResult> statisticsResultsList) {
+		DB_SERVER.save(statisticsResultsList);
 	}
 
 }

@@ -43,23 +43,25 @@ import com.google.common.collect.Maps;
  */
 public class StatisticsOceanModule extends OceanModule {
 
+	private static final String STATISTICS_DATAPLUG_PROPERTYKEY = "statistics.dataplug";
+
 	/** System property name defining the statistics environement. */
-	public static final String STATISTICS_ENVIRONEMENT_PROPERTY = "statistics.environement";
+	public static final String STATISTICS_ENVIRONEMENT_PROPERTYKEY = "statistics.environement";
 
 	/**
 	 * System property name defining if the user may write statistics or if it
 	 * only use it.
 	 */
-	public static final String STATISTICS_AUTHORIZEDWRITE_PROPERTY = "statistics.authorizedwrite";
+	public static final String STATISTICS_AUTHORIZEDWRITE_PROPERTYKEY = "statistics.authorizedwrite";
 
 	/** SimpleDateFormat static. */
-	private static final SimpleDateFormat SDF = new SimpleDateFormat("dd/MM/YYYY HH:mm");
+	private static final SimpleDateFormat SDF = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 
 	private Map<String, StatisticsResult> actualResultsMap = Maps.newHashMap();
 
 	private StatisticsDataPlug statisticsDataPlug;
 
-	/** Environnement name where the unit test is run. */
+	/** Environement name where the unit test is run. */
 	private String environment;
 
 	/*
@@ -70,12 +72,16 @@ public class StatisticsOceanModule extends OceanModule {
 	 * java.lang.Class)
 	 */
 	@Override
-	public void doBeforeAllTestedMethods(OceanRunner oceanRunner, Class<?> klass) throws OceanModuleException {
+	public void doBeforeAllTestedMethods(OceanRunner oceanRunner, Class<?> klass)
+			throws OceanModuleException {
 
-		String statisticsDataPlugClassName = oceanRunner.getAwareProperty("statistics.dataplug");
+		String statisticsDataPlugClassName = oceanRunner
+				.getAwareProperty(STATISTICS_DATAPLUG_PROPERTYKEY);
 		if (statisticsDataPlugClassName == null) {
 			throw new OceanModuleException(
-					"Supply the property statistics.dataplug, to run StatisticsOceanModule with a valid class extending StatisticsDataPlug");
+					"Supply the property "
+							+ STATISTICS_DATAPLUG_PROPERTYKEY
+							+ ", to run StatisticsOceanModule with a valid class extending StatisticsDataPlug");
 		}
 
 		try {
@@ -84,18 +90,26 @@ public class StatisticsOceanModule extends OceanModule {
 			klass = Class.forName(statisticsDataPlugClassName);
 			if (klass == null) {
 				throw new OceanModuleException(
-						"Supply the property statistics.dataplug, to run StatisticsOceanModule with a valid class extending StatisticsDataPlug");
+						"Supply the property "
+								+ STATISTICS_DATAPLUG_PROPERTYKEY
+								+ ", to run StatisticsOceanModule with a valid class extending StatisticsDataPlug");
 			}
-			Constructor<?> constructor = klass.getConstructor(OceanRunner.class);
+			Constructor<?> constructor = klass
+					.getConstructor(OceanRunner.class);
 
-			statisticsDataPlug = (StatisticsDataPlug) constructor.newInstance(oceanRunner);
+			statisticsDataPlug = (StatisticsDataPlug) constructor
+					.newInstance(oceanRunner);
 
 			this.actualResultsMap = Maps.newHashMap();
-			this.environment = oceanRunner.getAwareProperty(STATISTICS_ENVIRONEMENT_PROPERTY);
+			this.environment = oceanRunner
+					.getAwareProperty(STATISTICS_ENVIRONEMENT_PROPERTYKEY);
 
 		} catch (ClassNotFoundException e) {
 			throw new OceanModuleException(
-					"Supply the property statistics.dataplug, to run StatisticsOceanModule with a valid class extending StatisticsDataPlug", e);
+					"Supply the property " 
+							+ STATISTICS_DATAPLUG_PROPERTYKEY 
+							+ ", to run StatisticsOceanModule with a valid class extending StatisticsDataPlug",
+					e);
 		} catch (NoSuchMethodException e) {
 			throw new OceanModuleException(e);
 		} catch (SecurityException e) {
@@ -121,7 +135,8 @@ public class StatisticsOceanModule extends OceanModule {
 	 */
 	@Override
 	public void doAfterAllTestedMethods(final OceanRunner oceanRunner, final Class<?> klass) throws OceanModuleException {
-		boolean writeAuthorized = Boolean.parseBoolean(oceanRunner.getAwareProperty(STATISTICS_AUTHORIZEDWRITE_PROPERTY, "true"));
+		String writeAuthorizedString = oceanRunner.getAwareProperty(STATISTICS_AUTHORIZEDWRITE_PROPERTYKEY, "true");
+		boolean writeAuthorized = Boolean.parseBoolean(writeAuthorizedString);
 		if (writeAuthorized) {
 			statisticsDataPlug.storeLastTestStatus(actualResultsMap.values());
 		}
@@ -138,19 +153,19 @@ public class StatisticsOceanModule extends OceanModule {
 	public void doAfterEachFailedMethod(OceanRunner oceanRunner, Failure failure) {
 		// Add the statistics result in the cache result
 		StatisticsResult sResults = new StatisticsResult();
-		sResults.setComments(failure.getMessage() + "\n> Trace:" + failure.getTrace());
+		sResults.setComments(failure.getMessage() + System.lineSeparator() + "> Trace:" + failure.getTrace());
 		sResults.setRunDate(new Date());
 		sResults.setStatus(StatusTestResult.FAILED);
 		sResults.setThrowable(failure.getException());
 		sResults.setComments(failure.getMessage());
-		sResults.setEnvironement(this.environment);
+		sResults.setEnvironment(this.environment);
 		sResults.setClassUnderTestName(failure.getDescription().getClassName());
 		sResults.setMethodUnderTestName(failure.getDescription().getMethodName());
+		actualResultsMap.put(failure.getDescription().getMethodName(), sResults);
 
+		// Enhance the exception
 		String statisticsMsg = processStatisticMessage(failure);
 		enhanceThrowable(failure.getException(), statisticsMsg);
-
-		actualResultsMap.put(failure.getDescription().getMethodName(), sResults);
 	}
 
 	/*
@@ -161,15 +176,15 @@ public class StatisticsOceanModule extends OceanModule {
 	 * org.junit.runner.Description)
 	 */
 	@Override
-	public void doAfterEachIgnoredMethod(OceanRunner oceanRunner, Description description) {
+	public void doAfterEachIgnoredMethod(OceanRunner oceanRunner,
+			Description description) {
 		// Add the statistics result in the cache result
 		StatisticsResult sResults = new StatisticsResult();
 		sResults.setRunDate(new Date());
 		sResults.setStatus(StatusTestResult.IGNORE);
 		sResults.setClassUnderTestName(description.getClassName());
 		sResults.setMethodUnderTestName(description.getMethodName());
-		sResults.setEnvironement(this.environment);
-
+		sResults.setEnvironment(this.environment);
 		actualResultsMap.put(description.getMethodName(), sResults);
 	}
 
@@ -182,22 +197,23 @@ public class StatisticsOceanModule extends OceanModule {
 	 * org.junit.runner.notification.Failure)
 	 */
 	@Override
-	public void doAfterEachAssumptionFailedMethod(OceanRunner oceanRunner, Failure failure) {
+	public void doAfterEachAssumptionFailedMethod(OceanRunner oceanRunner,
+			Failure failure) {
 		// Add the statistics result in the cache result
 		StatisticsResult sResults = new StatisticsResult();
-		sResults.setComments(failure.getMessage() + "\n> Trace:" + failure.getTrace());
+		sResults.setComments(failure.getMessage() + System.lineSeparator() + "> Trace:" + failure.getTrace());
 		sResults.setRunDate(new Date());
 		sResults.setStatus(StatusTestResult.ASSUMPTION_FAILED);
 		sResults.setThrowable(failure.getException());
 		sResults.setClassUnderTestName(failure.getDescription().getClassName());
-		sResults.setEnvironement(this.environment);
+		sResults.setEnvironment(this.environment);
 		sResults.setMethodUnderTestName(failure.getDescription().getMethodName());
+		actualResultsMap.put(failure.getDescription().getMethodName(), sResults);
 
+		// Enhance the exception
 		String statisticsMsg = processStatisticMessage(failure);
-
 		enhanceThrowable(failure.getException(), statisticsMsg);
 
-		actualResultsMap.put(failure.getDescription().getMethodName(), sResults);
 	}
 
 	/**
@@ -207,38 +223,47 @@ public class StatisticsOceanModule extends OceanModule {
 	 * @return
 	 */
 	private String processStatisticMessage(Failure failure) {
-		List<StatisticsResult> statisticsResultList = statisticsDataPlug.loadTestStatus(failure.getDescription().getMethodName());
+		List<StatisticsResult> statisticsResultList = statisticsDataPlug
+				.loadTestStatus(failure.getDescription().getMethodName());
 
 		StringBuilder msgBuilder = new StringBuilder();
+		StatusTestResult lastStatusTestResult = StatusTestResult.SUCCESS;
+		String lastComments = "";
+		
 		for (StatisticsResult statisticsResult : statisticsResultList) {
-
-			StatusTestResult lastStatusTestResult = StatusTestResult.SUCCESS;
-			String lastComments = "";
 
 			if (StatusTestResult.SUCCESS.equals(statisticsResult.getStatus())) {
 				String date = SDF.format(statisticsResult.getRunDate());
-				msgBuilder.append("Last success of ").append(failure.getDescription().getMethodName()).append(", the ").append(date);
+				msgBuilder.append("Last success of ")
+						.append(failure.getDescription().getMethodName())
+						.append(", the ").append(date);
 				break;
-			} else if (!lastStatusTestResult.equals(statisticsResult.getStatus())
-					|| !(lastComments.equals(Strings.nullToEmpty(statisticsResult.getComments())))) {
+			} else if (!lastStatusTestResult.equals(statisticsResult.getStatus()) || !(lastComments.equals(Strings.nullToEmpty(statisticsResult.getComments())))) {
 				lastStatusTestResult = statisticsResult.getStatus();
 				lastComments = Strings.nullToEmpty(statisticsResult.getComments());
 
 				String date = SDF.format(statisticsResult.getRunDate());
 
-				msgBuilder.append("Last ").append(statisticsResult.getStatus().name()).append(" of ").append(failure.getDescription().getMethodName())
-						.append(", the ").append(date).append(", with comments: ").append(statisticsResult.getComments());
-
+				msgBuilder.append("Last ")
+						.append(statisticsResult.getStatus().name())
+						.append(" of ")
+						.append(failure.getDescription().getMethodName())
+						.append(", the ").append(date)
+						.append(", with comments: ")
+						.append(statisticsResult.getComments())
+						.append(System.lineSeparator());
 			}
-			msgBuilder.append(System.lineSeparator());
+			
 		}
 
 		return msgBuilder.toString();
 	}
 
 	@Override
-	public void doAfterEachTestedMethod(final OceanRunner oceanRunner, final Description description) throws OceanModuleException {
-		StatisticsResult sResult = actualResultsMap.get(description.getMethodName());
+	public void doAfterEachTestedMethod(final OceanRunner oceanRunner,
+			final Description description) throws OceanModuleException {
+		StatisticsResult sResult = actualResultsMap.get(description
+				.getMethodName());
 		// Doesn't exist -> The test was successful
 		if (sResult == null) {
 			// Add the statistics result in the cache result
@@ -247,7 +272,7 @@ public class StatisticsOceanModule extends OceanModule {
 			sResults.setStatus(StatusTestResult.FAILED);
 			sResults.setClassUnderTestName(description.getClassName());
 			sResults.setMethodUnderTestName(description.getMethodName());
-			sResults.setEnvironement(this.environment);
+			sResults.setEnvironment(this.environment);
 
 			actualResultsMap.put(description.getMethodName(), sResults);
 		}
@@ -267,7 +292,7 @@ public class StatisticsOceanModule extends OceanModule {
 			String detailMessage = (String) field.get(throwable);
 
 			String enhancedMessage;
-			if (detailMessage == null) {
+			if ((detailMessage == null) || (detailMessage.isEmpty())) {
 				enhancedMessage = message;
 			} else {
 				enhancedMessage = detailMessage + " - " + message;
