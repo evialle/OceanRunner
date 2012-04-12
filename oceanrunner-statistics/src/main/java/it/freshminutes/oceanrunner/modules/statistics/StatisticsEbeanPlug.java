@@ -46,6 +46,7 @@ public class StatisticsEbeanPlug extends StatisticsDataPlug {
 
 	/** JDBC URL, property key. */
 	private static final String STATISTICS_JPA_JDBC_URL_PROPERTYKEY = "statistics.jpa.jdbc.url";
+	
 
 	/** Database server. */
 	private static EbeanServer DB_SERVER = null;
@@ -102,12 +103,10 @@ public class StatisticsEbeanPlug extends StatisticsDataPlug {
 	@Override
 	public List<StatisticsResult> loadTestStatus(String testsToSearch) {
 
-		Query<StatisticsResult> selectResultsQuery = DB_SERVER
-				.find(StatisticsResult.class);
+		Query<StatisticsResult> selectResultsQuery = DB_SERVER.find(StatisticsResult.class);
 		selectResultsQuery
 				.where()
-				.eq("classundertestname",
-						oceanRunner.getClassUnderTest().getName())
+				.eq("classundertestname", oceanRunner.getClassUnderTest().getName())
 				.eq("methodundertestname", testsToSearch)
 				.eq("environment", this.environment).orderBy().desc("rundate")
 				.setMaxRows(this.maxRunToStudy);
@@ -118,8 +117,7 @@ public class StatisticsEbeanPlug extends StatisticsDataPlug {
 	}
 
 	@Override
-	public void storeLastTestStatus(
-			Collection<StatisticsResult> statisticsResultsList) {
+	public void storeLastTestStatus(final Collection<StatisticsResult> statisticsResultsList) {
 		DB_SERVER.save(statisticsResultsList);
 	}
 

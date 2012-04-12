@@ -19,15 +19,11 @@
 package it.freshminutes.oceanrunner.modules.statistics;
 
 import it.freshminutes.oceanrunner.OceanRunner;
-import it.freshminutes.oceanrunner.annotations.OceanModulesToUse;
-import it.freshminutes.oceanrunner.modules.statistics.StatisticsOceanModule;
 
 import java.sql.SQLException;
 
 import org.h2.tools.Server;
-import org.junit.AfterClass;
 import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -37,12 +33,11 @@ import org.junit.runner.RunWith;
  *
  */
 @RunWith(OceanRunner.class)
-@OceanModulesToUse(StatisticsOceanModule.class)
 public class TestStatisticsOceanModuleWithEBean {
 
 	private static Server server;
 
-	@BeforeClass
+	//@BeforeClass
 	public static void startDb() throws SQLException {
 		System.out.println("Starting DB server");
 
@@ -55,22 +50,22 @@ public class TestStatisticsOceanModuleWithEBean {
 	}
 
 	@Test
-	public void unsuccessfulTest() {
+	public void assertionFailedTest() {
 		Assert.assertEquals("la", "et non!");
 	}
 
 	@Test
-	@Ignore
+	//@Ignore
 	public void ignoreTest() {
-		Assert.assertTrue(true);
+		Assert.assertTrue("assertTrue with false", false);
 	}
 
 	@Test
-	public void exceptionTest() throws Exception {
+	public void exceptionFailedTest() throws Exception {
 		throw new Exception("marche pas");
 	}
 
-	@AfterClass
+	//@AfterClass
 	public static void stopDb() throws InterruptedException {
 		System.out.println("Stopping DB server");
 		server.stop();

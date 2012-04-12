@@ -53,5 +53,7 @@ public abstract class OceanModule {
 	public void doAfterEachAssumptionFailedMethod(final OceanRunner oceanRunner, final Failure failure) throws OceanModuleException {
 	}
 	
+	public void doAfterEachAssertionFailedMethod(final OceanRunner oceanRunner, final Failure failure) throws OceanModuleException {
+	}
 	
 }

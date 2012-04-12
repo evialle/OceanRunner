@@ -49,6 +49,8 @@ public class StatisticsResult implements Serializable {
 		@EnumValue("F")
 		FAILED, 
 		@EnumValue("A")
+		ASSERTION_FAILED,
+		@EnumValue("U")
 		ASSUMPTION_FAILED;
 	}
 

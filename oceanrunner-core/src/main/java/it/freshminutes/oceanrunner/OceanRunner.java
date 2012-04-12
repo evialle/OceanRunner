@@ -356,6 +356,13 @@ public class OceanRunner extends BlockJUnit4ClassRunner {
 		}
 	}
 
+	private void doAfterEachAssertionFailureForAllModules(Failure failure, Object target) throws OceanModuleException {
+		for (OceanModule oceanModule : this.oceanModulesList) {
+			oceanModule.doAfterEachAssertionFailedMethod(this, failure);
+		}
+
+	}
+
 	private void doAfterEachAssumptionFailureForAllModules(final Failure failure) throws OceanModuleException {
 		for (OceanModule oceanModule : this.oceanModulesList) {
 			oceanModule.doAfterEachAssumptionFailedMethod(this, failure);
@@ -477,8 +484,14 @@ public class OceanRunner extends BlockJUnit4ClassRunner {
 		 */
 		@Override
 		public void testFailure(final Failure failure) throws Exception {
-			doAfterEachFailureForAllModules(failure, getTarget());
+
+			if (failure.getException() instanceof AssertionError) {
+				doAfterEachAssertionFailureForAllModules(failure, getTarget());
+			} else {
+				doAfterEachFailureForAllModules(failure, getTarget());
+			}
 		}
+
 
 		/**
 		 * Called when an atomic test flags that it assumes a condition that is
