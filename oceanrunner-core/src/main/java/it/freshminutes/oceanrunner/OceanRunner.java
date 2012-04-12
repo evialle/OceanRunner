@@ -28,6 +28,9 @@ import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
@@ -38,6 +41,9 @@ import org.junit.internal.runners.statements.RunAfters;
 import org.junit.internal.runners.statements.RunBefores;
 import org.junit.runner.Description;
 import org.junit.runner.Result;
+import org.junit.runner.manipulation.Filter;
+import org.junit.runner.manipulation.NoTestsRemainException;
+import org.junit.runner.manipulation.Sorter;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunListener;
 import org.junit.runner.notification.RunNotifier;
@@ -54,6 +60,9 @@ import org.junit.runners.model.Statement;
  * @author Eric Vialle
  */
 public class OceanRunner extends BlockJUnit4ClassRunner {
+
+	/** Field used for reflection. */
+	private static final String F_TARGET = "fTarget";
 
 	/** Empty String. */
 	private static final String EMPTY_STRING = "";
@@ -80,6 +89,8 @@ public class OceanRunner extends BlockJUnit4ClassRunner {
 
 	/** Class actualy tested. */
 	private Class<?> classUnderTest = null;
+
+	private Sorter fSorter = Sorter.NULL;
 
 	/**
 	 * @return the classUnderTest
@@ -129,11 +140,11 @@ public class OceanRunner extends BlockJUnit4ClassRunner {
 			try {
 				Field fTargetField = null;
 				if (stmt instanceof InvokeMethod) {
-					fTargetField = InvokeMethod.class.getDeclaredField("fTarget");
+					fTargetField = InvokeMethod.class.getDeclaredField(F_TARGET);
 				} else if (stmt instanceof RunAfters) {
-					fTargetField = RunAfters.class.getDeclaredField("fTarget");
+					fTargetField = RunAfters.class.getDeclaredField(F_TARGET);
 				} else if (stmt instanceof RunBefores) {
-					fTargetField = RunBefores.class.getDeclaredField("fTarget");
+					fTargetField = RunBefores.class.getDeclaredField(F_TARGET);
 				}
 				if (fTargetField != null) {
 					// Get the target
@@ -408,11 +419,74 @@ public class OceanRunner extends BlockJUnit4ClassRunner {
 		fScheduler.finished();
 	}
 
+	@Override
+	public Description getDescription() {
+		Description description = Description.createSuiteDescription(getName(), getRunnerAnnotations());
+		for (FrameworkMethod child : getFilteredChildren())
+			description.addChild(describeChild(child));
+		return description;
+	}
+
+	@Override
+	public void sort(Sorter sorter) {
+		fSorter = sorter;
+		for (FrameworkMethod each : getFilteredChildren()) {
+			sortChild(each);
+		}
+		Collections.sort(getFilteredChildren(), comparator());
+	}
+
+	private void sortChild(FrameworkMethod child) {
+		fSorter.apply(child);
+	}
+
+	private Comparator<? super FrameworkMethod> comparator() {
+		return new Comparator<FrameworkMethod>() {
+			@Override
+			public int compare(FrameworkMethod o1, FrameworkMethod o2) {
+				return fSorter.compare(describeChild(o1), describeChild(o2));
+			}
+		};
+	}
+
+	@Override
+	public void filter(Filter filter) throws NoTestsRemainException {
+		for (Iterator<FrameworkMethod> iter = getFilteredChildren().iterator(); iter.hasNext();) {
+			FrameworkMethod each = iter.next();
+			if (shouldRun(filter, each))
+				try {
+					filter.apply(each);
+				} catch (NoTestsRemainException e) {
+					iter.remove();
+				}
+			else
+				iter.remove();
+		}
+		if (getFilteredChildren().isEmpty()) {
+			throw new NoTestsRemainException();
+		}
+	}
+
+	/**
+	 * 
+	 * @param filter
+	 * @param each
+	 * @return
+	 */
+	private boolean shouldRun(Filter filter, FrameworkMethod each) {
+		return filter.shouldRun(describeChild(each));
+	}
+
+	/**
+	 * @return list of children method filtered by filter method
+	 */
 	private List<FrameworkMethod> getFilteredChildren() {
-		if (fFilteredChildren == null)
+		if (fFilteredChildren == null) {
 			fFilteredChildren = new ArrayList<FrameworkMethod>(getChildren());
+		}
 		return fFilteredChildren;
 	}
+
 
 	/**
 	 * Sets a scheduler that determines the order and parallelization of

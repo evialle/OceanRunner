@@ -11,14 +11,14 @@
 	<groupId>it.freshminutes</groupId>
 	<artifactId>oceanrunner-junit3</artifactId>
 	<name>OceanRunner - Junit3Module</name>
-	<version>20120411-SNAPSHOT</version>
+	<version>20120413-SNAPSHOT</version>
 	<description>OceanRunner - manage JUnit3</description>
 
 
 	<parent>
 		<groupId>it.freshminutes</groupId>
 		<artifactId>oceanrunner</artifactId>
-		<version>20120411-SNAPSHOT</version>
+		<version>20120413-SNAPSHOT</version>
 	</parent>
 
 	<dependencies>

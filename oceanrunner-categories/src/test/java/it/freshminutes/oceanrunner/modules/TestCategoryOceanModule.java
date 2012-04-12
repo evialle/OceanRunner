@@ -38,7 +38,7 @@ public class TestCategoryOceanModule {
 
 	@Test
 	@Category(CategoryToDoNotUse.class)
-	public void testCategoryToDoNotUser() {
+	public void testCategoryToDoNotUse() {
 		Assert.fail("Do not execute that method");
 	}
 

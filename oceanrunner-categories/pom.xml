@@ -11,7 +11,7 @@
 	<groupId>it.freshminutes</groupId>
 	<artifactId>oceanrunner-categories</artifactId>
 	<name>OceanRunner - OceanCategoriesModule</name>
-	<version>20120411-SNAPSHOT</version>
+	<version>20120413-SNAPSHOT</version>
 
 	<description>OceanRunner - manage Categories</description>
 
@@ -19,7 +19,7 @@
 	<parent>
 		<groupId>it.freshminutes</groupId>
 		<artifactId>oceanrunner</artifactId>
-		<version>20120411-SNAPSHOT</version>
+		<version>20120413-SNAPSHOT</version>
 	</parent>
 
 	<dependencies>
@@ -27,7 +27,6 @@
 		<dependency>
 			<groupId>it.freshminutes</groupId>
 			<artifactId>oceanrunner-core</artifactId>
-			<version>20120409-SNAPSHOT</version>
 		</dependency>
 
 	</dependencies>

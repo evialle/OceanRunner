@@ -49,7 +49,7 @@ public class CategoryOceanModule extends OceanModule {
 	private final static String CATEGORY_EXCLUDED_PROPERTYKEY = "category.excluded";
 
 	@Override
-	public void doBeforeAllTestedMethods(final OceanRunner oceanRunner, final Class<?> klass) throws OceanModuleException {
+	public void doBeforeAllTestedMethods(OceanRunner oceanRunner, Class<?> klass) throws OceanModuleException {
 
 		try {
 			List<Class<?>> includedCategory = getIncludedCategory(oceanRunner, klass);
@@ -60,11 +60,9 @@ public class CategoryOceanModule extends OceanModule {
 			throw new OceanModuleException(e);
 		}
 		try {
-			assertNoCategorizedDescendentsOfUncategorizeableParents(oceanRunner
-					.getDescription());
+			assertNoCategorizedDescendentsOfUncategorizeableParents(oceanRunner.getDescription());
 		} catch (InitializationError e) {
 			throw new OceanModuleException(e);
-
 		}
 	}
 
