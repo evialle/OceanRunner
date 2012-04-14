@@ -19,6 +19,7 @@
 package it.freshminutes.oceanrunner.modules.statistics;
 
 import it.freshminutes.oceanrunner.OceanRunner;
+import it.freshminutes.oceanrunner.modules.concurrent.OceanRunTestsInDedicatedThreads;
 
 import java.sql.SQLException;
 
@@ -33,6 +34,7 @@ import org.junit.runner.RunWith;
  *
  */
 @RunWith(OceanRunner.class)
+@OceanRunTestsInDedicatedThreads()
 public class TestStatisticsOceanModuleWithEBean {
 
 	private static Server server;
@@ -55,7 +57,7 @@ public class TestStatisticsOceanModuleWithEBean {
 	}
 
 	@Test
-	//@Ignore
+	@Ignore
 	public void ignoreTest() {
 		Assert.assertTrue("assertTrue with false", false);
 	}

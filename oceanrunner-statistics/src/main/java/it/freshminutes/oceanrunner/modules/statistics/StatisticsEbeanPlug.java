@@ -57,13 +57,18 @@ public class StatisticsEbeanPlug extends StatisticsDataPlug {
 	/** Name of the environnement tested. */
 	private String environment;
 
+	/** Name of the tested project. */
+	private String project;
+
+	/** Version of the project. */
+	private String version;
+
 	/**
 	 * 
 	 * @param oceanRunner
 	 * @throws OceanModuleException
 	 */
-	public StatisticsEbeanPlug(final OceanRunner oceanRunner)
-			throws OceanModuleException {
+	public StatisticsEbeanPlug(final OceanRunner oceanRunner) throws OceanModuleException {
 		super(oceanRunner);
 
 		if (DB_SERVER == null) {
@@ -77,8 +82,6 @@ public class StatisticsEbeanPlug extends StatisticsDataPlug {
 			ServerConfig config = new ServerConfig();
 			config.setName("StatisticsEbeanPlug");
 			config.setDataSourceConfig(myDbConfig);
-			//config.setDdlGenerate(true);
-			//config.setDdlRun(true);
 			config.setDefaultServer(true);
 
 			config.addClass(StatisticsResult.class);
@@ -86,12 +89,11 @@ public class StatisticsEbeanPlug extends StatisticsDataPlug {
 			DB_SERVER = EbeanServerFactory.create(config);
 
 			// Properties for StatisticsEbeanPlug
-			this.environment = oceanRunner.getAwareProperty(
-					StatisticsOceanModule.STATISTICS_ENVIRONEMENT_PROPERTYKEY,
-					"default");
-			String maxRunToStudy = oceanRunner.getAwareProperty(
-					STATISTICS_MAX_RUN_TO_STUDY_PROPERTYKEY,
-					Integer.toString(MAX_RUN_TO_STUDY_DEFAULT));
+			this.environment = oceanRunner.getAwareProperty(StatisticsOceanModule.STATISTICS_ENVIRONEMENT_PROPERTYKEY, "%");
+			this.project = oceanRunner.getAwareProperty(StatisticsOceanModule.STATISTICS_PROJECT_PROPERTYKEY, "%");
+			this.version = oceanRunner.getAwareProperty(StatisticsOceanModule.STATISTICS_VERSION_PROPERTYKEY, "%");
+			
+			String maxRunToStudy = oceanRunner.getAwareProperty(STATISTICS_MAX_RUN_TO_STUDY_PROPERTYKEY, Integer.toString(MAX_RUN_TO_STUDY_DEFAULT));
 			try {
 				this.maxRunToStudy = Integer.parseInt(maxRunToStudy);
 			} catch (NumberFormatException e) {
@@ -108,7 +110,10 @@ public class StatisticsEbeanPlug extends StatisticsDataPlug {
 				.where()
 				.eq("classundertestname", oceanRunner.getClassUnderTest().getName())
 				.eq("methodundertestname", testsToSearch)
-				.eq("environment", this.environment).orderBy().desc("rundate")
+				.like("environment", this.environment)
+				.like("project", this.project)
+				.like("version", this.version)
+				.orderBy().desc("rundate")
 				.setMaxRows(this.maxRunToStudy);
 
 		List<StatisticsResult> lastStatusList = selectResultsQuery.findList();

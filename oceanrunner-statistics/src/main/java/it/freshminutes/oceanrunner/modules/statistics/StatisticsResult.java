@@ -76,6 +76,15 @@ public class StatisticsResult implements Serializable {
 
 	@Column(name = "environment")
 	private String environment;
+	
+	@Column(name = "project")
+	private String project;
+	
+	@Column(name = "version")
+	private String version;
+	
+	@Column(name = "duration")
+	private long duration;
 
 	private transient Throwable throwable;
 
@@ -188,6 +197,48 @@ public class StatisticsResult implements Serializable {
 	public String toString() {
 		return classUnderTestName + "." + methodUnderTestName + "() "
 				+ environment + ", " + runDate + " " + comments + ", " + status;
+	}
+
+	/**
+	 * @return the project
+	 */
+	public String getProject() {
+		return project;
+	}
+
+	/**
+	 * @param project the project to set
+	 */
+	public void setProject(String project) {
+		this.project = project;
+	}
+
+	/**
+	 * @return the version
+	 */
+	public String getVersion() {
+		return version;
+	}
+
+	/**
+	 * @param version the version to set
+	 */
+	public void setVersion(String version) {
+		this.version = version;
+	}
+
+	/**
+	 * @return the duration
+	 */
+	public long getDuration() {
+		return duration;
+	}
+
+	/**
+	 * @param duration the duration to set
+	 */
+	public void setDuration(long duration) {
+		this.duration = duration;
 	}
 
 }

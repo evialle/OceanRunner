@@ -45,22 +45,27 @@ public class StatisticsOceanModule extends OceanModule {
 
 	private static final String STATISTICS_DATAPLUG_PROPERTYKEY = "statistics.dataplug";
 
-	/** System property name defining the statistics environement. */
+	/** System property name defining the statistics environment. */
 	public static final String STATISTICS_ENVIRONEMENT_PROPERTYKEY = "statistics.environement";
 
 	private static final String STATISTICS_JPA_COMMENTSSIZE_PROPERTYKEY = "statistics.commentssize";
 
-	private static final int STATISTICS_JPA_COMMENTSSIZE_DEFAULT = 512;
+	private static final int STATISTICS_JPA_COMMENTSSIZE_DEFAULT = 256;
 
 	/**
 	 * System property name defining if the user may write statistics or if it
 	 * only use it.
 	 */
 	public static final String STATISTICS_AUTHORIZEDWRITE_PROPERTYKEY = "statistics.authorizedwrite";
+	
+	/** System property defining the name of the project. */
+	public static final String STATISTICS_PROJECT_PROPERTYKEY = "statistics.project";
+	
+	/** System property defining the version of the project. */
+	public static final String STATISTICS_VERSION_PROPERTYKEY = "statistics.version";
 
 	/** SimpleDateFormat static. */
-	private static final SimpleDateFormat SDF = new SimpleDateFormat(
-			"dd/MM/yyyy HH:mm");
+	private static final SimpleDateFormat SDF = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 
 	private Map<String, StatisticsResult> actualResultsMap = Maps.newHashMap();
 
@@ -68,6 +73,12 @@ public class StatisticsOceanModule extends OceanModule {
 
 	/** Environement name where the unit test is run. */
 	private String environment;
+	
+	private ThreadLocal<Long> startTestThreadLocal = new ThreadLocal<Long>();
+
+	private String project;
+
+	private String version;
 
 	/*
 	 * (non-Javadoc)
@@ -80,8 +91,8 @@ public class StatisticsOceanModule extends OceanModule {
 	public void doBeforeAllTestedMethods(final OceanRunner oceanRunner,
 			Class<?> klass) throws OceanModuleException {
 
-		String statisticsDataPlugClassName = oceanRunner
-				.getAwareProperty(STATISTICS_DATAPLUG_PROPERTYKEY);
+		String statisticsDataPlugClassName = oceanRunner.getAwareProperty(STATISTICS_DATAPLUG_PROPERTYKEY);
+		
 		if (statisticsDataPlugClassName == null) {
 			throw new OceanModuleException(
 					"Supply the property "
@@ -99,15 +110,14 @@ public class StatisticsOceanModule extends OceanModule {
 								+ STATISTICS_DATAPLUG_PROPERTYKEY
 								+ ", to run StatisticsOceanModule with a valid class extending StatisticsDataPlug");
 			}
-			Constructor<?> constructor = klass
-					.getConstructor(OceanRunner.class);
+			Constructor<?> constructor = klass.getConstructor(OceanRunner.class);
 
-			statisticsDataPlug = (StatisticsDataPlug) constructor
-					.newInstance(oceanRunner);
+			statisticsDataPlug = (StatisticsDataPlug) constructor.newInstance(oceanRunner);
 
 			this.actualResultsMap = Maps.newHashMap();
-			this.environment = oceanRunner
-					.getAwareProperty(STATISTICS_ENVIRONEMENT_PROPERTYKEY);
+			this.environment = oceanRunner.getAwareProperty(STATISTICS_ENVIRONEMENT_PROPERTYKEY, "default");
+			this.project = oceanRunner.getAwareProperty(STATISTICS_PROJECT_PROPERTYKEY, "default");;
+			this.version = oceanRunner.getAwareProperty(STATISTICS_VERSION_PROPERTYKEY, "default");
 
 		} catch (ClassNotFoundException e) {
 			throw new OceanModuleException(
@@ -139,8 +149,7 @@ public class StatisticsOceanModule extends OceanModule {
 	 * java.lang.Class)
 	 */
 	@Override
-	public void doAfterAllTestedMethods(final OceanRunner oceanRunner,
-			final Class<?> klass) throws OceanModuleException {
+	public void doAfterAllTestedMethods(final OceanRunner oceanRunner, final Class<?> klass) throws OceanModuleException {
 		String writeAuthorizedString = oceanRunner.getAwareProperty(STATISTICS_AUTHORIZEDWRITE_PROPERTYKEY, "true");
 		boolean writeAuthorized = Boolean.parseBoolean(writeAuthorizedString);
 		if (writeAuthorized) {
@@ -157,23 +166,28 @@ public class StatisticsOceanModule extends OceanModule {
 	 */
 	@Override
 	public void doAfterEachFailedMethod(final OceanRunner oceanRunner, final Failure failure) throws OceanModuleException {
+		long duration = getFinalTime();
 
 		// Add the statistics result in the cache result
-		StatisticsResult sResults = new StatisticsResult();
+		StatisticsResult sResult = new StatisticsResult();
 		String comments;
 		if (failure.getMessage() == null) {
 			comments = failure.getTrace();
 		} else {
-			comments = failure.getMessage() + " >> Trace: " + failure.getTrace();
+			comments = failure.getMessage() + " #Trace: " + failure.getException().getStackTrace()[0];
 		}
-		sResults.setComments(optimizeCommentsSize(oceanRunner, comments));
-		sResults.setRunDate(new Date());
-		sResults.setStatus(StatusTestResult.FAILED);
-		sResults.setThrowable(failure.getException());
-		sResults.setEnvironment(this.environment);
-		sResults.setClassUnderTestName(failure.getDescription().getClassName());
-		sResults.setMethodUnderTestName(failure.getDescription().getMethodName());
-		actualResultsMap.put(failure.getDescription().getMethodName(), sResults);
+		sResult.setComments(optimizeCommentsSize(oceanRunner, comments));
+		sResult.setRunDate(new Date());
+		sResult.setStatus(StatusTestResult.FAILED);
+		sResult.setThrowable(failure.getException());
+		sResult.setEnvironment(this.environment);
+		sResult.setProject(this.project);
+		sResult.setVersion(this.version);
+		sResult.setClassUnderTestName(failure.getDescription().getClassName());
+		sResult.setMethodUnderTestName(failure.getDescription().getMethodName());
+		sResult.setDuration(duration);
+
+		actualResultsMap.put(failure.getDescription().getMethodName(), sResult);
 
 		// Enhance the exception
 		String statisticsMsg = processStatisticMessage(failure);
@@ -192,9 +206,9 @@ public class StatisticsOceanModule extends OceanModule {
 		if ((Strings.isNullOrEmpty(comments))) {
 			return comments;
 		} else if (comments.length() < commentsSize) {
-			return comments.replace(System.lineSeparator(),";");
+			return comments.replace(System.getProperty("line.separator"),",");
 		}else {
-			return new String(comments.substring(0, commentsSize - 4) + "...").replace(System.lineSeparator(),";");
+			return new String(comments.substring(0, commentsSize - 4) + "...").replace(System.getProperty("line.separator"),",");
 		}
 	}
 
@@ -220,45 +234,62 @@ public class StatisticsOceanModule extends OceanModule {
 	 * org.junit.runner.Description)
 	 */
 	@Override
-	public void doAfterEachIgnoredMethod(final OceanRunner oceanRunner,
-			final Description description) {
+	public void doAfterEachIgnoredMethod(final OceanRunner oceanRunner, final Description description) {
+
 		// Add the statistics result in the cache result
-		StatisticsResult sResults = new StatisticsResult();
-		sResults.setRunDate(new Date());
-		sResults.setStatus(StatusTestResult.IGNORE);
-		sResults.setClassUnderTestName(description.getClassName());
-		sResults.setMethodUnderTestName(description.getMethodName());
-		sResults.setEnvironment(this.environment);
-		actualResultsMap.put(description.getMethodName(), sResults);
+		StatisticsResult sResult = new StatisticsResult();
+		sResult.setRunDate(new Date());
+		sResult.setStatus(StatusTestResult.IGNORE);
+		sResult.setClassUnderTestName(description.getClassName());
+		sResult.setMethodUnderTestName(description.getMethodName());
+		sResult.setEnvironment(this.environment);
+		sResult.setProject(this.project);
+		sResult.setVersion(this.version);
+
+		actualResultsMap.put(description.getMethodName(), sResult);
 	}
 
-	public void doAfterEachAssertionFailedMethod(final OceanRunner oceanRunner,
-			final Failure failure) throws OceanModuleException {
+	public void doAfterEachAssertionFailedMethod(final OceanRunner oceanRunner, final Failure failure) throws OceanModuleException {
+		
+		long duration = getFinalTime();
+
 
 		// Add the statistics result in the cache result
-		StatisticsResult sResults = new StatisticsResult();
+		StatisticsResult sResult = new StatisticsResult();
 		String comments;
 
 		if (failure.getMessage() == null) {
 			comments = failure.getTrace();
 		} else {
-			comments = failure.getMessage() + " >> Trace: " + failure.getTrace();
+			comments = failure.getMessage();
 		}
 		String optimizeCommentsSize = optimizeCommentsSize(oceanRunner, comments);
-		sResults.setComments(optimizeCommentsSize);
-		sResults.setRunDate(new Date());
-		sResults.setStatus(StatusTestResult.ASSERTION_FAILED);
-		sResults.setThrowable(failure.getException());
-		sResults.setClassUnderTestName(failure.getDescription().getClassName());
-		sResults.setEnvironment(this.environment);
-		sResults.setMethodUnderTestName(failure.getDescription().getMethodName());
-		actualResultsMap.put(failure.getDescription().getMethodName(), sResults);
+		sResult.setComments(optimizeCommentsSize);
+		sResult.setRunDate(new Date());
+		sResult.setStatus(StatusTestResult.ASSERTION_FAILED);
+		sResult.setThrowable(failure.getException());
+		sResult.setClassUnderTestName(failure.getDescription().getClassName());
+		sResult.setEnvironment(this.environment);
+		sResult.setProject(this.project);
+		sResult.setVersion(this.version);
+		sResult.setMethodUnderTestName(failure.getDescription().getMethodName());
+		sResult.setDuration(duration);
+
+		actualResultsMap.put(failure.getDescription().getMethodName(), sResult);
 
 		// Enhance the exception
 		String statisticsMsg = processStatisticMessage(failure);
-		enhanceThrowable(failure.getException(), failure.getMessage() + "; "+ statisticsMsg);
+		enhanceThrowable(failure.getException(), statisticsMsg);
 	}
 
+	/**
+	 * 
+	 */
+	public void doBeforeEachTestedMethod(final OceanRunner oceanRunner) throws OceanModuleException {
+		//used to compute the duration of the test
+		startTestThreadLocal.set(System.currentTimeMillis());
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -268,22 +299,27 @@ public class StatisticsOceanModule extends OceanModule {
 	 * org.junit.runner.notification.Failure)
 	 */
 	@Override
-	public void doAfterEachAssumptionFailedMethod(
-			final OceanRunner oceanRunner, final Failure failure) {
+	public void doAfterEachAssumptionFailedMethod(final OceanRunner oceanRunner, final Failure failure) {
+		long duration = getFinalTime();
+		
 		// Add the statistics result in the cache result
-		StatisticsResult sResults = new StatisticsResult();
+		StatisticsResult sResult = new StatisticsResult();
 		if (failure.getMessage() == null) {
-			sResults.setComments(failure.getTrace());
+			sResult.setComments(failure.getTrace());
 		} else {
-			sResults.setComments(failure.getMessage() + " >> Trace: " + failure.getTrace());
+			sResult.setComments(failure.getMessage() + " >> Trace: " + failure.getTrace());
 		}
-		sResults.setRunDate(new Date());
-		sResults.setStatus(StatusTestResult.ASSUMPTION_FAILED);
-		sResults.setThrowable(failure.getException());
-		sResults.setClassUnderTestName(failure.getDescription().getClassName());
-		sResults.setEnvironment(this.environment);
-		sResults.setMethodUnderTestName(failure.getDescription().getMethodName());
-		actualResultsMap.put(failure.getDescription().getMethodName(), sResults);
+		sResult.setRunDate(new Date());
+		sResult.setStatus(StatusTestResult.ASSUMPTION_FAILED);
+		sResult.setThrowable(failure.getException());
+		sResult.setClassUnderTestName(failure.getDescription().getClassName());
+		sResult.setEnvironment(this.environment);
+		sResult.setProject(this.project);
+		sResult.setVersion(this.version);
+		sResult.setMethodUnderTestName(failure.getDescription().getMethodName());
+		sResult.setDuration(duration);
+
+		actualResultsMap.put(failure.getDescription().getMethodName(), sResult);
 
 		// Enhance the exception
 		String statisticsMsg = processStatisticMessage(failure);
@@ -311,7 +347,8 @@ public class StatisticsOceanModule extends OceanModule {
 				String date = SDF.format(statisticsResult.getRunDate());
 				msgBuilder.append("Last success of ")
 						.append(failure.getDescription().getMethodName())
-						.append(", the ").append(date);
+						.append(", the ").append(date)
+						.append(" with duration: ").append(statisticsResult.getDuration()).append("ms");
 				break;
 			} else if (!lastStatusTestResult.equals(statisticsResult.getStatus()) || !(lastComments.equals(Strings.nullToEmpty(statisticsResult.getComments())))) {
 				lastStatusTestResult = statisticsResult.getStatus();
@@ -327,30 +364,32 @@ public class StatisticsOceanModule extends OceanModule {
 						if (! Strings.isNullOrEmpty(statisticsResult.getComments())) {
 							msgBuilder.append(", with comments: ").append(statisticsResult.getComments());
 						}
-				msgBuilder.append("; ");
+				msgBuilder.append(" / ");
 			}
 			
 		}
-
 		return msgBuilder.toString();
 	}
 
 	@Override
-	public void doAfterEachTestedMethod(final OceanRunner oceanRunner,
-			final Description description) throws OceanModuleException {
-		StatisticsResult sResult = actualResultsMap.get(description
-				.getMethodName());
+	public void doAfterEachTestedMethod(final OceanRunner oceanRunner, final Description description) throws OceanModuleException {
+		long duration = getFinalTime();
+		
+		StatisticsResult sResultFromCache = actualResultsMap.get(description.getMethodName());
 		// Doesn't exist -> The test was successful
-		if (sResult == null) {
+		if (sResultFromCache == null) {
 			// Add the statistics result in the cache result
-			StatisticsResult sResults = new StatisticsResult();
-			sResults.setRunDate(new Date());
-			sResults.setStatus(StatusTestResult.SUCCESS);
-			sResults.setClassUnderTestName(description.getClassName());
-			sResults.setMethodUnderTestName(description.getMethodName());
-			sResults.setEnvironment(this.environment);
+			StatisticsResult sResult = new StatisticsResult();
+			sResult.setRunDate(new Date());
+			sResult.setStatus(StatusTestResult.SUCCESS);
+			sResult.setClassUnderTestName(description.getClassName());
+			sResult.setMethodUnderTestName(description.getMethodName());
+			sResult.setEnvironment(this.environment);
+			sResult.setProject(this.project);
+			sResult.setVersion(this.version);
+			sResult.setDuration(duration);
 
-			actualResultsMap.put(description.getMethodName(), sResults);
+			actualResultsMap.put(description.getMethodName(), sResult);
 		}
 	}
 
@@ -365,7 +404,7 @@ public class StatisticsOceanModule extends OceanModule {
 		try {
 			Field field = Throwable.class.getDeclaredField("detailMessage");
 			field.setAccessible(true);
-			String detailMessage = (String) field.get(throwable);
+			String detailMessage = throwable.getMessage();
 
 			String enhancedMessage;
 			if (Strings.isNullOrEmpty(detailMessage)) {
@@ -373,7 +412,7 @@ public class StatisticsOceanModule extends OceanModule {
 			} else if (Strings.isNullOrEmpty(message)){
 				enhancedMessage = detailMessage;
 			} else {
-				enhancedMessage = detailMessage + " - " + message;
+				enhancedMessage = detailMessage + " / " + message;
 			}
 
 			field.set(throwable, enhancedMessage);
@@ -389,6 +428,11 @@ public class StatisticsOceanModule extends OceanModule {
 		}
 
 		return throwable;
+	}
+	
+	/** used to process the duration of a test. */
+	private long getFinalTime() {
+		return System.currentTimeMillis() - startTestThreadLocal.get();
 	}
 
 }

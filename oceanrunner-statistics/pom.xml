@@ -41,6 +41,14 @@
 
 
 		<!-- Test dependencies -->
+
+		<dependency>
+			<groupId>it.freshminutes</groupId>
+			<artifactId>oceanrunner-concurrent</artifactId>
+			<version>20120413-SNAPSHOT</version>
+			<scope>test</scope>
+		</dependency>
+
 		<dependency>
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
