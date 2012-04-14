@@ -20,25 +20,48 @@ import it.freshminutes.oceanrunner.annotations.OceanModulesToUse;
 import it.freshminutes.oceanrunner.modules.categories.CategoryOceanModule;
 import it.freshminutes.oceanrunner.tests.categories.CategoryToDoNotUse;
 import it.freshminutes.oceanrunner.tests.categories.CategoryToUse;
+import it.freshminutes.oceanrunner.tests.categories.CategoryToUseAsAnnotation;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.experimental.categories.Categories.IncludeCategory;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
 @RunWith(OceanRunner.class)
 @OceanModulesToUse(CategoryOceanModule.class)
-public class TestCategoryOceanModule {
+@IncludeCategory(CategoryToUseAsAnnotation.class)
+public class TestCategoryOceanModuleWithIncludeAnnotation {
 
 	@Test
-	@Category(CategoryToUse.class)
+	@Category(CategoryToUseAsAnnotation.class)
 	public void testCategoryToUseWithTheRightCategory() {
+		Assert.assertTrue(true);
+	}
+	
+	@Test
+	@Category(CategoryToUseAsAnnotation.class)
+	public void testCategoryToUseWithTheRightCategory2() {
 		Assert.assertTrue(true);
 	}
 
 	@Test
-	@Category(CategoryToDoNotUse.class)
+	@Category(CategoryToUse.class)
 	public void testCategoryToDoNotUse() {
+		Assert.fail("Do not execute that method");
+	}
+	
+
+	
+	@Test
+	@Category(CategoryToUse.class)
+	public void testCategoryToDoNotUse2() {
+		Assert.fail("Do not execute that method");
+	}
+	
+	@Test
+	@Category(CategoryToDoNotUse.class)
+	public void testCategoryToDoNotUse3() {
 		Assert.fail("Do not execute that method");
 	}
 
