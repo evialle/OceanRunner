@@ -48,8 +48,10 @@ public class StatisticsOceanModule extends OceanModule {
 	/** System property name defining the statistics environment. */
 	public static final String STATISTICS_ENVIRONEMENT_PROPERTYKEY = "statistics.environement";
 
+	/** System property name defining the max size of the comments. */
 	private static final String STATISTICS_JPA_COMMENTSSIZE_PROPERTYKEY = "statistics.commentssize";
 
+	/** Default max size of the comments. */
 	private static final int STATISTICS_JPA_COMMENTSSIZE_DEFAULT = 256;
 
 	/**
@@ -67,17 +69,22 @@ public class StatisticsOceanModule extends OceanModule {
 	/** SimpleDateFormat static. */
 	private static final SimpleDateFormat SDF = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 
+	/** Cache of the results for, with method name as key. */
 	private Map<String, StatisticsResult> actualResultsMap = Maps.newHashMap();
 
+	/** Plug to persistence store. */
 	private StatisticsDataPlug statisticsDataPlug;
 
 	/** Environement name where the unit test is run. */
 	private String environment;
 	
+	/** Used to compute test duration. */
 	private ThreadLocal<Long> startTestThreadLocal = new ThreadLocal<Long>();
 
+	/** Project name (defined by the user) */
 	private String project;
 
+	/** Version of the test (defined by the user). */
 	private String version;
 
 	/*
@@ -125,19 +132,9 @@ public class StatisticsOceanModule extends OceanModule {
 							+ STATISTICS_DATAPLUG_PROPERTYKEY
 							+ ", to run StatisticsOceanModule with a valid class extending StatisticsDataPlug",
 					e);
-		} catch (NoSuchMethodException e) {
+		} catch (Exception e) {
 			throw new OceanModuleException(e);
-		} catch (SecurityException e) {
-			throw new OceanModuleException(e);
-		} catch (InstantiationException e) {
-			throw new OceanModuleException(e);
-		} catch (IllegalAccessException e) {
-			throw new OceanModuleException(e);
-		} catch (IllegalArgumentException e) {
-			throw new OceanModuleException(e);
-		} catch (InvocationTargetException e) {
-			throw new OceanModuleException(e);
-		}
+		} 
 
 	}
 
@@ -172,11 +169,12 @@ public class StatisticsOceanModule extends OceanModule {
 		StatisticsResult sResult = new StatisticsResult();
 		String comments;
 		if (failure.getMessage() == null) {
-			comments = failure.getTrace();
+			comments = optimizedStackTrace(failure);
 		} else {
-			comments = failure.getMessage() + " #Trace: " + failure.getException().getStackTrace()[0];
+			comments = failure.getMessage() + " #Trace: " + optimizedStackTrace(failure);
 		}
-		sResult.setComments(optimizeCommentsSize(oceanRunner, comments));
+		String optimizeCommentsSize = optimizeCommentsSize(oceanRunner, comments);
+		sResult.setComments(optimizeCommentsSize);
 		sResult.setRunDate(new Date());
 		sResult.setStatus(StatusTestResult.FAILED);
 		sResult.setThrowable(failure.getException());
@@ -192,6 +190,14 @@ public class StatisticsOceanModule extends OceanModule {
 		// Enhance the exception
 		String statisticsMsg = processStatisticMessage(failure);
 		enhanceThrowable(failure.getException(), statisticsMsg);
+	}
+
+	/**
+	 * @param failure
+	 * @return
+	 */
+	private String optimizedStackTrace(final Failure failure) {
+		return failure.getException().getStackTrace()[0].toString();
 	}
 
 	/**
@@ -219,9 +225,7 @@ public class StatisticsOceanModule extends OceanModule {
 	 */
 	private int commentsSize(final OceanRunner oceanRunner)
 			throws OceanModuleException {
-		String commentsSizeStr = oceanRunner.getAwareProperty(
-				STATISTICS_JPA_COMMENTSSIZE_PROPERTYKEY,
-				Integer.toString(STATISTICS_JPA_COMMENTSSIZE_DEFAULT));
+		String commentsSizeStr = oceanRunner.getAwareProperty(STATISTICS_JPA_COMMENTSSIZE_PROPERTYKEY, Integer.toString(STATISTICS_JPA_COMMENTSSIZE_DEFAULT));
 		int commentsSize = Integer.parseInt(commentsSizeStr);
 		return commentsSize;
 	}
@@ -259,7 +263,7 @@ public class StatisticsOceanModule extends OceanModule {
 		String comments;
 
 		if (failure.getMessage() == null) {
-			comments = failure.getTrace();
+			comments = optimizedStackTrace(failure);
 		} else {
 			comments = failure.getMessage();
 		}
@@ -305,10 +309,11 @@ public class StatisticsOceanModule extends OceanModule {
 		// Add the statistics result in the cache result
 		StatisticsResult sResult = new StatisticsResult();
 		if (failure.getMessage() == null) {
-			sResult.setComments(failure.getTrace());
+			sResult.setComments(optimizedStackTrace(failure));
 		} else {
-			sResult.setComments(failure.getMessage() + " >> Trace: " + failure.getTrace());
+			sResult.setComments(failure.getMessage() + " #Trace: " + optimizedStackTrace(failure));
 		}
+		
 		sResult.setRunDate(new Date());
 		sResult.setStatus(StatusTestResult.ASSUMPTION_FAILED);
 		sResult.setThrowable(failure.getException());
@@ -368,6 +373,8 @@ public class StatisticsOceanModule extends OceanModule {
 			}
 			
 		}
+
+		
 		return msgBuilder.toString();
 	}
 
