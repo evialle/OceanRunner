@@ -11,7 +11,7 @@
 	<groupId>it.freshminutes</groupId>
 	<artifactId>oceanrunner-core</artifactId>
 	<name>OceanRunner - Core</name>
-	<version>20120413-SNAPSHOT</version>
+	<version>20120414-SNAPSHOT</version>
 	<description>OceanRunner - The base of OceanRunner</description>
 
 

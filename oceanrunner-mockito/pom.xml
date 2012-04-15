@@ -11,7 +11,7 @@
 	<groupId>it.freshminutes</groupId>
 	<artifactId>oceanrunner-mockito</artifactId>
 	<name>OceanRunner - MockitoOceanModule</name>
-	<version>20120413-SNAPSHOT</version>
+	<version>20120414-SNAPSHOT</version>
 
 	<description>OceanRunner - manage your mock with Mockito</description>
 

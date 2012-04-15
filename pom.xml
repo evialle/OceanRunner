@@ -3,13 +3,13 @@
 
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>it.freshminutes</groupId>
-	<version>20120413-SNAPSHOT</version>
+	<version>20120414-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<artifactId>oceanrunner</artifactId>
 	<name>OceanRunner</name>
 	<description>OceanRunner - Make easily JUnit Runners.</description>
 
-	<properties>
+	<properties>		
 		<java.version>1.6</java.version>
 		<java.source.version>1.6</java.source.version>
 		<java.target.version>1.6</java.target.version>
