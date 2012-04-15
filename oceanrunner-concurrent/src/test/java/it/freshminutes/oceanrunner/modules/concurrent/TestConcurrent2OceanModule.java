@@ -15,6 +15,7 @@
  */
 package it.freshminutes.oceanrunner.modules.concurrent;
 
+import static org.junit.Assert.*;
 import it.freshminutes.oceanrunner.OceanRunner;
 import it.freshminutes.oceanrunner.annotations.OceanModulesToUse;
 
@@ -26,9 +27,29 @@ import org.junit.runner.RunWith;
 @OceanRunTestsInDedicatedThreads(value = true)
 public class TestConcurrent2OceanModule {
 
+	static int repeatMe;
+	
+	static int repeatMeFailed;
+
+	
 	@Test
+	@OceanRunRepeat(10)
 	public void testConcurrent() {
-		System.out.println(Thread.currentThread().getName() + " 1");
+		
+		System.out.println(Thread.currentThread().getName() + " 1 - Repeat" + repeatMe++);
+		assertTrue(repeatMe <= 10);
+	}
+	
+	@Test
+	@OceanRunRepeat(10)
+	public void testConcurrentFailed() {
+		
+		System.out.println(Thread.currentThread().getName() + " 1 - Repeat" + repeatMeFailed++);
+		assertTrue(repeatMeFailed <= 10);
+		
+		if (repeatMeFailed == 5) {
+			fail("YES");
+		}
 	}
 
 	@Test
