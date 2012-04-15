@@ -11,18 +11,18 @@
 	<groupId>it.freshminutes</groupId>
 	<artifactId>oceanrunner-repeat</artifactId>
 	<name>OceanRunner - RepeatOceanModule</name>
-	<version>20120414-SNAPSHOT</version>
+	<version>20120415-SNAPSHOT</version>
 	<description>OceanRunner - Repeat tests</description>
 
 	<parent>
 		<groupId>it.freshminutes</groupId>
 		<artifactId>oceanrunner</artifactId>
-		<version>20120414-SNAPSHOT</version>
+		<version>20120415-SNAPSHOT</version>
 	</parent>
 
 	<dependencies>
-		
-		<!-- OceanRunner Core-->
+
+		<!-- OceanRunner Core -->
 		<dependency>
 			<groupId>it.freshminutes</groupId>
 			<artifactId>oceanrunner-core</artifactId>
@@ -33,7 +33,7 @@
 			<artifactId>oceanrunner-concurrent</artifactId>
 			<scope>test</scope>
 		</dependency>
-		
+
 	</dependencies>
 
 </project>
