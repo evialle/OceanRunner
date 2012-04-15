@@ -112,7 +112,6 @@ public class StatisticsEbeanPlug extends StatisticsDataPlug {
 				.eq("methodundertestname", testsToSearch)
 				.like("environment", this.environment)
 				.like("project", this.project)
-				.like("version", this.version)
 				.orderBy().desc("rundate")
 				.setMaxRows(this.maxRunToStudy);
 

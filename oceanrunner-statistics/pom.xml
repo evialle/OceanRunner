@@ -10,7 +10,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>it.freshminutes</groupId>
 	<artifactId>oceanrunner-statistics</artifactId>
-	<name>OceanRunner - OceanStatisticsModule</name>
+	<name>OceanRunner - StatisticsOceanModule</name>
 	<version>20120414-SNAPSHOT</version>
 
 	<description>OceanRunner - manage the success of your JUnit tests</description>
