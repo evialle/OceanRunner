@@ -47,7 +47,20 @@ public class TestRepeatOceanModule {
 		
 		System.out.println(Thread.currentThread().getName() + " 1 - Repeat Failed" + repeatMeFailed++);
 		assertTrue(repeatMeFailed <= 5);
+		
+		if (repeatMeFailed == 4) {
+			fail("That'what we want!");
+		}
 	}
+	
+	@Test
+	@OceanRunRepeat(5)
+	public void testConcurrentAlwaysFailed() {
+		
+		System.out.println(Thread.currentThread().getName() + " 1 - Always Repeat Failed" + repeatMeFailed++);
+		fail("Always failed");
+	}
+
 
 	@Test
 	public void testConcurrent2() {

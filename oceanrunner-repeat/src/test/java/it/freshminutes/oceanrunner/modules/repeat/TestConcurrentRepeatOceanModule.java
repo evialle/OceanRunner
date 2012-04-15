@@ -17,11 +17,11 @@
 package it.freshminutes.oceanrunner.modules.repeat;
 
 import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 import it.freshminutes.oceanrunner.OceanRunner;
 import it.freshminutes.oceanrunner.annotations.OceanModulesToUse;
 import it.freshminutes.oceanrunner.modules.concurrent.ConcurrentOceanModule;
-import it.freshminutes.oceanrunner.modules.concurrent.OceanRunTestsInDedicatedThreads;
-import it.freshminutes.oceanrunner.modules.repeat.RepeatOceanModule;
+import it.freshminutes.oceanrunner.modules.concurrent.annotations.OceanRunTestsInDedicatedThreads;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -49,6 +49,18 @@ public class TestConcurrentRepeatOceanModule {
 		
 		System.out.println(Thread.currentThread().getName() + " 1 - Repeat Failed" + repeatMeFailed++);
 		assertTrue(repeatMeFailed <= 5);
+		
+		if (repeatMeFailed == 4) {
+			fail("That'what we want!");
+		}
+	}
+	
+	@Test
+	@OceanRunRepeat(5)
+	public void testConcurrentAlwaysFailed() {
+		
+		System.out.println(Thread.currentThread().getName() + " 1 - Always Repeat Failed" + repeatMeFailed++);
+		fail("Always failed");
 	}
 
 	@Test
