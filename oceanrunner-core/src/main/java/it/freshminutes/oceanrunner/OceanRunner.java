@@ -15,6 +15,7 @@
  */
 package it.freshminutes.oceanrunner;
 
+import it.freshminutes.oceanrunner.annotations.OceanModulesToAddToDefault;
 import it.freshminutes.oceanrunner.annotations.OceanModulesToUse;
 import it.freshminutes.oceanrunner.exceptions.NoOceanModuleException;
 import it.freshminutes.oceanrunner.exceptions.OceanModuleException;
@@ -52,6 +53,8 @@ import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
 
+import com.google.common.collect.Lists;
+
 /**
  * OceanRunner is the JUnit Runner to use, to use OceanModule. Add
  * 
@@ -84,11 +87,16 @@ public class OceanRunner extends BlockJUnit4ClassRunner {
 	/** TargetClass. */
 	private final ThreadLocal<Object> targetThreadLocal = new ThreadLocal<Object>();
 
+	private final ThreadLocal<Long> nbOfIterationOfTheMethodThreadLocal = new ThreadLocal<Long>();
+
 	/** List of OceanModules. */
 	private final List<OceanModule> oceanModulesList = new ArrayList<OceanModule>();
 
 	/** Class actualy tested. */
 	private Class<?> classUnderTest = null;
+
+	/** Class actualy tested. */
+	private final ThreadLocal<String> methodUnderTest = new ThreadLocal<String>();
 
 	private Sorter fSorter = Sorter.NULL;
 
@@ -155,6 +163,7 @@ public class OceanRunner extends BlockJUnit4ClassRunner {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
+			setMethodUnderTest(description.getMethodName());
 			runLeaf(stmt, description, notifier);
 		}
 	}
@@ -273,6 +282,8 @@ public class OceanRunner extends BlockJUnit4ClassRunner {
 			// load from properties
 			try {
 				oceanModulesClass = listOceanModuleFromProperties();
+				List<Class<? extends OceanModule>> oceanModulesClassFromAddAnotation = listOceanModeduleFromOceanModuleToAddToDefault();
+				oceanModulesClass.addAll(oceanModulesClassFromAddAnotation);
 			} catch (IOException e) {
 				oceanModulesClass = new ArrayList<Class<? extends OceanModule>>();
 			}
@@ -287,6 +298,17 @@ public class OceanRunner extends BlockJUnit4ClassRunner {
 			}
 		}
 
+	}
+
+	private List<Class<? extends OceanModule>> listOceanModeduleFromOceanModuleToAddToDefault() {
+		List<Class<? extends OceanModule>> oceanModulesClassList;
+		if (this.classUnderTest.getAnnotation(OceanModulesToUse.class).value() == null) {
+			oceanModulesClassList = Lists.newArrayList();
+		} else {
+			Class<? extends OceanModule>[] array = this.classUnderTest.getAnnotation(OceanModulesToAddToDefault.class).value();
+			oceanModulesClassList = new ArrayList<Class<? extends OceanModule>>(Arrays.asList(array));
+		}
+		return oceanModulesClassList;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -406,15 +428,38 @@ public class OceanRunner extends BlockJUnit4ClassRunner {
 	 * @param notifier
 	 */
 	private void runChildren(final RunNotifier notifier) {
-		for (final FrameworkMethod each : getFilteredChildren())
-
-			fScheduler.schedule(new Runnable() {
-				@Override
-				public void run() {
-					OceanRunner.this.runChild(each, notifier);
-				}
-			}, each);
+		
+		for (final FrameworkMethod each : getFilteredChildren()) {
+			setMethodUnderTest(each.getName());
+			for (long i = 0; i < computeNumberOfRepeat(each); i++) {
+				fScheduler.schedule(new Runnable() {
+					private long nbOfIteration = 0;
+					@Override
+					public void run() {
+						setNbOfIterationOfTheMethod(++nbOfIteration);
+						OceanRunner.this.runChild(each, notifier);
+					}
+				}, each);
+			}
+		}
 		fScheduler.finished();
+	}
+	
+	/**
+	 * @param frameworkMethod
+	 * @return the number of times that the method will be ran
+	 */
+	private long computeNumberOfRepeat(final FrameworkMethod frameworkMethod) {
+		long numberOfRepeat = 1;
+		for (OceanModule oceanModule : this.oceanModulesList) {
+			try {
+				numberOfRepeat *= oceanModule.totalNumberOfRepeat(this);
+			} catch (OceanModuleException e) {
+				e.printStackTrace();
+			}
+		}
+
+		return numberOfRepeat;
 	}
 
 	@Override
@@ -492,6 +537,35 @@ public class OceanRunner extends BlockJUnit4ClassRunner {
 	 */
 	public void setScheduler(OceanRunnerScheduler scheduler) {
 		this.fScheduler = scheduler;
+	}
+
+	/**
+	 * @return the numberOfIterationOfTheMethodThreadLocal
+	 */
+	public Long getNbOfIterationOfTheMethod() {
+		return this.nbOfIterationOfTheMethodThreadLocal.get();
+	}
+
+	/**
+	 * set the numberOfIterationOfTheMethodThreadLocal
+	 */
+	private void setNbOfIterationOfTheMethod(Long nbOfIterationOfTheMethod) {
+		this.nbOfIterationOfTheMethodThreadLocal.set(nbOfIterationOfTheMethod);
+	}
+
+	/**
+	 * @return the methodUnderTest
+	 */
+	public String getMethodUnderTest() {
+		return this.methodUnderTest.get();
+	}
+
+	/**
+	 * @param methodUnderTest
+	 *            the methodUnderTest to set
+	 */
+	private void setMethodUnderTest(final String methodUnderTest) {
+		this.methodUnderTest.set(methodUnderTest);
 	}
 
 	/**

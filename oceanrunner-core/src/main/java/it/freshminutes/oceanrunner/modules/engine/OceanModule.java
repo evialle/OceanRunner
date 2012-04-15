@@ -32,28 +32,54 @@ import org.junit.runner.notification.Failure;
 public abstract class OceanModule {
 
 
+	/**
+	 * Called before all the tested method (first method to be called, after the
+	 * instantiation of class to test).
+	 */
 	public void doBeforeAllTestedMethods(final OceanRunner oceanRunner, final Class<?> klass) throws OceanModuleException {
 	}
 
+	/** Called after all the tested method (last method to be called). */
 	public void doAfterAllTestedMethods(final OceanRunner oceanRunner, final Class<?> klass) throws OceanModuleException {
 	}
 	
+	/** Called before each tested method. */
 	public void doBeforeEachTestedMethod(final OceanRunner oceanRunner) throws OceanModuleException {
 	}
 	
+	/** Called after each tested method (successful or not). */
 	public void doAfterEachTestedMethod(final OceanRunner oceanRunner, final Description description) throws OceanModuleException {
 	}
 	
+	/** Called after each failed tested method. */
 	public void doAfterEachFailedMethod(final OceanRunner oceanRunner, final Failure failure) throws OceanModuleException {
 	}
 	
+	/** Called after each ignored method. */
 	public void doAfterEachIgnoredMethod(final OceanRunner oceanRunner, final Description description) throws OceanModuleException {
 	}
 	
+	/** Called after each tested method with a failed assumption. */
 	public void doAfterEachAssumptionFailedMethod(final OceanRunner oceanRunner, final Failure failure) throws OceanModuleException {
 	}
 	
+	/** Called after each tested method with a failed assertion. */
 	public void doAfterEachAssertionFailedMethod(final OceanRunner oceanRunner, final Failure failure) throws OceanModuleException {
 	}
+
+	/**
+	 * Number of times that the method should be run.
+	 */
+	public long totalNumberOfRepeat(final OceanRunner oceanRunner) throws OceanModuleException {
+		return 1;
+	}
 	
+	/**
+	 * Number of times that this method has been run in function of the total
+	 * number of repeat for dedicated to this module.
+	 */
+	public final long nbOfRepeatModulo(final OceanRunner oceanRunner) throws OceanModuleException {
+		return oceanRunner.getNbOfIterationOfTheMethod() % totalNumberOfRepeat(oceanRunner);
+	}
+
 }
