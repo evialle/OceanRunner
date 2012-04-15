@@ -16,8 +16,8 @@
 package it.freshminutes.oceanrunner.modules.concurrent;
 
 import it.freshminutes.oceanrunner.OceanRunner;
-import it.freshminutes.oceanrunner.modules.concurrent.OceanRunConcurrencyForbidden;
-import it.freshminutes.oceanrunner.modules.concurrent.OceanRunTestsInDedicatedThreads;
+import it.freshminutes.oceanrunner.modules.concurrent.annotations.OceanRunConcurrencyForbidden;
+import it.freshminutes.oceanrunner.modules.concurrent.annotations.OceanRunTestsInDedicatedThreads;
 import it.freshminutes.oceanrunner.modules.engine.OceanModule;
 import it.freshminutes.oceanrunner.modules.engine.OceanRunnerScheduler;
 
