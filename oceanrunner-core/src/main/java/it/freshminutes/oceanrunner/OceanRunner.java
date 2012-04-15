@@ -87,8 +87,6 @@ public class OceanRunner extends BlockJUnit4ClassRunner {
 	/** TargetClass. */
 	private final ThreadLocal<Object> targetThreadLocal = new ThreadLocal<Object>();
 
-	private final ThreadLocal<Long> nbOfIterationOfTheMethodThreadLocal = new ThreadLocal<Long>();
-
 	/** List of OceanModules. */
 	private final List<OceanModule> oceanModulesList = new ArrayList<OceanModule>();
 
@@ -302,7 +300,8 @@ public class OceanRunner extends BlockJUnit4ClassRunner {
 
 	private List<Class<? extends OceanModule>> listOceanModeduleFromOceanModuleToAddToDefault() {
 		List<Class<? extends OceanModule>> oceanModulesClassList;
-		if (this.classUnderTest.getAnnotation(OceanModulesToUse.class).value() == null) {
+		OceanModulesToAddToDefault annotation = this.classUnderTest.getAnnotation(OceanModulesToAddToDefault.class);
+		if ((annotation == null) || (annotation.value() == null)) {
 			oceanModulesClassList = Lists.newArrayList();
 		} else {
 			Class<? extends OceanModule>[] array = this.classUnderTest.getAnnotation(OceanModulesToAddToDefault.class).value();
@@ -323,9 +322,7 @@ public class OceanRunner extends BlockJUnit4ClassRunner {
 				oceanModulesClassList.add((Class<? extends OceanModule>) Class.forName(classToLoadStr));
 
 			} catch (ClassNotFoundException e) {
-				if ((classToLoadStr != null) && (!classToLoadStr.trim().equals(EMPTY_STRING))) {
-					throw new NoOceanModuleException(classToLoadStr);
-				}
+				// No OceanRunner...
 			} catch (ClassCastException e) {
 				throw new NoOceanModuleException(classToLoadStr);
 			}
@@ -433,10 +430,9 @@ public class OceanRunner extends BlockJUnit4ClassRunner {
 			setMethodUnderTest(each.getName());
 			for (long i = 0; i < computeNumberOfRepeat(each); i++) {
 				fScheduler.schedule(new Runnable() {
-					private long nbOfIteration = 0;
 					@Override
 					public void run() {
-						setNbOfIterationOfTheMethod(++nbOfIteration);
+
 						OceanRunner.this.runChild(each, notifier);
 					}
 				}, each);
@@ -537,20 +533,6 @@ public class OceanRunner extends BlockJUnit4ClassRunner {
 	 */
 	public void setScheduler(OceanRunnerScheduler scheduler) {
 		this.fScheduler = scheduler;
-	}
-
-	/**
-	 * @return the numberOfIterationOfTheMethodThreadLocal
-	 */
-	public Long getNbOfIterationOfTheMethod() {
-		return this.nbOfIterationOfTheMethodThreadLocal.get();
-	}
-
-	/**
-	 * set the numberOfIterationOfTheMethodThreadLocal
-	 */
-	private void setNbOfIterationOfTheMethod(Long nbOfIterationOfTheMethod) {
-		this.nbOfIterationOfTheMethodThreadLocal.set(nbOfIterationOfTheMethod);
 	}
 
 	/**
