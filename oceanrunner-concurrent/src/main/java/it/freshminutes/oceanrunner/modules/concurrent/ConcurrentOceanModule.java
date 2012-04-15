@@ -65,28 +65,14 @@ public class ConcurrentOceanModule extends OceanModule {
 				public void schedule(final Runnable childStatement, final FrameworkMethod method) {
 
 					OceanRunConcurrencyForbidden annotation = method.getAnnotation(OceanRunConcurrencyForbidden.class);
-					OceanRunRepeat annotationRepeat = method.getAnnotation(OceanRunRepeat.class);
 
 					if (annotation == null) {
 						// Multi Thread
-						if ((annotationRepeat == null) || (annotationRepeat.value() < 2)) {
-							multithreadTasks.offer(getCompletionConcurrentService().submit(childStatement, null));
-						} else {
-							for (int i=0; i < annotationRepeat.value(); i++) {
-								multithreadTasks.offer(getCompletionConcurrentService().submit(childStatement, null));
-							}
-						}
+						multithreadTasks.offer(getCompletionConcurrentService().submit(childStatement, null));
 					} else {
 						// Mono Thread
-						if ((annotationRepeat == null) || (annotationRepeat.value() < 2)) {
-							monothreadTasks.offer(getCompletionMonoThreadService().submit(childStatement, null));
-						} else {
-							for (int i=0; i < annotationRepeat.value(); i++) {
-								monothreadTasks.offer(getCompletionMonoThreadService().submit(childStatement, null));
-							}
-						}
+						monothreadTasks.offer(getCompletionMonoThreadService().submit(childStatement, null));	
 					}
-
 				}
 
 				/** Define the number of threads to use. */

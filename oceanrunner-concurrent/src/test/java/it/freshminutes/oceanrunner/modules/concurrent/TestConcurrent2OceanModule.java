@@ -33,7 +33,6 @@ public class TestConcurrent2OceanModule {
 
 	
 	@Test
-	@OceanRunRepeat(10)
 	public void testConcurrent() {
 		
 		System.out.println(Thread.currentThread().getName() + " 1 - Repeat" + repeatMe++);
@@ -41,7 +40,6 @@ public class TestConcurrent2OceanModule {
 	}
 	
 	@Test
-	@OceanRunRepeat(10)
 	public void testConcurrentFailed() {
 		
 		System.out.println(Thread.currentThread().getName() + " 1 - Repeat" + repeatMeFailed++);
