@@ -9,27 +9,29 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>it.freshminutes</groupId>
-	<artifactId>oceanrunner-core</artifactId>
-	<name>OceanRunner - Core</name>
+	<artifactId>oceanrunner-spring</artifactId>
+	<name>OceanRunner - Spring Ocean Module</name>
 	<version>20120414-SNAPSHOT</version>
-	<description>OceanRunner - The base of OceanRunner</description>
 
+	<description>OceanRunner - manage Spring 3</description>
 
 	<parent>
 		<groupId>it.freshminutes</groupId>
 		<artifactId>oceanrunner</artifactId>
+		<version>20120414-SNAPSHOT</version>
 	</parent>
 
 	<dependencies>
-		<!-- JUnit 4 -->
+		<!-- Core -->
 		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
+			<groupId>it.freshminutes</groupId>
+			<artifactId>oceanrunner-core</artifactId>
 		</dependency>
-		<!-- Guava -->
+
+		<!-- Spring -->
 		<dependency>
-			<groupId>com.google.guava</groupId>
-			<artifactId>guava</artifactId>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
 		</dependency>
 	</dependencies>
 

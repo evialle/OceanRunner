@@ -19,7 +19,6 @@
 	<parent>
 		<groupId>it.freshminutes</groupId>
 		<artifactId>oceanrunner</artifactId>
-		<version>20120413-SNAPSHOT</version>
 	</parent>
 
 	<dependencies>

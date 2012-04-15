@@ -9,7 +9,7 @@
 	<name>OceanRunner</name>
 	<description>OceanRunner - Make easily JUnit Runners.</description>
 
-	<properties>		
+	<properties>
 		<java.version>1.6</java.version>
 		<java.source.version>1.6</java.source.version>
 		<java.target.version>1.6</java.target.version>
@@ -44,7 +44,6 @@
 				<groupId>it.freshminutes</groupId>
 				<artifactId>oceanrunner-core</artifactId>
 				<version>${version}</version>
-
 			</dependency>
 
 			<!-- JUnit 4 -->
@@ -102,6 +101,13 @@
 				<artifactId>h2</artifactId>
 				<version>1.1.115</version>
 				<scope>test</scope>
+			</dependency>
+
+			<!-- Spring -->
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-test</artifactId>
+				<version>3.1.1.RELEASE</version>
 			</dependency>
 
 

@@ -151,7 +151,6 @@ public class OceanRunner extends BlockJUnit4ClassRunner {
 					fTargetField.setAccessible(true);
 					Object target = fTargetField.get(stmt);
 					this.setTarget(target);
-
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -174,12 +173,9 @@ public class OceanRunner extends BlockJUnit4ClassRunner {
 				in = getAbsoluteInputStream(getPropertiesFilePath());
 				OceanRunner.properties.load(in);
 				in.close();
-			} catch (FileNotFoundException e) {
-				throw new OceanModuleException(e);
-			} catch (IOException e) {
+			} catch (Exception e) {
 				throw new OceanModuleException(e);
 			}
-
 		}
 
 		return OceanRunner.properties;
@@ -286,7 +282,6 @@ public class OceanRunner extends BlockJUnit4ClassRunner {
 			try {
 				OceanModule oceanModule = moduleClass.newInstance();
 				oceanModulesList.add(oceanModule);
-
 			} catch (Exception e) {
 				throw new OceanModuleException(e);
 			}
@@ -316,6 +311,9 @@ public class OceanRunner extends BlockJUnit4ClassRunner {
 		return oceanModulesClassList;
 	}
 
+	/**
+	 * @return the list of OceanModule in @OceanModulesToUse
+	 */
 	private List<Class<? extends OceanModule>> listOceanModulesFromAnnotation() {
 		List<Class<? extends OceanModule>> oceanModulesClassList;
 		if (this.classUnderTest.getAnnotation(OceanModulesToUse.class).value() == null) {
