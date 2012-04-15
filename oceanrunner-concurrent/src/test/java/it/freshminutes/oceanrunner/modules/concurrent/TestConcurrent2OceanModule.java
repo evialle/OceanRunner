@@ -15,9 +15,11 @@
  */
 package it.freshminutes.oceanrunner.modules.concurrent;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import it.freshminutes.oceanrunner.OceanRunner;
 import it.freshminutes.oceanrunner.annotations.OceanModulesToUse;
+import it.freshminutes.oceanrunner.modules.concurrent.annotations.OceanRunTestsInDedicatedThreads;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
