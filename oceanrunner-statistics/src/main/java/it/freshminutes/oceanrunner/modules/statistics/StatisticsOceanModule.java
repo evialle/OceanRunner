@@ -46,7 +46,7 @@ public class StatisticsOceanModule extends OceanModule {
 	private static final String STATISTICS_DATAPLUG_PROPERTYKEY = "statistics.dataplug";
 
 	/** System property name defining the statistics environment. */
-	public static final String STATISTICS_ENVIRONEMENT_PROPERTYKEY = "statistics.environement";
+	public static final String STATISTICS_ENVIRONMENT_PROPERTYKEY = "statistics.environment";
 
 	/** System property name defining the max size of the comments. */
 	private static final String STATISTICS_JPA_COMMENTSSIZE_PROPERTYKEY = "statistics.commentssize";
@@ -122,7 +122,7 @@ public class StatisticsOceanModule extends OceanModule {
 			statisticsDataPlug = (StatisticsDataPlug) constructor.newInstance(oceanRunner);
 
 			this.actualResultsMap = Maps.newHashMap();
-			this.environment = oceanRunner.getAwareProperty(STATISTICS_ENVIRONEMENT_PROPERTYKEY, "default");
+			this.environment = oceanRunner.getAwareProperty(STATISTICS_ENVIRONMENT_PROPERTYKEY, "default");
 			this.project = oceanRunner.getAwareProperty(STATISTICS_PROJECT_PROPERTYKEY, "default");;
 			this.version = oceanRunner.getAwareProperty(STATISTICS_VERSION_PROPERTYKEY, "default");
 

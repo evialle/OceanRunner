@@ -52,16 +52,14 @@ public class StatisticsEbeanPlug extends StatisticsDataPlug {
 	private static EbeanServer DB_SERVER = null;
 
 	/** The maximum statistics to analyse for a method. */
-	private int maxRunToStudy;
+	private static int maxRunToStudy;
 
 	/** Name of the environnement tested. */
-	private String environment;
+	private static String environment;
 
 	/** Name of the tested project. */
-	private String project;
+	private static String project;
 
-	/** Version of the project. */
-	private String version;
 
 	/**
 	 * 
@@ -89,15 +87,14 @@ public class StatisticsEbeanPlug extends StatisticsDataPlug {
 			DB_SERVER = EbeanServerFactory.create(config);
 
 			// Properties for StatisticsEbeanPlug
-			this.environment = oceanRunner.getAwareProperty(StatisticsOceanModule.STATISTICS_ENVIRONEMENT_PROPERTYKEY, "%");
-			this.project = oceanRunner.getAwareProperty(StatisticsOceanModule.STATISTICS_PROJECT_PROPERTYKEY, "%");
-			this.version = oceanRunner.getAwareProperty(StatisticsOceanModule.STATISTICS_VERSION_PROPERTYKEY, "%");
+			environment = oceanRunner.getAwareProperty(StatisticsOceanModule.STATISTICS_ENVIRONMENT_PROPERTYKEY, "%");
+			project = oceanRunner.getAwareProperty(StatisticsOceanModule.STATISTICS_PROJECT_PROPERTYKEY, "%");
 			
-			String maxRunToStudy = oceanRunner.getAwareProperty(STATISTICS_MAX_RUN_TO_STUDY_PROPERTYKEY, Integer.toString(MAX_RUN_TO_STUDY_DEFAULT));
+			String maxRunToStudyString = oceanRunner.getAwareProperty(STATISTICS_MAX_RUN_TO_STUDY_PROPERTYKEY, Integer.toString(MAX_RUN_TO_STUDY_DEFAULT));
 			try {
-				this.maxRunToStudy = Integer.parseInt(maxRunToStudy);
+				maxRunToStudy = Integer.parseInt(maxRunToStudyString);
 			} catch (NumberFormatException e) {
-				this.maxRunToStudy = MAX_RUN_TO_STUDY_DEFAULT;
+				maxRunToStudy = MAX_RUN_TO_STUDY_DEFAULT;
 			}
 		}
 	}
@@ -110,10 +107,10 @@ public class StatisticsEbeanPlug extends StatisticsDataPlug {
 				.where()
 				.eq("classundertestname", oceanRunner.getClassUnderTest().getName())
 				.eq("methodundertestname", testsToSearch)
-				.like("environment", this.environment)
-				.like("project", this.project)
+				.like("environment", environment)
+				.like("project", project)
 				.orderBy().desc("rundate")
-				.setMaxRows(this.maxRunToStudy);
+				.setMaxRows(maxRunToStudy);
 
 		List<StatisticsResult> lastStatusList = selectResultsQuery.findList();
 
