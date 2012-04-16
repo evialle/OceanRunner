@@ -27,6 +27,7 @@
 		<dependency>
 			<groupId>it.freshminutes</groupId>
 			<artifactId>oceanrunner-core</artifactId>
+			<version>20120415-SNAPSHOT</version>
 		</dependency>
 
 		<!-- DB Persistence for Statistics. -->
@@ -45,7 +46,7 @@
 		<dependency>
 			<groupId>it.freshminutes</groupId>
 			<artifactId>oceanrunner-concurrent</artifactId>
-			<version>20120413-SNAPSHOT</version>
+			<version>20120415-SNAPSHOT</version>
 			<scope>test</scope>
 		</dependency>
 
