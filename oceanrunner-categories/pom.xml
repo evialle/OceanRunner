@@ -28,7 +28,6 @@
 			<groupId>it.freshminutes</groupId>
 			<artifactId>oceanrunner-core</artifactId>
 		</dependency>
-
 	</dependencies>
 
 </project>

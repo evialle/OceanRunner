@@ -25,13 +25,11 @@ import it.freshminutes.oceanrunner.tests.categories.CategoryToUseAsAnnotation;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.experimental.categories.Categories.IncludeCategory;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
 @RunWith(OceanRunner.class)
 @OceanModulesToUse(CategoryOceanModule.class)
-@IncludeCategory(CategoryToUseAsAnnotation.class)
 public class TestCategoryOceanModule3 {
 
 	@Test
