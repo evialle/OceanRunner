@@ -22,6 +22,7 @@ import java.lang.annotation.Target;
 
 /**
  * Force a method to be executed many times. This could be useful to test random failures.
+ * By default, the method is repeated twice, and could be called more.
  * 
  * @author Eric Vialle
  */

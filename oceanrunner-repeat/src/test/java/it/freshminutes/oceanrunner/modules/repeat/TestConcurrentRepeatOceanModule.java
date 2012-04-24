@@ -16,8 +16,8 @@
 
 package it.freshminutes.oceanrunner.modules.repeat;
 
-import static org.junit.Assert.*;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import it.freshminutes.oceanrunner.OceanRunner;
 import it.freshminutes.oceanrunner.annotations.OceanModulesToUse;
 import it.freshminutes.oceanrunner.modules.concurrent.ConcurrentOceanModule;

@@ -80,12 +80,6 @@
 				<version>${ebean.version}</version>
 			</dependency>
 
-			<!-- OceanRunner Core -->
-			<dependency>
-				<groupId>it.freshminutes</groupId>
-				<version>${oceanrunner.version}</version>
-				<artifactId>OceanRunner</artifactId>
-			</dependency>
 
 			<!-- Mockito -->
 			<dependency>

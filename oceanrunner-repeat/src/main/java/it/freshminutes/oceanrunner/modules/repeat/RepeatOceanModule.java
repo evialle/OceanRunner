@@ -10,25 +10,26 @@ import it.freshminutes.oceanrunner.modules.engine.OceanModule;
 import java.lang.reflect.Method;
 
 /**
- * @author Eric
+ * OceanModule allowing user to test many time the same method with the annotation @OceanRunRepeat
  * 
+ * @author Eric Vialle
  */
 public class RepeatOceanModule extends OceanModule {
 	
 
-	/** Number of times that this method should be run. 
-	 * @throws OceanModuleException */
+	/** 
+	 * Number of times that this method should be run. 
+	 * @throws OceanModuleException
+	 */
 	@Override
 	public long totalNumberOfRepeat(final OceanRunner oceanRunner) throws OceanModuleException {
-		
 		
 		String methodName = oceanRunner.getMethodUnderTest();
 		try {
 			Method method = oceanRunner.getClassUnderTest().getMethod(methodName);
 			OceanRunRepeat repeatAnnotation = method.getAnnotation(OceanRunRepeat.class);
-			
-			
-			if ((repeatAnnotation!= null) && (repeatAnnotation.value() > 1)) {
+					
+			if ((repeatAnnotation != null) && (repeatAnnotation.value() > 1)) {
 				return repeatAnnotation.value();
 			} else {
 				return 1;
