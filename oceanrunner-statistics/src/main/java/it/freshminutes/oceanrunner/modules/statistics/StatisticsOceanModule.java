@@ -22,7 +22,6 @@ import it.freshminutes.oceanrunner.modules.statistics.StatisticsResult.StatusTes
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -439,7 +438,12 @@ public class StatisticsOceanModule extends OceanModule {
 	
 	/** used to process the duration of a test. */
 	private long getFinalTime() {
-		return System.currentTimeMillis() - startTestThreadLocal.get();
+		
+		long finalTime = 0L;
+		if ((this.startTestThreadLocal != null) && (this.startTestThreadLocal.get() != null)) {
+			finalTime = System.currentTimeMillis() - startTestThreadLocal.get();
+		}
+		return finalTime;
 	}
 
 }
