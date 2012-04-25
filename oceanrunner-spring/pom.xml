@@ -18,7 +18,7 @@
 	<parent>
 		<groupId>it.freshminutes</groupId>
 		<artifactId>oceanrunner</artifactId>
-		<version>20120415-SNAPSHOT</version>
+		<version>20120426-SNAPSHOT</version>
 	</parent>
 
 	<dependencies>
@@ -26,6 +26,7 @@
 		<dependency>
 			<groupId>it.freshminutes</groupId>
 			<artifactId>oceanrunner-core</artifactId>
+			<version>20120426-SNAPSHOT</version>
 		</dependency>
 
 		<!-- Spring -->

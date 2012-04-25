@@ -11,14 +11,14 @@
 	<groupId>it.freshminutes</groupId>
 	<artifactId>oceanrunner-junit3</artifactId>
 	<name>OceanRunner - Junit3Module</name>
-	<version>20120415-SNAPSHOT</version>
+	<version>20120426-SNAPSHOT</version>
 	<description>OceanRunner - manage JUnit3</description>
 
 
 	<parent>
 		<groupId>it.freshminutes</groupId>
 		<artifactId>oceanrunner</artifactId>
-		<version>20120415-SNAPSHOT</version>
+		<version>20120426-SNAPSHOT</version>
 	</parent>
 
 	<dependencies>
@@ -26,6 +26,7 @@
 		<dependency>
 			<groupId>it.freshminutes</groupId>
 			<artifactId>oceanrunner-core</artifactId>
+			<version>20120426-SNAPSHOT</version>
 		</dependency>
 		<!-- JUnit 4 -->
 		<dependency>

@@ -34,7 +34,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 
 /**
- * Not developped.
+ * Module to produce statistics about tests.
  * 
  * 
  * @author Eric Vialle
