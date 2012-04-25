@@ -64,6 +64,10 @@ import com.google.common.collect.Lists;
  */
 public class OceanRunner extends BlockJUnit4ClassRunner {
 
+
+
+	private static final String TRUE = "true";
+
 	/** Field used for reflection. */
 	private static final String F_TARGET = "fTarget";
 
@@ -72,6 +76,9 @@ public class OceanRunner extends BlockJUnit4ClassRunner {
 
 	/** property defining the OceanModules used by default. */
 	private static final String RUNNERS_DEFAULTMODULES = "runners.defaultmodules";
+
+	/** property defining the properties to display. */
+	private static final String RUNNERS_DISPLAYSETTINGS = "runners.displaysettings";
 
 	/** Path used for oceanrunner.properties by default. */
 	private final static String DEFAULT_PROPERTIES_PATH = "/oceanrunner.properties";
@@ -95,6 +102,14 @@ public class OceanRunner extends BlockJUnit4ClassRunner {
 
 	/** Class actualy tested. */
 	private final ThreadLocal<String> methodUnderTest = new ThreadLocal<String>();
+
+	/** JVM args to do not display. */
+	private final static String[] EXCLUDED_VM_ARGS = new String[] { "java.runtime.name", "sun.boot.library.path", "java.vm.version", "java.vm.vendor", "java.vendor.url", "path.separator", "java.vm.name",
+			"file.encoding.pkg", "user.country", "user.script", "sun.java.launcher", "sun.os.patch.level", "java.vm.specification.name", "user.dir", "java.runtime.version", "java.awt.graphicsenv",
+			"java.endorsed.dirs", "os.arch", "java.io.tmpdir", "line.separator", "java.vm.specification.vendor", "user.variant", "os.name", "sun.jnu.encoding", "java.library.path", "java.specification.name",
+			"java.class.version", "sun.management.compiler", "os.version", "user.home", "user.timezone", "java.awt.printerjob", "file.encoding", "java.specification.version", "java.class.path",
+			"java.vm.specification.version", "sun.java.command", "java.home", "sun.arch.data.model", "user.language", "java.specification.vendor", "java.vm.info", "java.version", "java.ext.dirs",
+			"sun.boot.class.path", "java.vendor", "file.separator", "java.vendor.url.bug", "awt.toolkit", "user.name", "sun.io.unicode.encoding", "sun.cpu.endian", "sun.desktop", "sun.cpu.isalist" };
 
 	private Sorter fSorter = Sorter.NULL;
 
@@ -175,17 +190,52 @@ public class OceanRunner extends BlockJUnit4ClassRunner {
 		if (OceanRunner.properties == null) {
 			OceanRunner.properties = new Properties();
 
+			// Load properties file
 			InputStream in;
 			try {
+				// Load file
 				in = getAbsoluteInputStream(getPropertiesFilePath());
 				OceanRunner.properties.load(in);
 				in.close();
+
 			} catch (Exception e) {
 				throw new OceanModuleException(e);
 			}
+
+			// Display properties
+			displayAwareProperties();
+
 		}
 
 		return OceanRunner.properties;
+	}
+
+	/** Display the oceanrunner properties. */
+	private void displayAwareProperties() throws OceanModuleException {
+		
+		if (TRUE.endsWith(getAwareProperty(RUNNERS_DISPLAYSETTINGS, TRUE))) {
+		
+			// OceanRunner.properties can't/musn't be null
+			for (Object key :  OceanRunner.properties.keySet()) {
+				System.out.println(key + ": " + getAwareProperty((String) key));
+			}
+			for (Object key : System.getProperties().keySet()) {
+				if (OceanRunner.properties.contains(key) == false) {
+					boolean isNotExcludedKey = true;
+					for (String excludedKey : EXCLUDED_VM_ARGS) {
+						if (excludedKey.equals(key)) {
+							isNotExcludedKey = false;
+							break;
+						}
+					}
+
+					if (isNotExcludedKey) {
+						System.out.println(key + ": " + getAwareProperty((String) key));
+					}
+
+				}
+			}
+		}
 	}
 
 	/**
@@ -236,7 +286,7 @@ public class OceanRunner extends BlockJUnit4ClassRunner {
 	private InputStream getAbsoluteInputStream(final String path) throws FileNotFoundException {
 		InputStream in;
 		try {
-			in = new FileInputStream(path);
+			in = new FileInputStream(getPropertiesFilePath());
 		} catch (FileNotFoundException e) {
 			in = getClass().getResourceAsStream(getPropertiesFilePath());
 			if (in == null) {
