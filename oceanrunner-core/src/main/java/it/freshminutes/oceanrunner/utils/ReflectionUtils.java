@@ -36,6 +36,25 @@ public class ReflectionUtils {
 		 return invokeHeritedMethod(target, method, target.getClass());
 	}
 
+	/**
+	 * 
+	 * @param klass
+	 * @param methodName
+	 * @return
+	 * @throws NoSuchMethodException
+	 * @throws SecurityException
+	 */
+	public static Method invokeStaticMethod(Class<?> klass, String methodName) throws NoSuchMethodException, SecurityException {
+
+		if (klass == null) {
+			throw new NoSuchMethodException();
+		}
+		
+		Method method = klass.getMethod(methodName, null);
+		method.setAccessible(true);
+		return method;
+	}
+
 	private static Method invokeHeritedMethod(Object target, String method, Class<?> klass) throws NoSuchMethodException {
 		if (klass == null) {
 			throw new NoSuchMethodException();
