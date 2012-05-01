@@ -8,6 +8,8 @@ By offering an easy way to integrate _"RunnersLike"_ class, named _*OceanModule*
 
 When you can use a single Runner for test, you may use many *OceanModules*.
 
+*More info on the wiki:* https://github.com/evialle/OceanRunner/wiki
+
 h2. Built in OceanModules:
 
 * *@ArquilianOceanModule@*: Manager Arquilian tests (not fully developped!)
