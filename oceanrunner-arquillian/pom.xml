@@ -11,14 +11,14 @@
 	<groupId>it.freshminutes</groupId>
 	<artifactId>oceanrunner-arquilian</artifactId>
 	<name>OceanRunner - OceanCategoriesModule</name>
-	<version>20120426-SNAPSHOT</version>
+	<version>1.0.Alpha1</version>
 
 	<description>OceanRunner - Manage your Unit tests in a JavaEE container</description>
 
 	<parent>
 		<groupId>it.freshminutes</groupId>
 		<artifactId>oceanrunner</artifactId>
-		<version>20120426-SNAPSHOT</version>
+		<version>1.0</version>
 	</parent>
 
 	<!-- Jboss Repository -->
@@ -34,7 +34,7 @@
 		<dependency>
 			<groupId>it.freshminutes</groupId>
 			<artifactId>oceanrunner-core</artifactId>
-			<version>20120426-SNAPSHOT</version>
+			<version>1.0</version>
 		</dependency>
 
 		<!-- Arquillian -->

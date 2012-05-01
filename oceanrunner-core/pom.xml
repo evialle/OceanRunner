@@ -11,14 +11,14 @@
 	<groupId>it.freshminutes</groupId>
 	<artifactId>oceanrunner-core</artifactId>
 	<name>OceanRunner - Core</name>
-	<version>20120426-SNAPSHOT</version>
+	<version>1.0</version>
 	<description>OceanRunner - The base of OceanRunner</description>
 
 
 	<parent>
 		<groupId>it.freshminutes</groupId>
 		<artifactId>oceanrunner</artifactId>
-		<version>20120426-SNAPSHOT</version>
+		<version>1.0</version>
 	</parent>
 
 	<dependencies>

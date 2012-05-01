@@ -11,7 +11,7 @@
 	<groupId>it.freshminutes</groupId>
 	<artifactId>oceanrunner-openejb30</artifactId>
 	<name>OceanRunner - OpenEjb30OceanModule</name>
-	<version>20120426-SNAPSHOT</version>
+	<version>1.0.Beta1</version>
 
 	<description>OceanRunner - manage OpenEJB 3.0</description>
 
@@ -19,7 +19,7 @@
 	<parent>
 		<groupId>it.freshminutes</groupId>
 		<artifactId>oceanrunner</artifactId>
-		<version>20120426-SNAPSHOT</version>
+		<version>1.0</version>
 	</parent>
 
 	<dependencies>
@@ -27,7 +27,7 @@
 		<dependency>
 			<groupId>it.freshminutes</groupId>
 			<artifactId>oceanrunner-core</artifactId>
-			<version>20120426-SNAPSHOT</version>
+			<version>1.0</version>
 		</dependency>
 
 
