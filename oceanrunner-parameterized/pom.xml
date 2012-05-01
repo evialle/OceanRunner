@@ -11,13 +11,13 @@
 	<groupId>it.freshminutes</groupId>
 	<artifactId>oceanrunner-parameterized</artifactId>
 	<name>OceanRunner - ParameterizedOceanModule</name>
-	<version>20120426-SNAPSHOT</version>
+	<version>20120501-SNAPSHOT</version>
 	<description>OceanRunner - Parameterized</description>
 
 	<parent>
 		<groupId>it.freshminutes</groupId>
 		<artifactId>oceanrunner</artifactId>
-		<version>20120426-SNAPSHOT</version>
+		<version>20120501-SNAPSHOT</version>
 	</parent>
 
 	<dependencies>
@@ -25,7 +25,7 @@
 		<dependency>
 			<groupId>it.freshminutes</groupId>
 			<artifactId>oceanrunner-core</artifactId>
-			<version>20120426-SNAPSHOT</version>
+			<version>20120501-SNAPSHOT</version>
 		</dependency>
 
 
@@ -33,14 +33,14 @@
 		<dependency>
 			<groupId>it.freshminutes</groupId>
 			<artifactId>oceanrunner-repeat</artifactId>
-			<version>20120426-SNAPSHOT</version>
+			<version>20120501-SNAPSHOT</version>
 			<scope>test</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>it.freshminutes</groupId>
 			<artifactId>oceanrunner-concurrent</artifactId>
-			<version>20120426-SNAPSHOT</version>
+			<version>20120501-SNAPSHOT</version>
 			<scope>test</scope>
 		</dependency>
 

@@ -3,7 +3,7 @@
 
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>it.freshminutes</groupId>
-	<version>20120426-SNAPSHOT</version>
+	<version>20120501-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<artifactId>oceanrunner</artifactId>
 	<name>OceanRunner</name>
@@ -34,6 +34,8 @@
 		<module>oceanrunner-statistics</module>
 		<module>oceanrunner-parameterized</module>
 		<module>oceanrunner-repeat</module>
+		<module>oceanrunner-arquilian</module>
+
 	</modules>
 
 
