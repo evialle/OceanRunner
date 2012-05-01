@@ -33,7 +33,9 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.junit.Ignore;
 import org.junit.internal.AssumptionViolatedException;
@@ -54,6 +56,7 @@ import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 /**
  * OceanRunner is the JUnit Runner to use, to use OceanModule. Add
@@ -63,8 +66,6 @@ import com.google.common.collect.Lists;
  * @author Eric Vialle
  */
 public class OceanRunner extends BlockJUnit4ClassRunner {
-
-
 
 	private static final String TRUE = "true";
 
@@ -113,6 +114,9 @@ public class OceanRunner extends BlockJUnit4ClassRunner {
 
 	private Sorter fSorter = Sorter.NULL;
 
+	/** Count the number of method called. */
+	private Map<String, AtomicLong> mapMethodCounter;
+
 	/**
 	 * @return the classUnderTest
 	 */
@@ -135,6 +139,8 @@ public class OceanRunner extends BlockJUnit4ClassRunner {
 			childStatement.run();
 		}
 	};
+
+
 
 	/**
 	 * Constructor.
@@ -348,6 +354,7 @@ public class OceanRunner extends BlockJUnit4ClassRunner {
 
 	}
 
+
 	private List<Class<? extends OceanModule>> listOceanModeduleFromOceanModuleToAddToDefault() {
 		List<Class<? extends OceanModule>> oceanModulesClassList;
 		OceanModulesToAddToDefault annotation = this.classUnderTest.getAnnotation(OceanModulesToAddToDefault.class);
@@ -482,15 +489,30 @@ public class OceanRunner extends BlockJUnit4ClassRunner {
 				fScheduler.schedule(new Runnable() {
 					@Override
 					public void run() {
-
+						addNbOfIterationOfTheMethod(each);
 						OceanRunner.this.runChild(each, notifier);
 					}
+
 				}, each);
 			}
 		}
 		fScheduler.finished();
 	}
 	
+	/** Count the number of execution og the method. */
+	private void addNbOfIterationOfTheMethod(FrameworkMethod each) {
+		mapMethodCounter = Maps.newConcurrentMap();
+		String key = each.getName();
+
+		AtomicLong atomicLong = mapMethodCounter.get(key);
+		if (atomicLong == null) {
+			atomicLong = new AtomicLong();
+			mapMethodCounter.put(key, atomicLong);
+		}
+		atomicLong.incrementAndGet();
+
+	}
+
 	/**
 	 * @param frameworkMethod
 	 * @return the number of times that the method will be ran
@@ -700,6 +722,17 @@ public class OceanRunner extends BlockJUnit4ClassRunner {
 			doAfterEachIgnoreForAllModules(description, getTarget());
 		}
 
+	}
+
+	/**
+	 * Number of iteration of a method.
+	 * 
+	 * @param methodUnderTest
+	 * @return
+	 */
+	public long getNbOfIterationOfTheMethod(String methodUnderTest) {
+		AtomicLong aLong = mapMethodCounter.get(methodUnderTest);
+		return aLong == null ? 0 : aLong.get();
 	}
 
 }

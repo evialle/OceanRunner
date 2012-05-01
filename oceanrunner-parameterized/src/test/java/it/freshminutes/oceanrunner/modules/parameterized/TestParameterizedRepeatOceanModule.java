@@ -6,6 +6,8 @@ package it.freshminutes.oceanrunner.modules.parameterized;
 import it.freshminutes.oceanrunner.OceanRunner;
 import it.freshminutes.oceanrunner.annotations.OceanModulesToUse;
 import it.freshminutes.oceanrunner.modules.parameterized.annotations.OceanParameterizedVariable;
+import it.freshminutes.oceanrunner.modules.repeat.OceanRunRepeat;
+import it.freshminutes.oceanrunner.modules.repeat.RepeatOceanModule;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -20,8 +22,8 @@ import org.junit.runners.Parameterized.Parameters;
  * @author Eric Vialle
  */
 @RunWith(OceanRunner.class)
-@OceanModulesToUse(ParameterizedOceanModule.class)
-public class TestParameterizedOceanModuleTest {
+@OceanModulesToUse({ParameterizedOceanModule.class, RepeatOceanModule.class})
+public class TestParameterizedRepeatOceanModule {
 
 	@OceanParameterizedVariable
 	String validEmail;
@@ -47,6 +49,7 @@ public class TestParameterizedOceanModuleTest {
 	}
 	
 	@Test
+	@OceanRunRepeat(3)
 	public void testIsValidEmail2() throws Exception {
 		Assert.assertNotNull(validEmail);
 		counter2 ++;
@@ -57,7 +60,7 @@ public class TestParameterizedOceanModuleTest {
 	@AfterClass
 	public static void afterClass() {
 		Assert.assertEquals(5, counter);
-		Assert.assertEquals(5, counter2);
+		Assert.assertEquals(15, counter2);
 
 	}
 }

@@ -36,6 +36,7 @@ import com.google.common.collect.Lists;
  */
 public class ParameterizedOceanModule extends OceanModule {
 
+	/** List of parameters. */
 	private List<Object[]> fParameterList;
 
 	@Override
@@ -54,7 +55,7 @@ public class ParameterizedOceanModule extends OceanModule {
 		//Get the index of the parameters to test
 		long index = this.nbOfRepeatModulo(oceanRunner);
 		
-		if (index <= Integer.MAX_VALUE) {
+		if (index <= Long.MAX_VALUE) {
 			//Retrieve the parameters and put them in the tests
 			Object[] valuesArray = fParameterList.get((int) index);
 			List<Field> variableList = getOceanVariableList(oceanRunner.getTestClass());
@@ -76,16 +77,18 @@ public class ParameterizedOceanModule extends OceanModule {
 				} 
 			}		
 		} else {
-			throw new OceanModuleException("Too much tests kill the tests");
+			throw new OceanModuleException("Too many tests kill the tests");
 		}
 		
 	}
 	
-	//TODO doesn't work
-	private long nbOfRepeatModulo(OceanRunner oceanRunner) {
-		return 0;
-	}
 
+	/**
+	 * List of variables to populate.
+	 * 
+	 * @param klass
+	 * @return
+	 */
 	private List<Field> getOceanVariableList(TestClass klass) {
 		List<Field> fieldsListToReturn = Lists.newArrayList();
 		List<FrameworkField> fieldsList = klass.getAnnotatedFields(OceanParameterizedVariable.class);

@@ -9,10 +9,12 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>it.freshminutes</groupId>
-	<artifactId>oceanrunner-parameterized</artifactId>
-	<name>OceanRunner - ParameterizedOceanModule</name>
+	<artifactId>oceanrunner-arquilian</artifactId>
+	<name>OceanRunner - OceanCategoriesModule</name>
 	<version>20120426-SNAPSHOT</version>
-	<description>OceanRunner - Parameterized</description>
+
+	<description>OceanRunner - Manage your Unit tests in a JavaEE container</description>
+
 
 	<parent>
 		<groupId>it.freshminutes</groupId>
@@ -21,29 +23,30 @@
 	</parent>
 
 	<dependencies>
-		<!-- JUnit 4 -->
+		<!-- Core -->
 		<dependency>
 			<groupId>it.freshminutes</groupId>
 			<artifactId>oceanrunner-core</artifactId>
 			<version>20120426-SNAPSHOT</version>
 		</dependency>
 
-
-		<!-- OceanRunner -->
+		<!-- Arquillian -->
 		<dependency>
-			<groupId>it.freshminutes</groupId>
-			<artifactId>oceanrunner-repeat</artifactId>
-			<version>20120426-SNAPSHOT</version>
-			<scope>test</scope>
+			<groupId>org.jboss.arquillian.junit</groupId>
+			<artifactId>arquillian-junit-container</artifactId>
+			<version>1.0.0.Final</version>
 		</dependency>
 
+
 		<dependency>
-			<groupId>it.freshminutes</groupId>
-			<artifactId>oceanrunner-concurrent</artifactId>
-			<version>20120426-SNAPSHOT</version>
+			<groupId>org.jboss.arquillian.container</groupId>
+			<artifactId>arquillian-wls-remote-10.3</artifactId>
+			<version>1.0.0.Alpha2</version>
 			<scope>test</scope>
 		</dependency>
-
 	</dependencies>
+
+
+
 
 </project>

@@ -5,7 +5,11 @@ package it.freshminutes.oceanrunner.modules.parameterized;
 
 import it.freshminutes.oceanrunner.OceanRunner;
 import it.freshminutes.oceanrunner.annotations.OceanModulesToUse;
+import it.freshminutes.oceanrunner.modules.concurrent.ConcurrentOceanModule;
+import it.freshminutes.oceanrunner.modules.concurrent.annotations.OceanRunTestsInDedicatedThreads;
 import it.freshminutes.oceanrunner.modules.parameterized.annotations.OceanParameterizedVariable;
+import it.freshminutes.oceanrunner.modules.repeat.OceanRunRepeat;
+import it.freshminutes.oceanrunner.modules.repeat.RepeatOceanModule;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -20,8 +24,9 @@ import org.junit.runners.Parameterized.Parameters;
  * @author Eric Vialle
  */
 @RunWith(OceanRunner.class)
-@OceanModulesToUse(ParameterizedOceanModule.class)
-public class TestParameterizedOceanModuleTest {
+@OceanModulesToUse({ParameterizedOceanModule.class, RepeatOceanModule.class, ConcurrentOceanModule.class})
+@OceanRunTestsInDedicatedThreads()
+public class TestParameterizedRepeatConcurrentOceanModule {
 
 	@OceanParameterizedVariable
 	String validEmail;
@@ -44,12 +49,16 @@ public class TestParameterizedOceanModuleTest {
 	public void testIsValidEmail() throws Exception {
 		Assert.assertNotNull(validEmail);
 		counter ++;
+		System.out.println(Thread.currentThread().getName() + " testIsValidEmail " + counter);
 	}
 	
 	@Test
+	@OceanRunRepeat(3)
 	public void testIsValidEmail2() throws Exception {
 		Assert.assertNotNull(validEmail);
 		counter2 ++;
+		System.out.println(Thread.currentThread().getName() + " testIsValidEmail2 " + counter2);
+
 	}
 	
 	
@@ -57,7 +66,6 @@ public class TestParameterizedOceanModuleTest {
 	@AfterClass
 	public static void afterClass() {
 		Assert.assertEquals(5, counter);
-		Assert.assertEquals(5, counter2);
-
+		Assert.assertEquals(15, counter2);
 	}
 }
