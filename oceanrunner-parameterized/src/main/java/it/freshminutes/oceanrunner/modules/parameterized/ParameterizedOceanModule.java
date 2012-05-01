@@ -32,6 +32,8 @@ import org.junit.runners.model.TestClass;
 import com.google.common.collect.Lists;
 
 /**
+ * Parameterized Runner like.
+ * 
  * @author Eric Vialle
  */
 public class ParameterizedOceanModule extends OceanModule {
