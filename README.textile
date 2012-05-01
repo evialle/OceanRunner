@@ -10,12 +10,17 @@ When you can use a single Runner for test, you may use many *OceanModules*.
 
 h2. Built in OceanModules:
 
+* *@ArquilianOceanModule@*: Manager Arquilian tests (not fully developped!)
 * *@CategoryOceanModule@*: include or exclude tests based not only on annotations
 * *@ConcurrentOceanModule@*: run simultaneously different tests
 * *@JUnit3AdapterOceanModule@*: run your JUnit3 tests
-* *@StatisticsOceanModule@*: process statistics about last success/failure of your test
-* *@OpenEjb30OceanModule@*: Test easily EJB 3.0
 * *@MockitoOceanModule@*: Easily use Mockito with your tests
+* *@OpenEjb30OceanModule@*: Test easily EJB 3.0
+* *@ParameterizedOceanModule@*: test different methods with different parameters
+* *@RepeatOceanModule@*: repeat the same test many times to test its consistency
+* *@SpringOceanModule@*: test your spring configuration
+* *@StatisticsOceanModule@*: process statistics about last success/failure of your test
+
 
 
 h2. Creating and using your own *OceanModule*
