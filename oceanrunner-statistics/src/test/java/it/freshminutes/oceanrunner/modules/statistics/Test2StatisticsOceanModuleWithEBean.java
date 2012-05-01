@@ -19,7 +19,7 @@
 package it.freshminutes.oceanrunner.modules.statistics;
 
 import it.freshminutes.oceanrunner.OceanRunner;
-import it.freshminutes.oceanrunner.modules.concurrent.OceanRunTestsInDedicatedThreads;
+import it.freshminutes.oceanrunner.modules.concurrent.annotations.OceanRunTestsInDedicatedThreads;
 
 import java.sql.SQLException;
 
