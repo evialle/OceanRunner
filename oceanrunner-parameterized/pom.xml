@@ -17,7 +17,7 @@
 	<parent>
 		<groupId>it.freshminutes</groupId>
 		<artifactId>oceanrunner</artifactId>
-		<version>1.0</version>
+		<version>1.0-RELEASE</version>
 	</parent>
 
 	<dependencies>
@@ -25,7 +25,7 @@
 		<dependency>
 			<groupId>it.freshminutes</groupId>
 			<artifactId>oceanrunner-core</artifactId>
-			<version>1.0</version>
+			<version>1.0-RELEASE</version>
 		</dependency>
 
 
@@ -33,14 +33,14 @@
 		<dependency>
 			<groupId>it.freshminutes</groupId>
 			<artifactId>oceanrunner-repeat</artifactId>
-			<version>1.0</version>
+			<version>1.0-RELEASE</version>
 			<scope>test</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>it.freshminutes</groupId>
 			<artifactId>oceanrunner-concurrent</artifactId>
-			<version>1.0</version>
+			<version>1.0-RELEASE</version>
 			<scope>test</scope>
 		</dependency>
 

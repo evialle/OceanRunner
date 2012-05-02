@@ -11,14 +11,14 @@
 	<groupId>it.freshminutes</groupId>
 	<artifactId>oceanrunner-spring</artifactId>
 	<name>OceanRunner - Spring Ocean Module</name>
-	<version>1.0.Beta1</version>
+	<version>1.0.Beta1-RELEASE</version>
 
 	<description>OceanRunner - manage Spring 3</description>
 
 	<parent>
 		<groupId>it.freshminutes</groupId>
 		<artifactId>oceanrunner</artifactId>
-		<version>1.0</version>
+		<version>1.0-RELEASE</version>
 	</parent>
 
 	<dependencies>
@@ -26,7 +26,7 @@
 		<dependency>
 			<groupId>it.freshminutes</groupId>
 			<artifactId>oceanrunner-core</artifactId>
-			<version>1.0</version>
+			<version>1.0-RELEASE</version>
 		</dependency>
 
 		<!-- Spring -->
