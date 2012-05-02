@@ -63,6 +63,7 @@ public class StatisticsEbeanPlug extends StatisticsDataPlug {
 
 	/**
 	 * 
+	 * 
 	 * @param oceanRunner
 	 * @throws OceanModuleException
 	 */
@@ -120,6 +121,7 @@ public class StatisticsEbeanPlug extends StatisticsDataPlug {
 	@Override
 	public void storeLastTestStatus(final Collection<StatisticsResult> statisticsResultsList) {
 		DB_SERVER.save(statisticsResultsList);
+		DB_SERVER.commitTransaction();
 	}
 
 }
