@@ -11,7 +11,7 @@
 	<groupId>it.freshminutes</groupId>
 	<artifactId>oceanrunner-statistics</artifactId>
 	<name>OceanRunner - StatisticsOceanModule</name>
-	<version>20120426-SNAPSHOT</version>
+	<version>20120502-SNAPSHOT</version>
 
 	<description>OceanRunner - manage the success of your JUnit tests</description>
 
