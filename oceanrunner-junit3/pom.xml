@@ -14,7 +14,13 @@
 	<version>20120501-SNAPSHOT</version>
 	<description>OceanRunner - manage JUnit3</description>
 
-
+	<licenses>
+		<license>
+			<name>Apache 2</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+		</license>
+	</licenses>
+	
 	<parent>
 		<groupId>it.freshminutes</groupId>
 		<artifactId>oceanrunner</artifactId>

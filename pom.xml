@@ -9,6 +9,13 @@
 	<name>OceanRunner</name>
 	<description>OceanRunner - Make easily JUnit Runners.</description>
 
+	<licenses>
+		<license>
+			<name>Apache 2</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+		</license>
+	</licenses>
+
 	<properties>
 		<java.version>1.6</java.version>
 		<java.source.version>1.6</java.source.version>
@@ -23,22 +30,18 @@
 		<mockito.version>1.9.0</mockito.version>
 	</properties>
 
-
 	<modules>
 		<module>oceanrunner-core</module>
 		<module>oceanrunner-categories</module>
 		<module>oceanrunner-concurrent</module>
 		<module>oceanrunner-junit3</module>
-		<module>oceanrunner-mockito</module>
 		<module>oceanrunner-openejb30</module>
 		<module>oceanrunner-statistics</module>
-		<module>oceanrunner-parameterized</module>
 		<module>oceanrunner-repeat</module>
-		<module>oceanrunner-arquilian</module>
-
+		<module>oceanrunner-mockito</module>
+		<module>oceanrunner-parameterized</module>
+		<module>oceanrunner-arquillian</module>
 	</modules>
-
-
 
 	<dependencyManagement>
 		<dependencies>
@@ -126,7 +129,6 @@
 				<version>1.1.1</version>
 			</dependency>
 
-
 		</dependencies>
 	</dependencyManagement>
 
@@ -152,6 +154,20 @@
 						<phase>package</phase>
 						<goals>
 							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<!-- Signing JARS -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-gpg-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>sign-artifacts</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>sign</goal>
 						</goals>
 					</execution>
 				</executions>
@@ -207,9 +223,6 @@
 
 	</profiles>
 
-
-
-
 	<!-- Maven Repo of OceanRunner: where to retrieve that tool -->
 	<distributionManagement>
 		<repository>
@@ -230,4 +243,22 @@
 	</issueManagement>
 	<url>https://github.com/evialle/OceanRunner</url>
 
+
+	<!-- Developpers -->
+	<developers>
+		<developer>
+			<id>evialle</id>
+			<name>Eric Vialle</name>
+			<email>eric@vialle.org</email>
+			<url>http://eric.vialle.org</url>
+			<roles>
+				<role>architect</role>
+				<role>developer</role>
+			</roles>
+			<timezone>+1</timezone>
+			<properties>
+				<picUrl>http://www.gravatar.com/avatar/26cd2ec5621a04f87ba6c0cf54fb1092.png</picUrl>
+			</properties>
+		</developer>
+	</developers>
 </project>

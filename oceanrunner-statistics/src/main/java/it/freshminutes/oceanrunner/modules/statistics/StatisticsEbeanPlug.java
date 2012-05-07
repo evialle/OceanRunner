@@ -17,7 +17,6 @@ package it.freshminutes.oceanrunner.modules.statistics;
 
 import it.freshminutes.oceanrunner.OceanRunner;
 import it.freshminutes.oceanrunner.exceptions.OceanModuleException;
-import it.freshminutes.oceanrunner.modules.statistics.StatisticsOceanModule;
 
 import java.util.Collection;
 import java.util.List;
@@ -76,11 +75,12 @@ public class StatisticsEbeanPlug extends StatisticsDataPlug {
 			myDbConfig.setUsername(oceanRunner.getAwareProperty(STATISTICS_JPA_JDBC_USER_PROPERTYKEY));
 			myDbConfig.setPassword(oceanRunner.getAwareProperty(STATISTICS_JPA_JDBC_PASSWORD_PROPERTYKEY));
 			myDbConfig.setUrl(oceanRunner.getAwareProperty(STATISTICS_JPA_JDBC_URL_PROPERTYKEY));
-
 			ServerConfig config = new ServerConfig();
 			config.setName("StatisticsEbeanPlug");
 			config.setDataSourceConfig(myDbConfig);
 			config.setDefaultServer(true);
+		
+			
 
 			config.addClass(StatisticsResult.class);
 
@@ -120,7 +120,12 @@ public class StatisticsEbeanPlug extends StatisticsDataPlug {
 	@Override
 	public void storeLastTestStatus(final Collection<StatisticsResult> statisticsResultsList) {
 		DB_SERVER.save(statisticsResultsList);
-		DB_SERVER.commitTransaction();
+		
+		StringBuilder str = new StringBuilder("Inserting in db: ");
+		for (StatisticsResult statisticsResult : statisticsResultsList) {
+			str.append(statisticsResult).append(";");
+		}
+		System.out.println(str.toString());
 	}
 
 }

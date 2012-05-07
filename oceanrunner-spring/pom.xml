@@ -13,6 +13,13 @@
 	<name>OceanRunner - Spring Ocean Module</name>
 	<version>20120415-SNAPSHOT</version>
 
+	<licenses>
+		<license>
+			<name>Apache 2</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+		</license>
+	</licenses>
+
 	<description>OceanRunner - manage Spring 3</description>
 
 	<parent>
