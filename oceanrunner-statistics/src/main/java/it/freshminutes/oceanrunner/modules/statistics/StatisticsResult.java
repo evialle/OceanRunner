@@ -36,6 +36,8 @@ import com.avaje.ebean.annotation.EnumValue;
 @Table(name = "oceanrunner_statisticsresult")
 public class StatisticsResult implements Serializable {
 
+
+	
 	/**
 	 * JUnit status.
 	 * 

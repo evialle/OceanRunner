@@ -12,9 +12,14 @@
 	<artifactId>oceanrunner-mockito</artifactId>
 	<name>OceanRunner - MockitoOceanModule</name>
 	<version>1.0-RELEASE</version>
-
 	<description>OceanRunner - manage your mock with Mockito</description>
 
+	<licenses>
+		<license>
+			<name>Apache 2</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+		</license>
+	</licenses>
 
 	<parent>
 		<groupId>it.freshminutes</groupId>

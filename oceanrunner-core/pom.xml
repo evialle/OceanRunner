@@ -14,6 +14,12 @@
 	<version>1.0-RELEASE</version>
 	<description>OceanRunner - The base of OceanRunner</description>
 
+	<licenses>
+		<license>
+			<name>Apache 2</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+		</license>
+	</licenses>
 
 	<parent>
 		<groupId>it.freshminutes</groupId>

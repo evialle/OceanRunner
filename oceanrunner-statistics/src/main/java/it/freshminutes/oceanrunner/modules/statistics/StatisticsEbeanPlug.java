@@ -17,7 +17,6 @@ package it.freshminutes.oceanrunner.modules.statistics;
 
 import it.freshminutes.oceanrunner.OceanRunner;
 import it.freshminutes.oceanrunner.exceptions.OceanModuleException;
-import it.freshminutes.oceanrunner.modules.statistics.StatisticsOceanModule;
 
 import java.util.Collection;
 import java.util.List;
@@ -30,6 +29,11 @@ import com.avaje.ebean.config.ServerConfig;
 
 public class StatisticsEbeanPlug extends StatisticsDataPlug {
 
+	private static final String TRUE = "true";
+	
+	/** property defining the properties to display. */
+	private static final String STATISTICS_EBEAN_DISPLAYSINSERT = "statistics.ebean.displayinsert";
+	
 	/** Property key defining the maximum statistics to analyse for a method. */
 	private static final String STATISTICS_MAX_RUN_TO_STUDY_PROPERTYKEY = "statistics.maxRunToStudy";
 
@@ -77,11 +81,12 @@ public class StatisticsEbeanPlug extends StatisticsDataPlug {
 			myDbConfig.setUsername(oceanRunner.getAwareProperty(STATISTICS_JPA_JDBC_USER_PROPERTYKEY));
 			myDbConfig.setPassword(oceanRunner.getAwareProperty(STATISTICS_JPA_JDBC_PASSWORD_PROPERTYKEY));
 			myDbConfig.setUrl(oceanRunner.getAwareProperty(STATISTICS_JPA_JDBC_URL_PROPERTYKEY));
-
 			ServerConfig config = new ServerConfig();
 			config.setName("StatisticsEbeanPlug");
 			config.setDataSourceConfig(myDbConfig);
 			config.setDefaultServer(true);
+		
+			
 
 			config.addClass(StatisticsResult.class);
 
@@ -121,7 +126,18 @@ public class StatisticsEbeanPlug extends StatisticsDataPlug {
 	@Override
 	public void storeLastTestStatus(final Collection<StatisticsResult> statisticsResultsList) {
 		DB_SERVER.save(statisticsResultsList);
-		DB_SERVER.commitTransaction();
+
+		try {
+			if (TRUE.equals(this.oceanRunner.getAwareProperty(STATISTICS_EBEAN_DISPLAYSINSERT))) {
+				StringBuilder str = new StringBuilder("Inserting in db: ");
+				for (StatisticsResult statisticsResult : statisticsResultsList) {
+					str.append(statisticsResult).append(";");
+				}
+				System.out.println(str.toString());
+			}
+		} catch (OceanModuleException e) {
+			//we do nothing 
+		}
 	}
 
 }

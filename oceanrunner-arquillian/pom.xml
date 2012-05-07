@@ -9,11 +9,19 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>it.freshminutes</groupId>
-	<artifactId>oceanrunner-arquilian</artifactId>
+	<artifactId>oceanrunner-arquillian</artifactId>
 	<name>OceanRunner - OceanCategoriesModule</name>
-	<version>1.0.Alpha1</version>
+	<version>1.0.Alpha1-RELEASE</version>
+
 
 	<description>OceanRunner - Manage your Unit tests in a JavaEE container</description>
+
+	<licenses>
+		<license>
+			<name>Apache 2</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+		</license>
+	</licenses>
 
 	<parent>
 		<groupId>it.freshminutes</groupId>

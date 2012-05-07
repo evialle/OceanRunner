@@ -12,7 +12,6 @@
 	<artifactId>oceanrunner-statistics</artifactId>
 	<name>OceanRunner - StatisticsOceanModule</name>
 	<version>1.0-RELEASE</version>
-
 	<description>OceanRunner - manage the success of your JUnit tests</description>
 
 
