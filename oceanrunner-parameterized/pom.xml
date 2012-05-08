@@ -11,7 +11,7 @@
 	<groupId>it.freshminutes</groupId>
 	<artifactId>oceanrunner-parameterized</artifactId>
 	<name>OceanRunner - ParameterizedOceanModule</name>
-	<version>1.0-RELEASE</version>
+	<version>1.0.1-RELEASE</version>
 	<description>OceanRunner - Parameterized</description>
 
 	<licenses>
@@ -24,7 +24,7 @@
 	<parent>
 		<groupId>it.freshminutes</groupId>
 		<artifactId>oceanrunner</artifactId>
-		<version>1.0-RELEASE</version>
+		<version>1.0.1-RELEASE</version>
 	</parent>
 
 	<dependencies>
@@ -32,7 +32,7 @@
 		<dependency>
 			<groupId>it.freshminutes</groupId>
 			<artifactId>oceanrunner-core</artifactId>
-			<version>1.0-RELEASE</version>
+			<version>1.0.1-RELEASE</version>
 		</dependency>
 
 
