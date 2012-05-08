@@ -115,7 +115,7 @@ public class OceanRunner extends BlockJUnit4ClassRunner {
 	private Sorter fSorter = Sorter.NULL;
 
 	/** Count the number of method called. */
-	private Map<String, AtomicLong> mapMethodCounter;
+	private final Map<String, AtomicLong> mapMethodCounter = Maps.newConcurrentMap();;
 
 	/**
 	 * @return the classUnderTest
@@ -501,7 +501,6 @@ public class OceanRunner extends BlockJUnit4ClassRunner {
 	
 	/** Count the number of execution og the method. */
 	private void addNbOfIterationOfTheMethod(FrameworkMethod each) {
-		mapMethodCounter = Maps.newConcurrentMap();
 		String key = each.getName();
 
 		AtomicLong atomicLong = mapMethodCounter.get(key);
@@ -509,8 +508,7 @@ public class OceanRunner extends BlockJUnit4ClassRunner {
 			atomicLong = new AtomicLong();
 			mapMethodCounter.put(key, atomicLong);
 		}
-		atomicLong.incrementAndGet();
-
+		atomicLong.getAndIncrement();
 	}
 
 	/**
@@ -732,7 +730,7 @@ public class OceanRunner extends BlockJUnit4ClassRunner {
 	 */
 	public long getNbOfIterationOfTheMethod(String methodUnderTest) {
 		AtomicLong aLong = mapMethodCounter.get(methodUnderTest);
-		return aLong == null ? 0 : aLong.get();
+		return aLong == null ? 1 : aLong.get();
 	}
 
 }

@@ -79,7 +79,7 @@ public abstract class OceanModule {
 	 * number of repeat for dedicated to this module.
 	 */
 	public final long nbOfRepeatModulo(final OceanRunner oceanRunner) throws OceanModuleException {
-		return oceanRunner.getNbOfIterationOfTheMethod(oceanRunner.getMethodUnderTest()) % totalNumberOfRepeat(oceanRunner);
+		return (oceanRunner.getNbOfIterationOfTheMethod(oceanRunner.getMethodUnderTest()) - 1) % totalNumberOfRepeat(oceanRunner);
 	}
 
 }

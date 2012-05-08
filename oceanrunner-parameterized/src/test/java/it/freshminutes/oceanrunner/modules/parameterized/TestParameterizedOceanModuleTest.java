@@ -43,12 +43,14 @@ public class TestParameterizedOceanModuleTest {
 	@Test
 	public void testIsValidEmail() throws Exception {
 		Assert.assertNotNull(validEmail);
+		System.out.println("testIsValidEmail: " + validEmail);
 		counter ++;
 	}
 	
 	@Test
 	public void testIsValidEmail2() throws Exception {
 		Assert.assertNotNull(validEmail);
+		System.out.println("testIsValidEmail2: " + validEmail);
 		counter2 ++;
 	}
 	
