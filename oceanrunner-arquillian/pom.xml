@@ -10,7 +10,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>it.freshminutes</groupId>
 	<artifactId>oceanrunner-arquillian</artifactId>
-	<name>OceanRunner - OceanCategoriesModule</name>
+	<name>OceanRunner - OceanArquillianModule</name>
 	<version>1.0.Alpha1-RELEASE</version>
 
 
